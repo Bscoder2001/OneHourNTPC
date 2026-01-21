@@ -913,7 +913,8 @@ function proceedToDay2() {
         'practice-section',
         'powerup-section',
         'boss-section',
-        'confidence-section'
+        'confidence-section',
+		'proceedToDay2'
     ];
     
     day1Sections.forEach(sectionId => {
@@ -959,7 +960,8 @@ function backToDay1() {
         'practice-section',
         'powerup-section',
         'boss-section',
-        'confidence-section'
+        'confidence-section',
+		'proceedToDay2'
     ];
     
     day1Sections.forEach(sectionId => {
