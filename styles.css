@@ -549,6 +549,130 @@ body {
     box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
 }
 
+/* Day Divider */
+.day-divider {
+    text-align: center;
+    margin: var(--spacing-xl) 0;
+    padding: var(--spacing-lg) 0;
+    border-top: 3px solid var(--highlight-color);
+    border-bottom: 3px solid var(--highlight-color);
+    background: linear-gradient(135deg, rgba(233, 69, 96, 0.1), rgba(243, 156, 18, 0.1));
+}
+
+.day-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--highlight-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.day-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* ChatGPT Button */
+.chatgpt-btn {
+    background: linear-gradient(135deg, #10a37f, #1a7f64);
+    color: var(--text-primary);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-top: var(--spacing-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    box-shadow: var(--shadow-sm);
+}
+
+.chatgpt-btn:hover {
+    background: linear-gradient(135deg, #0d8c6d, #15695a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+}
+
+.chatgpt-btn:active {
+    transform: translateY(0);
+}
+
+.chatgpt-btn::before {
+    content: "🤖";
+    font-size: 1rem;
+}
+
+/* Proceed Button */
+.proceed-btn {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: var(--text-primary);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-top: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.proceed-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+.proceed-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Back Button */
+.back-btn {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: var(--text-primary);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    margin-top: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    background: linear-gradient(135deg, #2980b9, #21618c);
+}
+
+.back-btn:active {
+    transform: translateY(0);
+}
+
+/* Day Container */
+.day-container {
+    animation: fadeInContent 0.5s ease;
+}
+
+@keyframes fadeInContent {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Footer */
 .footer {
     text-align: center;
