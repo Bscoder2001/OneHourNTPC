@@ -150,7 +150,6 @@ function checkWarmup() {
  * Checks practice MCQ answers
  */
 function checkPractice() {
-	// Prevent multiple submissions
 	if (AppState.practiceCompleted) {
 		showMessage('practice-result', 'You already completed this section!', 'partial');
 		return;
@@ -168,53 +167,56 @@ function checkPractice() {
 	let correctCount = 0;
 	const answers = [];
 
-	// Check each question
 	questions.forEach(q => {
-		const selected = document.querySelector(`input[name="${q}"]:checked`);
-		const userAnswer = selected ? selected.value : null;
+		let selected = document.querySelector(`input[name="${q}"]:checked`);
+		let userAnswer = null;
+
+		if (selected) {
+			userAnswer = selected.value;
+		}
+
 		answers.push(userAnswer);
 
-		// Highlight correct answer
-		const correctOption = document.querySelector(`.radio-option[data-answer="${correctAnswers[q]}"]`);
-		console.log(correctOption);
-		
-		if (correctOption) {
-			correctOption.classList.add('show-correct');
+		let anyInput = document.querySelector(`input[name="${q}"]`);
+		let questionCard = null;
+
+		if (selected) {
+			questionCard = selected.closest('.question-card');
+		} else if (anyInput) {
+			questionCard = anyInput.closest('.question-card');
 		}
 
-		// Show explanation
-		const questionCard = selected ? selected.closest('.question-card') : document.querySelector(`input[name="${q}"]`).closest('.question-card');
-		const explanation = questionCard.querySelector('.explanation');
-		if (explanation) {
-			explanation.classList.add('show');
+		if (questionCard) {
+			let correctOption = questionCard.querySelector(`.radio-option[data-answer="${correctAnswers[q]}"]`);
+			if (correctOption) {
+				correctOption.classList.add('show-correct');
+			}
+
+			let explanation = questionCard.querySelector('.explanation');
+			if (explanation) {
+				explanation.classList.add('show');
+			}
 		}
 
-		// Check if correct
 		if (userAnswer === correctAnswers[q]) {
 			correctCount++;
 		}
 
-		// Disable all radio buttons for this question
 		document.querySelectorAll(`input[name="${q}"]`).forEach(radio => {
 			radio.disabled = true;
 		});
 	});
 
-	// Store answers (future: send to backend)
 	AppState.userAnswers.practice = answers;
 
-	// Calculate XP
 	const xpEarned = correctCount * AppState.xpValues.practice;
 	updateXP(xpEarned);
 
-	// Show result
 	const message = `You got ${correctCount}/5 correct! Earned ${xpEarned} XP 💪`;
 	showMessage('practice-result', message, 'success');
 
-	// Mark as completed
 	AppState.practiceCompleted = true;
 
-	// Disable submit button
 	event.target.disabled = true;
 	event.target.textContent = 'Completed ✓';
 }
@@ -391,6 +393,16 @@ const Day2State = {
 		boss: []
 	}
 };
+
+const Day3State = {
+	practiceCompleted: false,
+	bossCompleted: false,
+	userAnswers: {
+		practice: [],
+		boss: []
+	}
+};
+
 
 // ==========================================
 // DAY 2: WARM-UP LOGIC
@@ -645,6 +657,303 @@ function checkDay2Boss() {
 	event.target.textContent = 'Boss Defeated ✓';
 }
 
+
+// ==========================================
+// DAY 3: BOSS FIGHT LOGIC
+// ==========================================
+
+/**
+ * Checks Day 3 boss fight answers
+ */
+function checkDay3Boss() {
+	if (Day3State.bossCompleted) {
+		showMessage('day3-boss-result', 'You already defeated the boss!', 'partial');
+		return;
+	}
+
+	let correctCount = 0;
+	const answers = [];
+
+	// Question 1 (MCQ)
+	const boss1 = document.querySelector('input[name="day3-boss1"]:checked');
+	let boss1Answer = null;
+
+	if (boss1) {
+		boss1Answer = boss1.value;
+	}
+
+	answers.push(boss1Answer);
+
+	if (boss1Answer === 'b') {
+		correctCount++;
+	}
+
+	const boss1Correct = document.querySelector('#day3-boss-section .boss-card:nth-of-type(1) .radio-option[data-answer="b"]');
+	if (boss1Correct) {
+		boss1Correct.classList.add('show-correct');
+	}
+
+	const boss1Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(1) .explanation');
+	if (boss1Explanation) {
+		boss1Explanation.classList.add('show');
+	}
+
+	document.querySelectorAll('input[name="day3-boss1"]').forEach(radio => {
+		radio.disabled = true;
+	});
+
+	// Question 2 (Input)
+	const boss2Input = document.getElementById('day3-boss-2');
+	const boss2Answer = boss2Input.value.trim();
+	answers.push(boss2Answer);
+
+	if (boss2Answer === '80') {
+		correctCount++;
+		boss2Input.classList.add('correct');
+	} else {
+		boss2Input.classList.add('incorrect');
+	}
+	boss2Input.disabled = true;
+
+	const boss2Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(2) .explanation');
+	if (boss2Explanation) {
+		boss2Explanation.classList.add('show');
+	}
+
+	// Question 3 (MCQ)
+	const boss3 = document.querySelector('input[name="day3-boss3"]:checked');
+	let boss3Answer = null;
+
+	if (boss3) {
+		boss3Answer = boss3.value;
+	}
+
+	answers.push(boss3Answer);
+
+	if (boss3Answer === 'a') {
+		correctCount++;
+	}
+
+	const boss3Correct = document.querySelector('#day3-boss-section .boss-card:nth-of-type(3) .radio-option[data-answer="a"]');
+	if (boss3Correct) {
+		boss3Correct.classList.add('show-correct');
+	}
+
+	const boss3Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(3) .explanation');
+	if (boss3Explanation) {
+		boss3Explanation.classList.add('show');
+	}
+
+	document.querySelectorAll('input[name="day3-boss3"]').forEach(radio => {
+		radio.disabled = true;
+	});
+
+	// Question 4 (Input)
+	const boss4Input = document.getElementById('day3-boss-4');
+	const boss4Answer = boss4Input.value.trim();
+	answers.push(boss4Answer);
+
+	if (boss4Answer === '150') {
+		correctCount++;
+		boss4Input.classList.add('correct');
+	} else {
+		boss4Input.classList.add('incorrect');
+	}
+	boss4Input.disabled = true;
+
+	const boss4Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(4) .explanation');
+	if (boss4Explanation) {
+		boss4Explanation.classList.add('show');
+	}
+
+	Day3State.userAnswers.boss = answers;
+
+	const xpEarned = correctCount * AppState.xpValues.boss;
+	updateXP(xpEarned);
+
+	let message;
+	if (correctCount === 4) {
+		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
+	} else if (correctCount >= 3) {
+		message = `💪 Good fight! ${correctCount}/4 correct. Earned ${xpEarned} XP!`;
+	} else {
+		message = `Keep practicing! ${correctCount}/4 correct. Earned ${xpEarned} XP.`;
+	}
+
+	if (correctCount >= 3) {
+		showMessage('day3-boss-result', message, 'success');
+	} else {
+		showMessage('day3-boss-result', message, 'partial');
+	}
+
+	Day3State.bossCompleted = true;
+	event.target.disabled = true;
+	event.target.textContent = 'Boss Defeated ✓';
+}
+
+/**
+ * Wrapper: single boss-check function for all days
+ * @param {number} dayNumber - Day number (1/2/3)
+ */
+function checkBossFight(dayNumber, btn)
+{
+	checkBossGeneric(dayNumber, btn);
+}
+
+
+function checkBossGeneric(dayNumber, btn)
+{
+	let config = BossConfig[dayNumber];
+
+	if (!config)
+	{
+		return;
+	}
+
+	let state = config.state();
+
+	if (state.bossCompleted)
+	{
+		showMessage(config.resultId, 'You already defeated the boss!', 'partial');
+		return;
+	}
+
+	let correctCount = 0;
+	let answers = [];
+
+	let section = document.querySelector(config.sectionSelector);
+
+	if (!section)
+	{
+		return;
+	}
+
+	let bossCards = Array.from(section.querySelectorAll('.boss-card'));
+
+	config.questions.forEach(q =>
+	{
+		let card = bossCards[q.cardIndex];
+
+		if (!card)
+		{
+			answers.push(null);
+			return;
+		}
+
+		if (q.type === 'mcq')
+		{
+			let selected = document.querySelector('input[name="' + q.name + '"]:checked');
+			let selectedValue = null;
+
+			if (selected)
+			{
+				selectedValue = selected.value;
+			}
+
+			answers.push(selectedValue);
+
+			if (selectedValue === q.correctValue)
+			{
+				correctCount++;
+			}
+
+			let correctOption = card.querySelector(q.correctSelector);
+			if (correctOption)
+			{
+				correctOption.classList.add('show-correct');
+			}
+
+			let explanation = card.querySelector('.explanation');
+			if (explanation)
+			{
+				explanation.classList.add('show');
+			}
+
+			document.querySelectorAll('input[name="' + q.name + '"]').forEach(radio =>
+			{
+				radio.disabled = true;
+			});
+		}
+		else if (q.type === 'input')
+		{
+			let input = document.getElementById(q.id);
+
+			if (!input)
+			{
+				answers.push(null);
+				return;
+			}
+
+			let value = input.value.trim();
+			answers.push(value);
+
+			let isCorrect = false;
+
+			q.correctValues.forEach(cv =>
+			{
+				if (value === cv)
+				{
+					isCorrect = true;
+				}
+			});
+
+			if (isCorrect)
+			{
+				correctCount++;
+				input.classList.add('correct');
+			}
+			else
+			{
+				input.classList.add('incorrect');
+			}
+
+			input.disabled = true;
+
+			let explanation = card.querySelector('.explanation');
+			if (explanation)
+			{
+				explanation.classList.add('show');
+			}
+		}
+	});
+
+	state.userAnswers.boss = answers;
+
+	let xpEarned = correctCount * AppState.xpValues.boss;
+	updateXP(xpEarned);
+
+	let message = '';
+	if (correctCount === config.totalQuestions)
+	{
+		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
+	}
+	else if (correctCount >= 3)
+	{
+		message = `💪 Good fight! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP!`;
+	}
+	else
+	{
+		message = `Keep practicing! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP.`;
+	}
+
+	if (correctCount >= 3)
+	{
+		showMessage(config.resultId, message, 'success');
+	}
+	else
+	{
+		showMessage(config.resultId, message, 'partial');
+	}
+
+	state.bossCompleted = true;
+
+	if (btn)
+	{
+		btn.disabled = true;
+		btn.textContent = config.buttonText;
+	}
+}
+
 // ==========================================
 // CHATGPT INTEGRATION
 // ==========================================
@@ -701,6 +1010,56 @@ const questionDatabase = {
 	'day2-boss-q5': {
 		question: 'The product of two numbers is 360 and their HCF is 6. What is their LCM?',
 		context: 'HCF × LCM formula application'
+	},
+
+	// Day 3 Warmup
+	'day3-warmup-1': {
+		question: 'What is 50% of 100?',
+		context: 'Percentage basics (50% = half)'
+	},
+	'day3-warmup-2': {
+		question: 'Find the next number: 2, 4, 6, 8, ?',
+		context: 'Number series (add 2 each time)'
+	},
+
+	// Day 3 Practice
+	'day3-practice-q1': {
+		question: 'What is 25% of 200? Options: 25, 50, 75, 100',
+		context: '25% = 1/4, so 200 ÷ 4 = 50'
+	},
+	'day3-practice-q2': {
+		question: 'Convert 3/5 to percentage: Options: 30%, 50%, 60%, 35%',
+		context: 'Fraction to percentage (multiply by 100)'
+	},
+	'day3-practice-q3': {
+		question: 'If 20% of a number is 40, what is the number? Options: 80, 200, 100, 160',
+		context: 'Find whole from percentage (reverse calculation)'
+	},
+	'day3-practice-q4': {
+		question: 'What is 10% of 500? Options: 50, 100, 5, 25',
+		context: '10% = 1/10, so 500 ÷ 10 = 50'
+	},
+	'day3-practice-q5': {
+		question: '0.75 expressed as percentage is: Options: 7.5%, 75%, 0.75%, 750%',
+		context: 'Decimal to percentage (×100)'
+	},
+
+	// Day 3 Boss
+	'day3-boss-q1': {
+		question: 'A student scored 360 marks out of 600. What is his percentage? Options: 50%, 60%, 65%, 70%',
+		context: 'Percentage formula: (part/whole) × 100'
+	},
+	'day3-boss-q2': {
+		question: 'Find the next number: 5, 10, 20, 40, ?',
+		context: 'Number series (×2 each time)'
+	},
+	'day3-boss-q3': {
+		question: 'Which is larger: 0.6 or 0.58? (Revision from Day 1)',
+		context: 'Compare decimals by equal digits: 0.60 vs 0.58'
+	},
+	'day3-boss-q4': {
+		question: 'If 30% of a number is 90, find 50% of that number:',
+		context: 'Find 100% first, then calculate 50%'
 	}
 };
 
@@ -717,20 +1076,21 @@ function askChatGPT(questionId) {
 	}
 
 	const prompt = `I am preparing for the RRB NTPC exam.
-Explain the following question in very simple terms, step by step, assuming I am weak in basics.
+		Explain the following question in very simple terms, step by step, assuming I am weak in basics.
 
-Topic: ${questionData.context}
+		Topic: ${questionData.context}
 
-Question:
-${questionData.question}
+		Question:
+		${questionData.question}
 
-Please explain:
-- Why the correct answer is correct
-- A shortcut if possible
-- How NTPC usually twists this concept
-- Give me 2-3 similar practice questions
+		Please explain:
+		- Why the correct answer is correct
+		- A shortcut if possible
+		- How NTPC usually twists this concept
+		- Give me 2-3 similar practice questions
 
-Use simple language and assume I'm learning from scratch.`;
+		Use simple language and assume I'm learning from scratch.
+	`;
 
 	// Copy to clipboard
 	copyToClipboard(prompt);
@@ -796,15 +1156,43 @@ function showCopyNotification() {
 	}, 2500);
 }
 
-/**
- * Redirects to WhatsApp for Day 3 unlock request
- */
-function requestUnlockDay3() {
-	const phoneNumber = '919051521161';
-	const message = encodeURIComponent("I've completed day 2, please unlock day 3");
-	const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+function requestUnlockNextDay(dayNumber)
+{
+	const email = 'bsubham408@gmail.com';
+	const subjectText = `Request to Unlock Day ${dayNumber} - OneHourNTPC`;
 
-	window.open(whatsappUrl, '_blank');
+	const bodyText =
+		`Hi Team OneHourNTPC,
+
+		I've successfully completed Day ${dayNumber - 1} of my NTPC preparation on OneHourNTPC.
+
+		Please unlock Day ${dayNumber} for me.
+
+		Thanks,
+		A OneHourNTPC Learner
+	`;
+
+	const gmailUrl =
+		"https://mail.google.com/mail/?view=cm&fs=1" +
+		"&to=" + encodeURIComponent(email) +
+		"&su=" + encodeURIComponent(subjectText) +
+		"&body=" + encodeURIComponent(bodyText);
+
+	const mailtoUrl =
+		"mailto:" + encodeURIComponent(email) +
+		"?subject=" + encodeURIComponent(subjectText) +
+		"&body=" + encodeURIComponent(bodyText);
+
+	const confirmSend = confirm(
+		"Your email app will open to request unlocking the next day.\n\nDo you want to continue?"
+	);
+
+	if (!confirmSend) return;
+	const win = window.open(gmailUrl, "_blank");
+
+	if (!win) {
+		window.location.href = mailtoUrl;
+	}
 }
 
 // ==========================================
@@ -905,95 +1293,277 @@ function checkDayUnlock() {
 }
 
 /**
- * Proceeds to Day 2 - Hides Day 1, Shows Day 2
+ * Proceeds to next day
+ * @param {number} nextDay - The day number to navigate to
  */
-function proceedToDay2() {
-    // Hide all Day 1 sections
-    const day1Sections = [
-        'warmup-section',
-        'core-mission-section',
-        'practice-section',
-        'powerup-section',
-        'boss-section',
-        'confidence-section',
-		'proceedToDay2'
-    ];
-    
-    day1Sections.forEach(sectionId => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = 'none';
-        }
-    });
-    
-    // Show Day 2 container
-    const day2Container = document.getElementById('day2-container');
-    if (day2Container) {
-        day2Container.style.display = 'block';
-    }
-    
-    // Scroll to top smoothly
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-    
-    // Update header subtitle
-    const subtitle = document.querySelector('.subtitle');
-    if (subtitle) {
-        subtitle.textContent = 'Level 1 – Foundation (Day 2)';
-    }
-    
-    // Update day indicator
-    const dayValue = document.querySelector('.progress-stats .stat:first-child .stat-value');
-    if (dayValue) {
-        dayValue.textContent = '2 / 7';
-    }
+function proceedToNextDay(nextDay) {
+	if (AppState.currentDay === 1 && nextDay === 2) {
+		const day1Sections = [
+			'warmup-section',
+			'core-mission-section',
+			'practice-section',
+			'powerup-section',
+			'boss-section',
+			'confidence-section',
+			'proceedToDay2'
+		];
+
+		day1Sections.forEach(sectionId => {
+			const section = document.getElementById(sectionId);
+			if (section) {
+				section.style.display = 'none';
+			}
+		});
+
+		const day2Container = document.getElementById('day2-container');
+		if (day2Container) {
+			day2Container.style.display = 'block';
+		}
+
+		AppState.currentDay = 2;
+		updateHeaderForDay(2);
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	} else if (AppState.currentDay === 2 && nextDay === 3) {
+		const day2Container = document.getElementById('day2-container');
+		if (day2Container) {
+			day2Container.style.display = 'none';
+		}
+
+		const day3Container = document.getElementById('day3-container');
+		if (day3Container) {
+			day3Container.style.display = 'block';
+		}
+
+		AppState.currentDay = 3;
+		updateHeaderForDay(3);
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	} else if (AppState.currentDay === 3 && nextDay === 4) {
+		const day4Locked = document.getElementById('day4-locked');
+		if (day4Locked) {
+			day4Locked.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
 }
 
 /**
- * Goes back to Day 1 - Shows Day 1, Hides Day 2
+ * Goes back to previous day
+ * @param {number} previousDay - The day number to navigate back to
  */
-function backToDay1() {
-    // Show all Day 1 sections
-    const day1Sections = [
-        'warmup-section',
-        'core-mission-section',
-        'practice-section',
-        'powerup-section',
-        'boss-section',
-        'confidence-section',
-		'proceedToDay2'
-    ];
-    
-    day1Sections.forEach(sectionId => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-            section.style.display = 'block';
-        }
-    });
-    
-    // Hide Day 2 container
-    const day2Container = document.getElementById('day2-container');
-    if (day2Container) {
-        day2Container.style.display = 'none';
-    }
-    
-    // Scroll to top smoothly
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-    
-    // Update header subtitle
-    const subtitle = document.querySelector('.subtitle');
-    if (subtitle) {
-        subtitle.textContent = 'Level 1 – Foundation';
-    }
-    
-    // Update day indicator
-    const dayValue = document.querySelector('.progress-stats .stat:first-child .stat-value');
-    if (dayValue) {
-        dayValue.textContent = '1 / 7';
-    }
+function backToPreviousDay(previousDay) {
+	if (AppState.currentDay === 2 && previousDay === 1) {
+		const day1Sections = [
+			'warmup-section',
+			'core-mission-section',
+			'practice-section',
+			'powerup-section',
+			'boss-section',
+			'confidence-section',
+			'proceedToDay2'
+		];
+
+		day1Sections.forEach(sectionId => {
+			const section = document.getElementById(sectionId);
+			if (section) {
+				section.style.display = 'block';
+			}
+		});
+
+		const day2Container = document.getElementById('day2-container');
+		if (day2Container) {
+			day2Container.style.display = 'none';
+		}
+
+		AppState.currentDay = 1;
+		updateHeaderForDay(1);
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	} else if (AppState.currentDay === 3 && previousDay === 2) {
+		const day3Container = document.getElementById('day3-container');
+		if (day3Container) {
+			day3Container.style.display = 'none';
+		}
+
+		const day2Container = document.getElementById('day2-container');
+		if (day2Container) {
+			day2Container.style.display = 'block';
+		}
+
+		AppState.currentDay = 2;
+		updateHeaderForDay(2);
+
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth'
+		});
+	}
 }
+
+/**
+ * Updates header subtitle and day indicator
+ * @param {number} dayNumber - Current day number
+ */
+function updateHeaderForDay(dayNumber) {
+	const subtitle = document.querySelector('.subtitle');
+	if (subtitle) {
+		if (dayNumber === 1) {
+			subtitle.textContent = 'Level 1 – Foundation';
+		} else {
+			subtitle.textContent = `Level 1 – Foundation (Day ${dayNumber})`;
+		}
+	}
+
+	const dayValue = document.querySelector('.progress-stats .stat:first-child .stat-value');
+	if (dayValue) {
+		dayValue.textContent = `${dayNumber} / 7`;
+	}
+}
+
+const BossConfig =
+{
+	1:
+	{
+		state: function()
+		{
+			return AppState;
+		},
+		resultId: 'boss-result',
+		sectionSelector: '#boss-section',
+		totalQuestions: 5,
+		buttonText: 'Boss Defeated ✓',
+		questions:
+		[
+			{
+				type: 'mcq',
+				name: 'boss1',
+				correctValue: 'b',
+				cardIndex: 0,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'input',
+				id: 'boss-2',
+				correctValues: ['0.5', '.5'],
+				cardIndex: 1
+			},
+			{
+				type: 'mcq',
+				name: 'boss3',
+				correctValue: 'd',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="d"]'
+			},
+			{
+				type: 'input',
+				id: 'boss-4',
+				correctValues: ['35'],
+				cardIndex: 3
+			},
+			{
+				type: 'input',
+				id: 'boss-5',
+				correctValues: ['1'],
+				cardIndex: 4
+			}
+		]
+	},
+
+	2:
+	{
+		state: function()
+		{
+			return Day2State;
+		},
+		resultId: 'day2-boss-result',
+		sectionSelector: '#day2-boss-section',
+		totalQuestions: 5,
+		buttonText: 'Boss Defeated ✓',
+		questions:
+		[
+			{
+				type: 'input',
+				id: 'day2-boss-1',
+				correctValues: ['60'],
+				cardIndex: 0
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss2',
+				correctValue: 'c',
+				cardIndex: 1,
+				correctSelector: '.radio-option[data-answer="c"]'
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss3',
+				correctValue: 'b',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss4',
+				correctValue: 'c',
+				cardIndex: 3,
+				correctSelector: '.radio-option[data-answer="c"]'
+			},
+			{
+				type: 'input',
+				id: 'day2-boss-5',
+				correctValues: ['60'],
+				cardIndex: 4
+			}
+		]
+	},
+
+	3:
+	{
+		state: function()
+		{
+			return Day3State;
+		},
+		resultId: 'day3-boss-result',
+		sectionSelector: '#day3-boss-section',
+		totalQuestions: 4,
+		buttonText: 'Boss Defeated ✓',
+		questions:
+		[
+			{
+				type: 'mcq',
+				name: 'day3-boss1',
+				correctValue: 'b',
+				cardIndex: 0,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'input',
+				id: 'day3-boss-2',
+				correctValues: ['80'],
+				cardIndex: 1
+			},
+			{
+				type: 'mcq',
+				name: 'day3-boss3',
+				correctValue: 'a',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="a"]'
+			},
+			{
+				type: 'input',
+				id: 'day3-boss-4',
+				correctValues: ['150'],
+				cardIndex: 3
+			}
+		]
+	}
+};

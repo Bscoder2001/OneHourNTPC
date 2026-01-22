@@ -136,13 +136,13 @@
 							<input type="radio" name="q2" value="a">
 							<span>0.45</span>
 						</label>
-						<label class="radio-option correct-answer" data-answer="c">
-							<input type="radio" name="q2" value="c">
-							<span>0.505</span>
-						</label>
 						<label class="radio-option">
 							<input type="radio" name="q2" value="b">
 							<span>0.5</span>
+						</label>
+						<label class="radio-option correct-answer" data-answer="c">
+							<input type="radio" name="q2" value="c">
+							<span>0.505</span>
 						</label>
 						<label class="radio-option">
 							<input type="radio" name="q2" value="d">
@@ -217,7 +217,7 @@
 						<div class="explanation">3 ÷ 4 = 0.75</div>
 					</div>
 
-					<button type="button" class="submit-btn" onclick="checkPractice()">Submit Practice</button>
+					<button type="button" class="submit-btn" onclick="checkPractice(this)">Submit Practice</button>
 					<div class="result-message" id="practice-result"></div>
 				</form>
 			</section>
@@ -326,7 +326,7 @@
 					<div class="explanation">1 is the smallest natural number (counting starts from 1)</div>
 				</div>
 
-				<button class="submit-btn boss-btn" onclick="checkBoss()">Defeat the Boss!</button>
+				<button class="submit-btn boss-btn" onclick="checkBossFight(1, this)">Defeat the Boss!</button>
 				<div class="result-message" id="boss-result"></div>
 			</section>
 
@@ -355,7 +355,7 @@
 			</section> -->
 			<!-- Button to proceed to Day 2 -->
 			<div style="text-align: center;" id="proceedToDay2">
-				<button class="proceed-btn" onclick="proceedToDay2()">
+				<button class="proceed-btn" onclick="proceedToNextDay(2)">
 					Proceed to Day 2 →
 				</button>
 			</div>
@@ -367,7 +367,7 @@
 					<p class="day-subtitle">LCM & HCF + General Science Basics</p>
 					
 					<!-- Button to go back to Day 1 -->
-					<button class="back-btn" onclick="backToDay1()">
+					<button class="back-btn" onclick="backToPreviousDay(1)">
 						← Back to Day 1
 					</button>
 				</div>
@@ -498,7 +498,7 @@
 						<button class="chatgpt-btn" onclick="askChatGPT('day2-boss-q5')">Make this clear with ChatGPT</button>
 					</div>
 
-					<button class="submit-btn boss-btn" onclick="checkDay2Boss()">Defeat the Boss!</button>
+					<button class="submit-btn boss-btn" onclick="checkBossFight(2, this)">Defeat the Boss!</button>
 					<div class="result-message" id="day2-boss-result"></div>
 				</section>
 
@@ -517,368 +517,367 @@
 					</div>
 				</section>
 				<!-- DAY 3 LOCKED SECTION -->
-				<section class="locked-section" id="day3-locked">
+				<!-- <section class="locked-section" id="day3-locked">
 					<div class="locked-card">
 						<h2>Day 3 – Locked 🔒</h2>
 						<p>Complete Day 2 to unlock Day 3</p>
-						<button class="unlock-btn" onclick="requestUnlockDay3()">Request Unlock for Day 3</button>
+						<button class="unlock-btn" onclick="requestUnlockNextDay()">Request Unlock for Day 3</button>
 					</div>
-				</section>
+				</section> -->
+				<div style="text-align: center;" id="proceedToDay2">
+					<button class="proceed-btn" onclick="proceedToNextDay(3)">
+						Proceed to Day 3 →
+					</button>
+				</div>
 			</div>
 
 			<!-- ============================================
-                 DAY 3 SECTION - UNLOCKED (HIDDEN BY DEFAULT)
-                 ============================================ -->
-            
-            <div id="day3-container" class="day-container" style="display: none;">
-            
-            <div class="day-divider">
-                <h2 class="day-title">📅 DAY 3 - Level 1: Foundation</h2>
-                <p class="day-subtitle">Percentages + Reasoning Basics + Revision</p>
-                
-                <!-- Button to go back to Day 2 -->
-                <button class="back-btn" onclick="backToDay2()">
-                    ← Back to Day 2
-                </button>
-            </div>
+				 DAY 3 SECTION - UNLOCKED (HIDDEN BY DEFAULT)
+				 ============================================ -->
+			
+			<div id="day3-container" class="day-container" style="display: none;">
+				<div class="day-divider">
+					<h2 class="day-title">📅 DAY 3 - Level 1: Foundation</h2>
+					<p class="day-subtitle">Percentages + Reasoning Basics + Revision</p>
+					
+					<!-- Button to go back to Day 2 -->
+					<button class="back-btn" onclick="backToPreviousDay(2)">
+						← Back to Day 2
+					</button>
+				</div>
 
-            <!-- DAY 3: WARM-UP -->
-            <section class="mission-section" id="day3-warmup-section">
-                <div class="section-header">
-                    <h2>🔥 Warm-up – Quick Start</h2>
-                    <span class="time-badge">5 min</span>
-                </div>
-                
-                <div class="question-card">
-                    <p class="question-text">1. What is 50% of 100?</p>
-                    <input type="number" class="answer-input" data-answer="50" id="day3-warmup-1">
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-warmup-1')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <div class="question-card">
-                    <p class="question-text">2. Find the next number: 2, 4, 6, 8, ?</p>
-                    <input type="number" class="answer-input" data-answer="10" id="day3-warmup-2">
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-warmup-2')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <button class="submit-btn" onclick="checkDay3Warmup()">Submit Warm-up</button>
-                <div class="result-message" id="day3-warmup-result"></div>
-            </section>
+				<!-- DAY 3: WARM-UP -->
+				<section class="mission-section" id="day3-warmup-section">
+					<div class="section-header">
+						<h2>🔥 Warm-up – Quick Start</h2>
+						<span class="time-badge">5 min</span>
+					</div>
+					
+					<div class="question-card">
+						<p class="question-text">1. What is 50% of 100?</p>
+						<input type="number" class="answer-input" data-answer="50" id="day3-warmup-1">
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-warmup-1')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<div class="question-card">
+						<p class="question-text">2. Find the next number: 2, 4, 6, 8, ?</p>
+						<input type="number" class="answer-input" data-answer="10" id="day3-warmup-2">
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-warmup-2')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<button class="submit-btn" onclick="checkDay3Warmup()">Submit Warm-up</button>
+					<div class="result-message" id="day3-warmup-result"></div>
+				</section>
 
-            <!-- DAY 3: CORE MISSION - PERCENTAGES -->
-            <section class="mission-section" id="day3-core-mission-section">
-                <div class="section-header">
-                    <h2>💎 Core Mission – Understanding Percentages</h2>
-                    <span class="time-badge">20 min</span>
-                </div>
-                
-                <div class="content-card">
-                    <h3>What is Percentage?</h3>
-                    <ul class="concept-list">
-                        <li><strong>Percent (%) = Per 100</strong> → Out of 100 parts</li>
-                        <li>50% means 50 out of 100</li>
-                        <li>25% means 25 out of 100</li>
-                        <li>100% means complete/whole</li>
-                    </ul>
-                </div>
-                
-                <div class="content-card highlight-card">
-                    <h3>🎯 Real-Life Example (Money)</h3>
-                    <ul class="concept-list">
-                        <li>You have ₹100</li>
-                        <li>You spend 20% on food</li>
-                        <li>20% of ₹100 = ₹20</li>
-                        <li>Money left = ₹100 - ₹20 = ₹80</li>
-                    </ul>
-                </div>
-                
-                <div class="content-card">
-                    <h3>Quick Understanding</h3>
-                    <ul class="concept-list">
-                        <li>10% = 10/100 = 0.10</li>
-                        <li>25% = 25/100 = 0.25 = 1/4</li>
-                        <li>50% = 50/100 = 0.50 = 1/2</li>
-                        <li>75% = 75/100 = 0.75 = 3/4</li>
-                    </ul>
-                </div>
-                
-                <div class="content-card highlight-card">
-                    <h3>⚡ Converting Between Forms</h3>
-                    <ul class="concept-list">
-                        <li><strong>Fraction to %:</strong> Multiply by 100 (e.g., 1/4 × 100 = 25%)</li>
-                        <li><strong>% to Fraction:</strong> Divide by 100 (e.g., 20% = 20/100 = 1/5)</li>
-                        <li><strong>% to Decimal:</strong> Divide by 100 (e.g., 35% = 0.35)</li>
-                    </ul>
-                </div>
-            </section>
+				<!-- DAY 3: CORE MISSION - PERCENTAGES -->
+				<section class="mission-section" id="day3-core-mission-section">
+					<div class="section-header">
+						<h2>💎 Core Mission – Understanding Percentages</h2>
+						<span class="time-badge">20 min</span>
+					</div>
+					
+					<div class="content-card">
+						<h3>What is Percentage?</h3>
+						<ul class="concept-list">
+							<li><strong>Percent (%) = Per 100</strong> → Out of 100 parts</li>
+							<li>50% means 50 out of 100</li>
+							<li>25% means 25 out of 100</li>
+							<li>100% means complete/whole</li>
+						</ul>
+					</div>
+					
+					<div class="content-card highlight-card">
+						<h3>🎯 Real-Life Example (Money)</h3>
+						<ul class="concept-list">
+							<li>You have ₹100</li>
+							<li>You spend 20% on food</li>
+							<li>20% of ₹100 = ₹20</li>
+							<li>Money left = ₹100 - ₹20 = ₹80</li>
+						</ul>
+					</div>
+					
+					<div class="content-card">
+						<h3>Quick Understanding</h3>
+						<ul class="concept-list">
+							<li>10% = 10/100 = 0.10</li>
+							<li>25% = 25/100 = 0.25 = 1/4</li>
+							<li>50% = 50/100 = 0.50 = 1/2</li>
+							<li>75% = 75/100 = 0.75 = 3/4</li>
+						</ul>
+					</div>
+					
+					<div class="content-card highlight-card">
+						<h3>⚡ Converting Between Forms</h3>
+						<ul class="concept-list">
+							<li><strong>Fraction to %:</strong> Multiply by 100 (e.g., 1/4 × 100 = 25%)</li>
+							<li><strong>% to Fraction:</strong> Divide by 100 (e.g., 20% = 20/100 = 1/5)</li>
+							<li><strong>% to Decimal:</strong> Divide by 100 (e.g., 35% = 0.35)</li>
+						</ul>
+					</div>
+				</section>
 
-            <!-- DAY 3: PRACTICE ARENA -->
-            <section class="mission-section" id="day3-practice-section">
-                <div class="section-header">
-                    <h2>⚔️ Practice Arena – Percentages</h2>
-                    <span class="time-badge">20 min</span>
-                </div>
-                
-                <form id="day3-practice-form">
-                    <!-- Question 1 -->
-                    <div class="question-card">
-                        <p class="question-text">1. What is 25% of 200?</p>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q1" value="a">
-                            <span>25</span>
-                        </label>
-                        <label class="radio-option correct-answer" data-answer="b">
-                            <input type="radio" name="day3-q1" value="b">
-                            <span>50</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q1" value="c">
-                            <span>75</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q1" value="d">
-                            <span>100</span>
-                        </label>
-                        <div class="explanation">25% = 25/100 = 1/4. So 1/4 of 200 = 200 ÷ 4 = 50</div>
-                        <button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q1')">Make this clear with ChatGPT</button>
-                    </div>
-                    
-                    <!-- Question 2 -->
-                    <div class="question-card">
-                        <p class="question-text">2. Convert 3/5 to percentage:</p>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q2" value="a">
-                            <span>30%</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q2" value="b">
-                            <span>50%</span>
-                        </label>
-                        <label class="radio-option correct-answer" data-answer="c">
-                            <input type="radio" name="day3-q2" value="c">
-                            <span>60%</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q2" value="d">
-                            <span>35%</span>
-                        </label>
-                        <div class="explanation">3/5 × 100 = (3 × 100)/5 = 300/5 = 60%</div>
-                        <button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q2')">Make this clear with ChatGPT</button>
-                    </div>
-                    
-                    <!-- Question 3 -->
-                    <div class="question-card">
-                        <p class="question-text">3. If 20% of a number is 40, what is the number?</p>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q3" value="a">
-                            <span>80</span>
-                        </label>
-                        <label class="radio-option correct-answer" data-answer="b">
-                            <input type="radio" name="day3-q3" value="b">
-                            <span>200</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q3" value="c">
-                            <span>100</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q3" value="d">
-                            <span>160</span>
-                        </label>
-                        <div class="explanation">If 20% = 40, then 100% = (40 × 100)/20 = 4000/20 = 200</div>
-                        <button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q3')">Make this clear with ChatGPT</button>
-                    </div>
-                    
-                    <!-- Question 4 -->
-                    <div class="question-card">
-                        <p class="question-text">4. What is 10% of 500?</p>
-                        <label class="radio-option correct-answer" data-answer="a">
-                            <input type="radio" name="day3-q4" value="a">
-                            <span>50</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q4" value="b">
-                            <span>100</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q4" value="c">
-                            <span>5</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q4" value="d">
-                            <span>25</span>
-                        </label>
-                        <div class="explanation">10% = 10/100 = 1/10. So 1/10 of 500 = 500 ÷ 10 = 50</div>
-                        <button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q4')">Make this clear with ChatGPT</button>
-                    </div>
-                    
-                    <!-- Question 5 -->
-                    <div class="question-card">
-                        <p class="question-text">5. 0.75 expressed as percentage is:</p>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q5" value="a">
-                            <span>7.5%</span>
-                        </label>
-                        <label class="radio-option correct-answer" data-answer="b">
-                            <input type="radio" name="day3-q5" value="b">
-                            <span>75%</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q5" value="c">
-                            <span>0.75%</span>
-                        </label>
-                        <label class="radio-option">
-                            <input type="radio" name="day3-q5" value="d">
-                            <span>750%</span>
-                        </label>
-                        <div class="explanation">0.75 × 100 = 75%</div>
-                        <button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q5')">Make this clear with ChatGPT</button>
-                    </div>
-                    
-                    <button type="button" class="submit-btn" onclick="checkDay3Practice()">Submit Practice</button>
-                    <div class="result-message" id="day3-practice-result"></div>
-                </form>
-            </section>
+				<!-- DAY 3: PRACTICE ARENA -->
+				<section class="mission-section" id="day3-practice-section">
+					<div class="section-header">
+						<h2>⚔️ Practice Arena – Percentages</h2>
+						<span class="time-badge">20 min</span>
+					</div>
+					
+					<form id="day3-practice-form">
+						<!-- Question 1 -->
+						<div class="question-card">
+							<p class="question-text">1. What is 25% of 200?</p>
+							<label class="radio-option">
+								<input type="radio" name="day3-q1" value="a">
+								<span>25</span>
+							</label>
+							<label class="radio-option correct-answer" data-answer="b">
+								<input type="radio" name="day3-q1" value="b">
+								<span>50</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q1" value="c">
+								<span>75</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q1" value="d">
+								<span>100</span>
+							</label>
+							<div class="explanation">25% = 25/100 = 1/4. So 1/4 of 200 = 200 ÷ 4 = 50</div>
+							<button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q1')">Make this clear with ChatGPT</button>
+						</div>
+						
+						<!-- Question 2 -->
+						<div class="question-card">
+							<p class="question-text">2. Convert 3/5 to percentage:</p>
+							<label class="radio-option">
+								<input type="radio" name="day3-q2" value="a">
+								<span>30%</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q2" value="b">
+								<span>50%</span>
+							</label>
+							<label class="radio-option correct-answer" data-answer="c">
+								<input type="radio" name="day3-q2" value="c">
+								<span>60%</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q2" value="d">
+								<span>35%</span>
+							</label>
+							<div class="explanation">3/5 × 100 = (3 × 100)/5 = 300/5 = 60%</div>
+							<button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q2')">Make this clear with ChatGPT</button>
+						</div>
+						
+						<!-- Question 3 -->
+						<div class="question-card">
+							<p class="question-text">3. If 20% of a number is 40, what is the number?</p>
+							<label class="radio-option">
+								<input type="radio" name="day3-q3" value="a">
+								<span>80</span>
+							</label>
+							<label class="radio-option correct-answer" data-answer="b">
+								<input type="radio" name="day3-q3" value="b">
+								<span>200</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q3" value="c">
+								<span>100</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q3" value="d">
+								<span>160</span>
+							</label>
+							<div class="explanation">If 20% = 40, then 100% = (40 × 100)/20 = 4000/20 = 200</div>
+							<button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q3')">Make this clear with ChatGPT</button>
+						</div>
+						
+						<!-- Question 4 -->
+						<div class="question-card">
+							<p class="question-text">4. What is 10% of 500?</p>
+							<label class="radio-option correct-answer" data-answer="a">
+								<input type="radio" name="day3-q4" value="a">
+								<span>50</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q4" value="b">
+								<span>100</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q4" value="c">
+								<span>5</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q4" value="d">
+								<span>25</span>
+							</label>
+							<div class="explanation">10% = 10/100 = 1/10. So 1/10 of 500 = 500 ÷ 10 = 50</div>
+							<button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q4')">Make this clear with ChatGPT</button>
+						</div>
+						
+						<!-- Question 5 -->
+						<div class="question-card">
+							<p class="question-text">5. 0.75 expressed as percentage is:</p>
+							<label class="radio-option">
+								<input type="radio" name="day3-q5" value="a">
+								<span>7.5%</span>
+							</label>
+							<label class="radio-option correct-answer" data-answer="b">
+								<input type="radio" name="day3-q5" value="b">
+								<span>75%</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q5" value="c">
+								<span>0.75%</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="day3-q5" value="d">
+								<span>750%</span>
+							</label>
+							<div class="explanation">0.75 × 100 = 75%</div>
+							<button class="chatgpt-btn" onclick="askChatGPT('day3-practice-q5')">Make this clear with ChatGPT</button>
+						</div>
+						
+						<button type="button" class="submit-btn" onclick="checkDay3Practice()">Submit Practice</button>
+						<div class="result-message" id="day3-practice-result"></div>
+					</form>
+				</section>
 
-            <!-- DAY 3: REASONING POWER-UP -->
-            <section class="mission-section" id="day3-powerup-section">
-                <div class="section-header">
-                    <h2>⚡ Reasoning Power-Up – Number Series</h2>
-                    <span class="time-badge">5 min</span>
-                </div>
-                
-                <div class="powerup-card">
-                    <h3>🧠 Number Series Basics</h3>
-                    <div class="trick-box">
-                        <p><strong>Find the Pattern:</strong></p>
-                        <ol>
-                            <li>Look at the difference between consecutive numbers</li>
-                            <li>Check if difference is constant (e.g., +2, +3, +5)</li>
-                            <li>Check if ratio is constant (e.g., ×2, ×3)</li>
-                        </ol>
-                        <div class="example-box">
-                            <strong>Example 1:</strong> 3, 6, 9, 12, ?
-                            <br>→ Difference: +3 each time
-                            <br>→ Next number: 12 + 3 = <strong>15</strong>
-                            <br><br>
-                            <strong>Example 2:</strong> 2, 4, 8, 16, ?
-                            <br>→ Ratio: ×2 each time
-                            <br>→ Next number: 16 × 2 = <strong>32</strong>
-                        </div>
-                    </div>
-                </div>
-            </section>
+				<!-- DAY 3: REASONING POWER-UP -->
+				<section class="mission-section" id="day3-powerup-section">
+					<div class="section-header">
+						<h2>⚡ Reasoning Power-Up – Number Series</h2>
+						<span class="time-badge">5 min</span>
+					</div>
+					
+					<div class="powerup-card">
+						<h3>🧠 Number Series Basics</h3>
+						<div class="trick-box">
+							<p><strong>Find the Pattern:</strong></p>
+							<ol>
+								<li>Look at the difference between consecutive numbers</li>
+								<li>Check if difference is constant (e.g., +2, +3, +5)</li>
+								<li>Check if ratio is constant (e.g., ×2, ×3)</li>
+							</ol>
+							<div class="example-box">
+								<strong>Example 1:</strong> 3, 6, 9, 12, ?
+								<br>→ Difference: +3 each time
+								<br>→ Next number: 12 + 3 = <strong>15</strong>
+								<br><br>
+								<strong>Example 2:</strong> 2, 4, 8, 16, ?
+								<br>→ Ratio: ×2 each time
+								<br>→ Next number: 16 × 2 = <strong>32</strong>
+							</div>
+						</div>
+					</div>
+				</section>
 
-            <!-- DAY 3: MINI BOSS FIGHT -->
-            <section class="mission-section boss-section" id="day3-boss-section">
-                <div class="section-header">
-                    <h2>👹 Mini Boss Fight – Mixed Challenge</h2>
-                    <span class="time-badge">10 min</span>
-                </div>
-                
-                <div class="boss-warning">
-                    <p>⚠️ Hard difficulty - Percentage + Reasoning + Revision - Each correct: 30 XP</p>
-                </div>
-                
-                <!-- Boss Question 1 -->
-                <div class="question-card boss-card">
-                    <p class="question-text">1. A student scored 360 marks out of 600. What is his percentage?</p>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss1" value="a">
-                        <span>50%</span>
-                    </label>
-                    <label class="radio-option correct-answer" data-answer="b">
-                        <input type="radio" name="day3-boss1" value="b">
-                        <span>60%</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss1" value="c">
-                        <span>65%</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss1" value="d">
-                        <span>70%</span>
-                    </label>
-                    <div class="explanation">Percentage = (Marks obtained / Total marks) × 100 = (360/600) × 100 = 0.6 × 100 = 60%</div>
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q1')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <!-- Boss Question 2 -->
-                <div class="question-card boss-card">
-                    <p class="question-text">2. Find the next number: 5, 10, 20, 40, ?</p>
-                    <input type="number" class="answer-input" data-answer="80" id="day3-boss-2">
-                    <small class="hint">Look for multiplication pattern</small>
-                    <div class="explanation">Each number is multiplied by 2: 5×2=10, 10×2=20, 20×2=40, 40×2=80</div>
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q2')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <!-- Boss Question 3 (Revision from Day 1) -->
-                <div class="question-card boss-card">
-                    <p class="question-text">3. Which is larger: 0.6 or 0.58? (Revision from Day 1)</p>
-                    <label class="radio-option correct-answer" data-answer="a">
-                        <input type="radio" name="day3-boss3" value="a">
-                        <span>0.6</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss3" value="b">
-                        <span>0.58</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss3" value="c">
-                        <span>Both are equal</span>
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="day3-boss3" value="d">
-                        <span>Cannot determine</span>
-                    </label>
-                    <div class="explanation">0.6 = 0.60 and 0.58. Comparing: 60 > 58, so 0.6 is larger</div>
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q3')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <!-- Boss Question 4 -->
-                <div class="question-card boss-card">
-                    <p class="question-text">4. If 30% of a number is 90, find 50% of that number:</p>
-                    <input type="number" class="answer-input" data-answer="150" id="day3-boss-4">
-                    <small class="hint">First find the complete number, then calculate 50%</small>
-                    <div class="explanation">If 30% = 90, then 100% = (90×100)/30 = 300. Now 50% of 300 = 300/2 = 150</div>
-                    <button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q4')">Make this clear with ChatGPT</button>
-                </div>
-                
-                <button class="submit-btn boss-btn" onclick="checkDay3Boss()">Defeat the Boss!</button>
-                <div class="result-message" id="day3-boss-result"></div>
-            </section>
+				<!-- DAY 3: MINI BOSS FIGHT -->
+				<section class="mission-section boss-section" id="day3-boss-section">
+					<div class="section-header">
+						<h2>👹 Mini Boss Fight – Mixed Challenge</h2>
+						<span class="time-badge">10 min</span>
+					</div>
+					
+					<div class="boss-warning">
+						<p>⚠️ Hard difficulty - Percentage + Reasoning + Revision - Each correct: 30 XP</p>
+					</div>
+					
+					<!-- Boss Question 1 -->
+					<div class="question-card boss-card">
+						<p class="question-text">1. A student scored 360 marks out of 600. What is his percentage?</p>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss1" value="a">
+							<span>50%</span>
+						</label>
+						<label class="radio-option correct-answer" data-answer="b">
+							<input type="radio" name="day3-boss1" value="b">
+							<span>60%</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss1" value="c">
+							<span>65%</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss1" value="d">
+							<span>70%</span>
+						</label>
+						<div class="explanation">Percentage = (Marks obtained / Total marks) × 100 = (360/600) × 100 = 0.6 × 100 = 60%</div>
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q1')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<!-- Boss Question 2 -->
+					<div class="question-card boss-card">
+						<p class="question-text">2. Find the next number: 5, 10, 20, 40, ?</p>
+						<input type="number" class="answer-input" data-answer="80" id="day3-boss-2">
+						<small class="hint">Look for multiplication pattern</small>
+						<div class="explanation">Each number is multiplied by 2: 5×2=10, 10×2=20, 20×2=40, 40×2=80</div>
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q2')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<!-- Boss Question 3 (Revision from Day 1) -->
+					<div class="question-card boss-card">
+						<p class="question-text">3. Which is larger: 0.6 or 0.58? (Revision from Day 1)</p>
+						<label class="radio-option correct-answer" data-answer="a">
+							<input type="radio" name="day3-boss3" value="a">
+							<span>0.6</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss3" value="b">
+							<span>0.58</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss3" value="c">
+							<span>Both are equal</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="day3-boss3" value="d">
+							<span>Cannot determine</span>
+						</label>
+						<div class="explanation">0.6 = 0.60 and 0.58. Comparing: 60 > 58, so 0.6 is larger</div>
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q3')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<!-- Boss Question 4 -->
+					<div class="question-card boss-card">
+						<p class="question-text">4. If 30% of a number is 90, find 50% of that number:</p>
+						<input type="number" class="answer-input" data-answer="150" id="day3-boss-4">
+						<small class="hint">First find the complete number, then calculate 50%</small>
+						<div class="explanation">If 30% = 90, then 100% = (90×100)/30 = 300. Now 50% of 300 = 300/2 = 150</div>
+						<button class="chatgpt-btn" onclick="askChatGPT('day3-boss-q4')">Make this clear with ChatGPT</button>
+					</div>
+					
+					<button class="submit-btn boss-btn" onclick="checkBossFight(3, this)">Defeat the Boss!</button>
+					<div class="result-message" id="day3-boss-result"></div>
+				</section>
 
-            <!-- DAY 3: CONFIDENCE BOOST -->
-            <section class="mission-section confidence-section" id="day3-confidence-section">
-                <div class="confidence-card">
-                    <h2>🎉 Day 3 Complete!</h2>
-                    <p class="confidence-text">
-                        You've mastered <strong>Percentages</strong> and started <strong>Reasoning</strong>!<br>
-                        Plus you revised Day 1 concepts. Your foundation is getting stronger! 💪
-                    </p>
-                    <div class="achievement-badge">
-                        <span class="badge-icon">🏆</span>
-                        <span class="badge-text">Percentage Master</span>
-                    </div>
-                    
-                    <!-- Button to proceed to Day 4 -->
-                    <button class="proceed-btn" onclick="proceedToDay4()">
-                        Proceed to Day 4 →
-                    </button>
-                </div>
-            </section>
+				<!-- DAY 3: CONFIDENCE BOOST -->
+				<section class="mission-section confidence-section" id="day3-confidence-section">
+					<div class="confidence-card">
+						<h2>🎉 Day 3 Complete!</h2>
+						<p class="confidence-text">
+							You've mastered <strong>Percentages</strong> and started <strong>Reasoning</strong>!<br>
+							Plus you revised Day 1 concepts. Your foundation is getting stronger! 💪
+						</p>
+						<div class="achievement-badge">
+							<span class="badge-icon">🏆</span>
+							<span class="badge-text">Percentage Master</span>
+						</div>
+					</div>
+				</section>
 
-            <!-- DAY 4 LOCKED SECTION -->
-            <section class="locked-section" id="day4-locked">
-                <div class="locked-card">
-                    <h2>Day 4 – Locked 🔒</h2>
-                    <p>Complete Day 3 to unlock Day 4</p>
-                    <button class="unlock-btn" onclick="requestUnlockDay4()">Request Unlock for Day 4</button>
-                </div>
-            </section>
-            
-            </div>
-            <!-- End of Day 3 Container -->
+				<!-- DAY 4 LOCKED SECTION -->
+				<section class="locked-section" id="day4-locked">
+					<div class="locked-card">
+						<h2>Day 4 – Locked 🔒</h2>
+						<p>Complete Day 3 to unlock Day 4</p>
+						<button class="unlock-btn" onclick="requestUnlockNextDay(4)">Request Unlock for Day 4</button>
+					</div>
+				</section>
+			
+			</div>
+			<!-- End of Day 3 Container -->
 
 		</div>
 	</main>
