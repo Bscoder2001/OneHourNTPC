@@ -176,6 +176,8 @@ function checkPractice() {
 
 		// Highlight correct answer
 		const correctOption = document.querySelector(`.radio-option[data-answer="${correctAnswers[q]}"]`);
+		console.log(correctOption);
+		
 		if (correctOption) {
 			correctOption.classList.add('show-correct');
 		}
