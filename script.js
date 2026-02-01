@@ -131,76 +131,181 @@ function checkWarmup(btn)
 /**
  * Checks practice MCQ answers
  */
-function checkPractice() {
-	if (AppState.practiceCompleted) {
-		showMessage('practice-result', 'You already completed this section!', 'partial');
+function checkPractice(btn)
+{
+	checkPracticeGeneric(btn);
+}
+
+function checkPracticeGeneric(btn)
+{
+	let section = null;
+
+	if (btn)
+	{
+		section = btn.closest('.mission-section');
+	}
+
+	if (!section)
+	{
 		return;
 	}
 
-	const questions = ['q1', 'q2', 'q3', 'q4', 'q5'];
-	const correctAnswers = {
-		q1: 'c',
-		q2: 'c',
-		q3: 'b',
-		q4: 'c',
-		q5: 'c'
-	};
+	let dayContainer = section.closest('.day-container');
+	let dayNumber = 1;
 
+	if (dayContainer && dayContainer.id)
+	{
+		let match = dayContainer.id.match(/^day(\d+)-container$/);
+		if (match && match[1])
+		{
+			dayNumber = parseInt(match[1], 10);
+		}
+	}
+
+	let state = getOrCreateDayState(dayNumber);
+
+	if (state.practiceCompleted)
+	{
+		let resultEl = section.querySelector('.result-message');
+		if (resultEl && resultEl.id)
+		{
+			showMessage(resultEl.id, 'You already completed this section!', 'partial');
+		}
+		return;
+	}
+
+	let questionCards = Array.from(section.querySelectorAll('.question-card'));
 	let correctCount = 0;
-	const answers = [];
+	let totalCount = 0;
+	let answers = [];
 
-	questions.forEach(q => {
-		let selected = document.querySelector(`input[name="${q}"]:checked`);
-		let userAnswer = null;
+	questionCards.forEach(card =>
+	{
+		let radios = Array.from(card.querySelectorAll('input[type="radio"]'));
 
-		if (selected) {
-			userAnswer = selected.value;
+		if (radios.length <= 0)
+		{
+			return;
 		}
 
-		answers.push(userAnswer);
+		totalCount++;
 
-		let anyInput = document.querySelector(`input[name="${q}"]`);
-		let questionCard = null;
+		let selectedRadio = card.querySelector('input[type="radio"]:checked');
+		let selectedLabel = null;
 
-		if (selected) {
-			questionCard = selected.closest('.question-card');
-		} else if (anyInput) {
-			questionCard = anyInput.closest('.question-card');
+		if (selectedRadio)
+		{
+			selectedLabel = selectedRadio.closest('.radio-option');
 		}
 
-		if (questionCard) {
-			let correctOption = questionCard.querySelector(`.radio-option[data-answer="${correctAnswers[q]}"]`);
-			if (correctOption) {
-				correctOption.classList.add('show-correct');
+		let correctLabel = card.querySelector('.radio-option.correct-answer');
+
+		if (!correctLabel)
+		{
+			correctLabel = card.querySelector('.radio-option[data-answer]');
+		}
+
+		let isCorrect = false;
+
+		if (selectedLabel && selectedLabel.classList.contains('correct-answer'))
+		{
+			isCorrect = true;
+		}
+
+		if (!isCorrect && selectedRadio && correctLabel && correctLabel.classList.contains('correct-answer') === false)
+		{
+			let expected = correctLabel.getAttribute('data-answer');
+			if (expected && selectedRadio.value === expected)
+			{
+				isCorrect = true;
 			}
-
-			let explanation = questionCard.querySelector('.explanation');
-			if (explanation) {
-				explanation.classList.add('show');
-			}
 		}
 
-		if (userAnswer === correctAnswers[q]) {
+		if (isCorrect)
+		{
 			correctCount++;
 		}
 
-		document.querySelectorAll(`input[name="${q}"]`).forEach(radio => {
-			radio.disabled = true;
+		if (correctLabel)
+		{
+			correctLabel.classList.add('show-correct');
+		}
+
+		let explanation = card.querySelector('.explanation');
+		if (explanation)
+		{
+			explanation.classList.add('show');
+		}
+
+		if (selectedRadio)
+		{
+			answers.push(selectedRadio.value);
+		}
+		else
+		{
+			answers.push(null);
+		}
+
+		radios.forEach(r =>
+		{
+			r.disabled = true;
 		});
 	});
 
-	AppState.userAnswers.practice = answers;
+	state.userAnswers.practice = answers;
 
-	const xpEarned = correctCount * AppState.xpValues.practice;
+	let xpEarned = correctCount * AppState.xpValues.practice;
 	updateXP(xpEarned);
 
-	const message = `You got ${correctCount}/5 correct! Earned ${xpEarned} XP 💪`;
-	showMessage('practice-result', message, 'success');
+	let resultEl = section.querySelector('.result-message');
 
-	AppState.practiceCompleted = true;
+	if (resultEl && resultEl.id)
+	{
+		let message = `You got ${correctCount}/${totalCount} correct! Earned ${xpEarned} XP 💪`;
+		showMessage(resultEl.id, message, 'success');
+	}
 
-	event.target.disabled = true;
-	event.target.textContent = 'Completed ✓';
+	state.practiceCompleted = true;
+
+	if (dayNumber === 1)
+	{
+		AppState.practiceCompleted = true;
+		AppState.userAnswers.practice = answers;
+	}
+
+	if (btn)
+	{
+		btn.disabled = true;
+		btn.textContent = 'Completed ✓';
+	}
+}
+
+function getOrCreateDayState(dayNumber)
+{
+	if (dayNumber === 1)
+	{
+		return AppState;
+	}
+
+	let key = 'Day' + dayNumber + 'State';
+
+	if (!window[key])
+	{
+		window[key] =
+		{
+			warmupCompleted: false,
+			practiceCompleted: false,
+			bossCompleted: false,
+			userAnswers:
+			{
+				warmup: [],
+				practice: [],
+				boss: []
+			}
+		};
+	}
+
+	return window[key];
 }
 
 // ==========================================
