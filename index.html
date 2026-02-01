@@ -36,328 +36,355 @@
 		</div>
 	</header>
 
+	<!-- MAIN SECTION -->
 	<main class="main-content">
 		<div class="container">
 
-			<!-- SECTION A: WARM-UP -->
-			<section class="mission-section" id="warmup-section">
-				<div class="section-header">
-					<h2>🔥 Warm-up – Confidence Boosters</h2>
-					<span class="time-badge">5 min</span>
-				</div>
-
-				<div class="question-card">
-					<p class="question-text">1. What is 25 + 15?</p>
-					<input type="number" class="answer-input" data-answer="40" id="warmup-1">
-				</div>
-
-				<div class="question-card">
-					<p class="question-text">2. What is 100 - 37?</p>
-					<input type="number" class="answer-input" data-answer="63" id="warmup-2">
-				</div>
-
-				<div class="question-card">
-					<p class="question-text">3. What is 12 × 5?</p>
-					<input type="number" class="answer-input" data-answer="60" id="warmup-3">
-				</div>
-
-				<div class="question-card">
-					<p class="question-text">4. What is 144 ÷ 12?</p>
-					<input type="number" class="answer-input" data-answer="12" id="warmup-4">
-				</div>
-
-				<button class="submit-btn" onclick="checkWarmup()">Submit Warm-up</button>
-				<div class="result-message" id="warmup-result"></div>
-			</section>
-
-			<!-- SECTION B: CORE MISSION -->
-			<section class="mission-section" id="core-mission-section">
-				<div class="section-header">
-					<h2>💎 Core Mission – Number System Basics</h2>
-					<span class="time-badge">20 min</span>
-				</div>
-
-				<div class="content-card">
-					<h3>Types of Numbers</h3>
-					<ul class="concept-list">
-						<li><strong>Natural Numbers:</strong> 1, 2, 3, 4, 5... (counting numbers)</li>
-						<li><strong>Whole Numbers:</strong> 0, 1, 2, 3, 4... (natural numbers + zero)</li>
-						<li><strong>Integers:</strong> ...-3, -2, -1, 0, 1, 2, 3... (whole numbers + negatives)</li>
-						<li><strong>Rational Numbers:</strong> Numbers that can be expressed as p/q (e.g., 1/2, 0.75, 3)</li>
-						<li><strong>Irrational Numbers:</strong> Numbers that cannot be expressed as fractions (e.g., π, √2)</li>
-					</ul>
-				</div>
-
-				<div class="content-card highlight-card">
-					<h3>🎯 Decimal Comparison Trick</h3>
-					<p><strong>To compare decimals:</strong></p>
-					<ul class="concept-list">
-						<li>Compare digit by digit from left to right</li>
-						<li>0.5 vs 0.45 → Compare first decimal place: 5 > 4, so 0.5 is larger</li>
-						<li>0.234 vs 0.24 → Add zeros: 0.234 vs 0.240 → 4 > 3, so 0.24 is larger</li>
-					</ul>
-				</div>
-			</section>
-
-			<!-- SECTION C: PRACTICE ARENA -->
-			<section class="mission-section" id="practice-section">
-				<div class="section-header">
-					<h2>⚔️ Practice Arena</h2>
-					<span class="time-badge">20 min</span>
-				</div>
-
-				<form id="practice-form">
-					<!-- Question 1 -->
-					<div class="question-card">
-						<p class="question-text">1. Which of the following is a rational number?</p>
-						<label class="radio-option">
-							<input type="radio" name="q1" value="a">
-							<span>π</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q1" value="b">
-							<span>√2</span>
-						</label>
-						<label class="radio-option correct-answer" data-answer="c">
-							<input type="radio" name="q1" value="c">
-							<span>0.75</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q1" value="d">
-							<span>√3</span>
-						</label>
-						<div class="explanation">0.75 can be written as 3/4, making it a rational number.</div>
+			<div id="day1-container" class="day-container">
+				<!-- SECTION A: WARM-UP -->
+				<section class="mission-section" id="warmup-section">
+					<div class="section-header">
+						<h2>🔥 Warm-up – Confidence Boosters</h2>
+						<span class="time-badge">5 min</span>
 					</div>
 
-					<!-- Question 2 -->
 					<div class="question-card">
-						<p class="question-text">2. Which is the largest: 0.5, 0.45, 0.505, 0.055?</p>
-						<label class="radio-option">
-							<input type="radio" name="q2" value="a">
-							<span>0.45</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q2" value="b">
-							<span>0.5</span>
-						</label>
-						<label class="radio-option correct-answer" data-answer="c">
-							<input type="radio" name="q2" value="c">
-							<span>0.505</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q2" value="d">
-							<span>0.055</span>
-						</label>
-						<div class="explanation">Comparing: 0.500 vs 0.450 vs 0.505 vs 0.055 → 0.505 is largest.</div>
+						<p class="question-text">1. What is 25 + 15?</p>
+						<input type="number" data-answer="40" class="warmup-input">
+
 					</div>
 
-					<!-- Question 3 -->
 					<div class="question-card">
-						<p class="question-text">3. What is the sum of first 5 natural numbers?</p>
-						<label class="radio-option">
-							<input type="radio" name="q3" value="a">
-							<span>10</span>
-						</label>
-						<label class="radio-option correct-answer" data-answer="b">
-							<input type="radio" name="q3" value="b">
-							<span>15</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q3" value="c">
-							<span>20</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q3" value="d">
-							<span>25</span>
-						</label>
-						<div class="explanation">1 + 2 + 3 + 4 + 5 = 15</div>
+						<p class="question-text">2. What is 100 - 37?</p>
+						<input type="number" data-answer="63" class="warmup-input">
+
 					</div>
 
-					<!-- Question 4 -->
 					<div class="question-card">
-						<p class="question-text">4. Which of these is NOT an integer?</p>
-						<label class="radio-option">
-							<input type="radio" name="q4" value="a">
-							<span>-5</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q4" value="b">
-							<span>0</span>
-						</label>
-						<label class="radio-option correct-answer" data-answer="c">
-							<input type="radio" name="q4" value="c">
-							<span>2.5</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q4" value="d">
-							<span>100</span>
-						</label>
-						<div class="explanation">2.5 is a decimal, not an integer. Integers are whole numbers.</div>
+						<p class="question-text">3. What is 12 × 5?</p>
+						<!-- <input type="number" class="answer-input" data-answer="60" id="warmup-3"> -->
+						<input type="number" data-answer="60" class="warmup-input">
 					</div>
 
-					<!-- Question 5 -->
 					<div class="question-card">
-						<p class="question-text">5. Convert 3/4 to decimal:</p>
-						<label class="radio-option">
-							<input type="radio" name="q5" value="a">
-							<span>0.25</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q5" value="b">
-							<span>0.5</span>
-						</label>
-						<label class="radio-option correct-answer" data-answer="c">
-							<input type="radio" name="q5" value="c">
-							<span>0.75</span>
-						</label>
-						<label class="radio-option">
-							<input type="radio" name="q5" value="d">
-							<span>0.34</span>
-						</label>
-						<div class="explanation">3 ÷ 4 = 0.75</div>
+						<p class="question-text">4. What is 144 ÷ 12?</p>
+						<!-- <input type="number" class="answer-input" data-answer="12" id="warmup-4"> -->
+						<input type="number" data-answer="12" class="warmup-input">
 					</div>
 
-					<button type="button" class="submit-btn" onclick="checkPractice(this)">Submit Practice</button>
-					<div class="result-message" id="practice-result"></div>
-				</form>
-			</section>
+					<button class="submit-btn" onclick="checkWarmup(this)">Submit Warm-up</button>
+					<div class="result-message" id="warmup-result"></div>
+				</section>
 
-			<!-- SECTION D: POWER-UP -->
-			<section class="mission-section" id="powerup-section">
-				<div class="section-header">
-					<h2>⚡ Power-Up</h2>
-					<span class="time-badge">5 min</span>
-				</div>
+				<!-- SECTION B: CORE MISSION -->
+				<section class="mission-section" id="core-mission-section">
+					<div class="section-header">
+						<h2>💎 Core Mission – Number System Basics</h2>
+						<span class="time-badge">20 min</span>
+					</div>
 
-				<div class="powerup-card">
-					<h3>🎯 Shortcut: Decimal Comparison Trick</h3>
-					<div class="trick-box">
-						<p><strong>Quick Method:</strong></p>
-						<ol>
-							<li>Write all numbers with same decimal places (add zeros)</li>
-							<li>Compare left to right, digit by digit</li>
-							<li>First different digit determines which is larger</li>
-						</ol>
-						<div class="example-box">
-							<strong>Example:</strong> Compare 0.6, 0.58, 0.605
-							<br>→ 0.600 vs 0.580 vs 0.605
-							<br>→ First decimal: all have same (5 or 6)
-							<br>→ 0.6 (600) is largest, then 0.605, then 0.58
+					<div class="content-card">
+						<h3>Types of Numbers</h3>
+						<ul class="concept-list">
+							<li><strong>Natural Numbers:</strong> 1, 2, 3, 4, 5... (counting numbers)</li>
+							<li><strong>Whole Numbers:</strong> 0, 1, 2, 3, 4... (natural numbers + zero)</li>
+							<li><strong>Integers:</strong> ...-3, -2, -1, 0, 1, 2, 3... (whole numbers + negatives)</li>
+							<li><strong>Rational Numbers:</strong> Numbers that can be expressed as p/q (e.g., 1/2, 0.75, 3)</li>
+							<li><strong>Irrational Numbers:</strong> Numbers that cannot be expressed as fractions (e.g., π, √2)</li>
+						</ul>
+					</div>
+
+					<div class="content-card highlight-card">
+						<h3>🎯 Decimal Comparison Trick</h3>
+						<p><strong>To compare decimals:</strong></p>
+						<ul class="concept-list">
+							<li>Compare digit by digit from left to right</li>
+							<li>0.5 vs 0.45 → Compare first decimal place: 5 > 4, so 0.5 is larger</li>
+							<li>0.234 vs 0.24 → Add zeros: 0.234 vs 0.240 → 4 > 3, so 0.24 is larger</li>
+						</ul>
+					</div>
+				</section>
+
+				<!-- SECTION C: PRACTICE ARENA -->
+				<section class="mission-section" id="practice-section">
+					<div class="section-header">
+						<h2>⚔️ Practice Arena</h2>
+						<span class="time-badge">20 min</span>
+					</div>
+
+					<form id="practice-form">
+						<!-- Question 1 -->
+						<div class="question-card">
+							<p class="question-text">1. Which of the following is a rational number?</p>
+							<label class="radio-option">
+								<input type="radio" name="q1" value="a">
+								<span>π</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q1" value="b">
+								<span>√2</span>
+							</label>
+							<!-- <label class="radio-option correct-answer" data-answer="c">
+								<input type="radio" name="q1" value="c">
+								<span>0.75</span>
+							</label> -->
+							<label class="radio-option correct-answer">
+								<input type="radio" name="q1">
+								<span>0.75</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q1" value="d">
+								<span>√3</span>
+							</label>
+							<div class="explanation">0.75 can be written as 3/4, making it a rational number.</div>
+						</div>
+
+						<!-- Question 2 -->
+						<div class="question-card">
+							<p class="question-text">2. Which is the largest: 0.5, 0.45, 0.505, 0.055?</p>
+							<label class="radio-option">
+								<input type="radio" name="q2" value="a">
+								<span>0.45</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q2" value="b">
+								<span>0.5</span>
+							</label>
+							<!-- <label class="radio-option correct-answer" data-answer="c">
+								<input type="radio" name="q2" value="c">
+								<span>0.505</span>
+							</label> -->
+							<label class="radio-option correct-answer">
+								<input type="radio" name="q2">
+								<span>0.505</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q2" value="d">
+								<span>0.055</span>
+							</label>
+							<div class="explanation">Comparing: 0.500 vs 0.450 vs 0.505 vs 0.055 → 0.505 is largest.</div>
+						</div>
+
+						<!-- Question 3 -->
+						<div class="question-card">
+							<p class="question-text">3. What is the sum of first 5 natural numbers?</p>
+							<label class="radio-option">
+								<input type="radio" name="q3" value="a">
+								<span>10</span>
+							</label>
+							<!-- <label class="radio-option correct-answer" data-answer="b">
+								<input type="radio" name="q3" value="b">
+								<span>15</span>
+							</label> -->
+							<label class="radio-option correct-answer">
+								<input type="radio" name="q3">
+								<span>15</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q3" value="c">
+								<span>20</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q3" value="d">
+								<span>25</span>
+							</label>
+							<div class="explanation">1 + 2 + 3 + 4 + 5 = 15</div>
+						</div>
+
+						<!-- Question 4 -->
+						<div class="question-card">
+							<p class="question-text">4. Which of these is NOT an integer?</p>
+							<label class="radio-option">
+								<input type="radio" name="q4" value="a">
+								<span>-5</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q4" value="b">
+								<span>0</span>
+							</label>
+							<!-- <label class="radio-option correct-answer" data-answer="c">
+								<input type="radio" name="q4" value="c">
+								<span>2.5</span>
+							</label> -->
+							<label class="radio-option correct-answer">
+								<input type="radio" name="q4">
+								<span>2.5</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q4" value="d">
+								<span>100</span>
+							</label>
+							<div class="explanation">2.5 is a decimal, not an integer. Integers are whole numbers.</div>
+						</div>
+
+						<!-- Question 5 -->
+						<div class="question-card">
+							<p class="question-text">5. Convert 3/4 to decimal:</p>
+							<label class="radio-option">
+								<input type="radio" name="q5" value="a">
+								<span>0.25</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q5" value="b">
+								<span>0.5</span>
+							</label>
+							<!-- <label class="radio-option correct-answer" data-answer="c">
+								<input type="radio" name="q5" value="c">
+								<span>0.75</span>
+							</label> -->
+							<label class="radio-option correct-answer">
+								<input type="radio" name="q5">
+								<span>0.75</span>
+							</label>
+							<label class="radio-option">
+								<input type="radio" name="q5" value="d">
+								<span>0.34</span>
+							</label>
+							<div class="explanation">3 ÷ 4 = 0.75</div>
+						</div>
+
+						<button type="button" class="submit-btn" onclick="checkPractice(this)">Submit Practice</button>
+						<div class="result-message" id="practice-result"></div>
+					</form>
+				</section>
+
+				<!-- SECTION D: POWER-UP -->
+				<section class="mission-section" id="powerup-section">
+					<div class="section-header">
+						<h2>⚡ Power-Up</h2>
+						<span class="time-badge">5 min</span>
+					</div>
+
+					<div class="powerup-card">
+						<h3>🎯 Shortcut: Decimal Comparison Trick</h3>
+						<div class="trick-box">
+							<p><strong>Quick Method:</strong></p>
+							<ol>
+								<li>Write all numbers with same decimal places (add zeros)</li>
+								<li>Compare left to right, digit by digit</li>
+								<li>First different digit determines which is larger</li>
+							</ol>
+							<div class="example-box">
+								<strong>Example:</strong> Compare 0.6, 0.58, 0.605
+								<br>→ 0.600 vs 0.580 vs 0.605
+								<br>→ First decimal: all have same (5 or 6)
+								<br>→ 0.6 (600) is largest, then 0.605, then 0.58
+							</div>
 						</div>
 					</div>
-				</div>
-			</section>
+				</section>
 
-			<!-- SECTION E: MINI BOSS FIGHT -->
-			<section class="mission-section boss-section" id="boss-section">
-				<div class="section-header">
-					<h2>👹 Mini Boss Fight</h2>
-					<span class="time-badge">10 min</span>
-				</div>
-
-				<div class="boss-warning">
-					<p>⚠️ Hard difficulty - Each correct answer: 30 XP</p>
-				</div>
-
-				<!-- Boss Question 1 -->
-				<div class="question-card boss-card">
-					<p class="question-text">1. Arrange in ascending order: 0.7, 0.07, 0.707, 0.077</p>
-					<label class="radio-option">
-						<input type="radio" name="boss1" value="a">
-						<span>0.7, 0.707, 0.07, 0.077</span>
-					</label>
-					<label class="radio-option correct-answer" data-answer="b">
-						<input type="radio" name="boss1" value="b">
-						<span>0.07, 0.077, 0.7, 0.707</span>
-					</label>
-					<label class="radio-option">
-						<input type="radio" name="boss1" value="c">
-						<span>0.077, 0.07, 0.707, 0.7</span>
-					</label>
-					<label class="radio-option">
-						<input type="radio" name="boss1" value="d">
-						<span>0.07, 0.7, 0.077, 0.707</span>
-					</label>
-					<div class="explanation">Convert: 0.070, 0.077, 0.700, 0.707. Smallest to largest: 0.07, 0.077, 0.7, 0.707</div>
-				</div>
-
-				<!-- Boss Question 2 -->
-				<div class="question-card boss-card">
-					<p class="question-text">2. What is the value of 1/8 + 3/8?</p>
-					<input type="text" class="answer-input" data-answer="0.5" id="boss-2">
-					<small class="hint">Enter as decimal</small>
-					<div class="explanation">1/8 + 3/8 = 4/8 = 1/2 = 0.5</div>
-				</div>
-
-				<!-- Boss Question 3 -->
-				<div class="question-card boss-card">
-					<p class="question-text">3. Which is NOT a prime number?</p>
-					<label class="radio-option">
-						<input type="radio" name="boss3" value="a">
-						<span>17</span>
-					</label>
-					<label class="radio-option">
-						<input type="radio" name="boss3" value="b">
-						<span>19</span>
-					</label>
-					<label class="radio-option">
-						<input type="radio" name="boss3" value="c">
-						<span>23</span>
-					</label>
-					<label class="radio-option correct-answer" data-answer="d">
-						<input type="radio" name="boss3" value="d">
-						<span>21</span>
-					</label>
-					<div class="explanation">21 = 3 × 7, so it's not a prime number (divisible by more than 1 and itself)</div>
-				</div>
-
-				<!-- Boss Question 4 -->
-				<div class="question-card boss-card">
-					<p class="question-text">4. Convert 7/20 to percentage:</p>
-					<input type="number" class="answer-input" data-answer="35" id="boss-4">
-					<small class="hint">Enter number only (without %)</small>
-					<div class="explanation">7/20 = 0.35 = 35%</div>
-				</div>
-
-				<!-- Boss Question 5 -->
-				<div class="question-card boss-card">
-					<p class="question-text">5. What is the smallest natural number?</p>
-					<input type="number" class="answer-input" data-answer="1" id="boss-5">
-					<div class="explanation">1 is the smallest natural number (counting starts from 1)</div>
-				</div>
-
-				<button class="submit-btn boss-btn" onclick="checkBossFight(1, this)">Defeat the Boss!</button>
-				<div class="result-message" id="boss-result"></div>
-			</section>
-
-			<!-- SECTION F: CONFIDENCE BOOST -->
-			<section class="mission-section confidence-section" id="confidence-section">
-				<div class="confidence-card">
-					<h2>🎉 Day 1 Complete!</h2>
-					<p class="confidence-text">
-						Today you mastered <strong>Number System basics</strong>.<br>
-						NTPC Maths is predictable. You're building the foundation for success!
-					</p>
-					<div class="achievement-badge">
-						<span class="badge-icon">🏆</span>
-						<span class="badge-text">Foundation Master</span>
+				<!-- SECTION E: MINI BOSS FIGHT -->
+				<section class="mission-section boss-section" id="boss-section">
+					<div class="section-header">
+						<h2>👹 Mini Boss Fight</h2>
+						<span class="time-badge">10 min</span>
 					</div>
-				</div>
-			</section>
 
-			<!-- DAY 2 LOCKED SECTION -->
-			<!-- <section class="locked-section" id="day2-locked">
-				<div class="locked-card">
-					<h2>Day 2 – Locked 🔒</h2>
-					<p>Complete Day 1 to unlock Day 2</p>
-					<button class="unlock-btn" onclick="requestUnlock()">Request Unlock for Day 2</button>
+					<div class="boss-warning">
+						<p>⚠️ Hard difficulty - Each correct answer: 30 XP</p>
+					</div>
+
+					<!-- Boss Question 1 -->
+					<div class="question-card boss-card">
+						<p class="question-text">1. Arrange in ascending order: 0.7, 0.07, 0.707, 0.077</p>
+						<label class="radio-option">
+							<input type="radio" name="boss1" value="a">
+							<span>0.7, 0.707, 0.07, 0.077</span>
+						</label>
+						<!-- <label class="radio-option correct-answer" data-answer="b">
+							<input type="radio" name="boss1" value="b">
+							<span>0.07, 0.077, 0.7, 0.707</span>
+						</label> -->
+						<label class="radio-option correct-answer">
+							<input type="radio" name="boss1" value="b">
+							<span>0.07, 0.077, 0.7, 0.707</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="boss1" value="c">
+							<span>0.077, 0.07, 0.707, 0.7</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="boss1" value="d">
+							<span>0.07, 0.7, 0.077, 0.707</span>
+						</label>
+						<div class="explanation">Convert: 0.070, 0.077, 0.700, 0.707. Smallest to largest: 0.07, 0.077, 0.7, 0.707</div>
+					</div>
+
+					<!-- Boss Question 2 -->
+					<div class="question-card boss-card">
+						<p class="question-text">2. What is the value of 1/8 + 3/8?</p>
+						<input type="text" class="answer-input" data-answer="0.5" id="boss-2">
+						<small class="hint">Enter as decimal</small>
+						<div class="explanation">1/8 + 3/8 = 4/8 = 1/2 = 0.5</div>
+					</div>
+
+					<!-- Boss Question 3 -->
+					<div class="question-card boss-card">
+						<p class="question-text">3. Which is NOT a prime number?</p>
+						<label class="radio-option">
+							<input type="radio" name="boss3" value="a">
+							<span>17</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="boss3" value="b">
+							<span>19</span>
+						</label>
+						<label class="radio-option">
+							<input type="radio" name="boss3" value="c">
+							<span>23</span>
+						</label>
+						<!-- <label class="radio-option correct-answer" data-answer="d">
+							<input type="radio" name="boss3" value="d">
+							<span>21</span>
+						</label> -->
+						<label class="radio-option correct-answer">
+							<input type="radio" name="boss3" value="d">
+							<span>21</span>
+						</label>
+						<div class="explanation">21 = 3 × 7, so it's not a prime number (divisible by more than 1 and itself)</div>
+					</div>
+
+					<!-- Boss Question 4 -->
+					<div class="question-card boss-card">
+						<p class="question-text">4. Convert 7/20 to percentage:</p>
+						<input type="number" class="answer-input" data-answer="35" id="boss-4">
+						<small class="hint">Enter number only (without %)</small>
+						<div class="explanation">7/20 = 0.35 = 35%</div>
+					</div>
+
+					<!-- Boss Question 5 -->
+					<div class="question-card boss-card">
+						<p class="question-text">5. What is the smallest natural number?</p>
+						<input type="number" class="answer-input" data-answer="1" id="boss-5">
+						<div class="explanation">1 is the smallest natural number (counting starts from 1)</div>
+					</div>
+
+					<button class="submit-btn boss-btn" onclick="checkBossFight(1, this)">Defeat the Boss!</button>
+					<div class="result-message" id="boss-result"></div>
+				</section>
+
+				<!-- SECTION F: CONFIDENCE BOOST -->
+				<section class="mission-section confidence-section" id="confidence-section">
+					<div class="confidence-card">
+						<h2>🎉 Day 1 Complete!</h2>
+						<p class="confidence-text">
+							Today you mastered <strong>Number System basics</strong>.<br>
+							NTPC Maths is predictable. You're building the foundation for success!
+						</p>
+						<div class="achievement-badge">
+							<span class="badge-icon">🏆</span>
+							<span class="badge-text">Foundation Master</span>
+						</div>
+					</div>
+				</section>
+
+				<!-- Button to proceed to Day 2 -->
+				<div style="text-align: center;" id="proceedToDay2">
+					<button class="proceed-btn" onclick="goToDay(2)">
+						Proceed to Day 2 →
+					</button>
 				</div>
-			</section> -->
-			<!-- Button to proceed to Day 2 -->
-			<div style="text-align: center;" id="proceedToDay2">
-				<button class="proceed-btn" onclick="proceedToNextDay(2)">
-					Proceed to Day 2 →
-				</button>
 			</div>
 
 			<!-- DAY 2: GS POWER-UP -->
@@ -367,7 +394,7 @@
 					<p class="day-subtitle">LCM & HCF + General Science Basics</p>
 					
 					<!-- Button to go back to Day 1 -->
-					<button class="back-btn" onclick="backToPreviousDay(1)">
+					<button class="back-btn" onclick="goToDay(1)">
 						← Back to Day 1
 					</button>
 				</div>
@@ -516,38 +543,28 @@
 						</div>
 					</div>
 				</section>
-				<!-- DAY 3 LOCKED SECTION -->
-				<!-- <section class="locked-section" id="day3-locked">
-					<div class="locked-card">
-						<h2>Day 3 – Locked 🔒</h2>
-						<p>Complete Day 2 to unlock Day 3</p>
-						<button class="unlock-btn" onclick="requestUnlockNextDay()">Request Unlock for Day 3</button>
-					</div>
-				</section> -->
+
 				<div style="text-align: center;" id="proceedToDay2">
-					<button class="proceed-btn" onclick="proceedToNextDay(3)">
+					<button class="proceed-btn" onclick="goToDay(3)">
 						Proceed to Day 3 →
 					</button>
 				</div>
 			</div>
 
-			<!-- ============================================
-				 DAY 3 SECTION - UNLOCKED (HIDDEN BY DEFAULT)
-				 ============================================ -->
-			
+			<!-- DAY 3: PERCENTAGES & REASONING BASICS -->
 			<div id="day3-container" class="day-container" style="display: none;">
 				<div class="day-divider">
 					<h2 class="day-title">📅 DAY 3 - Level 1: Foundation</h2>
 					<p class="day-subtitle">Percentages + Reasoning Basics + Revision</p>
 					
 					<!-- Button to go back to Day 2 -->
-					<button class="back-btn" onclick="backToPreviousDay(2)">
+					<button class="back-btn" onclick="goToDay(2)">
 						← Back to Day 2
 					</button>
 				</div>
 
 				<!-- DAY 3: WARM-UP -->
-				<section class="mission-section" id="day3-warmup-section">
+				<section class="mission-section">
 					<div class="section-header">
 						<h2>🔥 Warm-up – Quick Start</h2>
 						<span class="time-badge">5 min</span>
@@ -570,7 +587,7 @@
 				</section>
 
 				<!-- DAY 3: CORE MISSION - PERCENTAGES -->
-				<section class="mission-section" id="day3-core-mission-section">
+				<section class="mission-section">
 					<div class="section-header">
 						<h2>💎 Core Mission – Understanding Percentages</h2>
 						<span class="time-badge">20 min</span>
@@ -617,7 +634,7 @@
 				</section>
 
 				<!-- DAY 3: PRACTICE ARENA -->
-				<section class="mission-section" id="day3-practice-section">
+				<section class="mission-section">
 					<div class="section-header">
 						<h2>⚔️ Practice Arena – Percentages</h2>
 						<span class="time-badge">20 min</span>
@@ -745,7 +762,7 @@
 				</section>
 
 				<!-- DAY 3: REASONING POWER-UP -->
-				<section class="mission-section" id="day3-powerup-section">
+				<section class="mission-section">
 					<div class="section-header">
 						<h2>⚡ Reasoning Power-Up – Number Series</h2>
 						<span class="time-badge">5 min</span>
@@ -774,7 +791,7 @@
 				</section>
 
 				<!-- DAY 3: MINI BOSS FIGHT -->
-				<section class="mission-section boss-section" id="day3-boss-section">
+				<section class="mission-section boss-section">
 					<div class="section-header">
 						<h2>👹 Mini Boss Fight – Mixed Challenge</h2>
 						<span class="time-badge">10 min</span>
@@ -853,7 +870,7 @@
 				</section>
 
 				<!-- DAY 3: CONFIDENCE BOOST -->
-				<section class="mission-section confidence-section" id="day3-confidence-section">
+				<section class="mission-section confidence-section">
 					<div class="confidence-card">
 						<h2>🎉 Day 3 Complete!</h2>
 						<p class="confidence-text">
@@ -887,5 +904,6 @@
 	</footer>
 
 	<script src="script.js"></script>
+	<!-- <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js" type="text/javascript"></script> -->
 </body>
 </html>

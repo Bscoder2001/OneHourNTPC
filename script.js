@@ -1,8 +1,3 @@
-/* ==========================================
-   NTPC MISSION MODE - DAY 1
-   JavaScript Logic for Gamification System
-   ========================================== */
-
 // ==========================================
 // STATE MANAGEMENT
 // Future-ready for backend integration
@@ -41,7 +36,6 @@ const AppState = {
 function updateXP(xpToAdd) {
 	AppState.totalXP += xpToAdd;
 
-	// Ensure XP doesn't exceed target
 	if (AppState.totalXP > AppState.targetXP) {
 		AppState.totalXP = AppState.targetXP;
 	}
@@ -87,59 +81,47 @@ function celebrateCompletion() {
 /**
  * Checks warm-up answers and calculates XP
  */
-function checkWarmup() {
-	// Prevent multiple submissions
-	if (AppState.warmupCompleted) {
-		showMessage('warmup-result', 'You already completed this section!', 'partial');
-		return;
-	}
+function checkWarmup(btn)
+{
+    const section =
+        btn.closest('.mission-section');
 
-	const inputs = [
-		document.getElementById('warmup-1'),
-		document.getElementById('warmup-2'),
-		document.getElementById('warmup-3'),
-		document.getElementById('warmup-4')
-	];
+    const inputs =
+        section.querySelectorAll('input[data-answer]');
 
-	let correctCount = 0;
-	const answers = [];
+    let correctCount = 0;
+    let answers = [];
 
-	// Check each answer
-	inputs.forEach((input, index) => {
-		const userAnswer = input.value.trim();
-		const correctAnswer = input.dataset.answer;
-		answers.push(userAnswer);
+    inputs.forEach(input =>
+    {
+        const userAnswer = input.value.trim();
+        const correctAnswer = input.dataset.answer;
 
-		if (userAnswer === correctAnswer) {
-			input.classList.add('correct');
-			input.classList.remove('incorrect');
-			correctCount++;
-		} else {
-			input.classList.add('incorrect');
-			input.classList.remove('correct');
-		}
+        answers.push(userAnswer);
 
-		// Disable input after checking
-		input.disabled = true;
-	});
+        if (userAnswer === correctAnswer)
+        {
+            correctCount++;
+            input.classList.add('correct');
+        }
+        else
+        {
+            input.classList.add('incorrect');
+        }
 
-	// Store answers (future: send to backend)
-	AppState.userAnswers.warmup = answers;
+        input.disabled = true;
+    });
 
-	// Calculate XP
-	const xpEarned = correctCount * AppState.xpValues.warmup;
-	updateXP(xpEarned);
+    const xpEarned =
+        correctCount * AppState.xpValues.warmup;
 
-	// Show result
-	const message = `You got ${correctCount}/4 correct! Earned ${xpEarned} XP 🎯`;
-	showMessage('warmup-result', message, 'success');
+    updateXP(xpEarned);
 
-	// Mark as completed
-	AppState.warmupCompleted = true;
+    section.querySelector('.result-message').textContent =
+        `You got ${correctCount}/${inputs.length} correct. XP +${xpEarned}`;
 
-	// Disable submit button
-	event.target.disabled = true;
-	event.target.textContent = 'Completed ✓';
+    btn.disabled = true;
+    btn.textContent = 'Completed ✓';
 }
 
 // ==========================================
@@ -403,417 +385,25 @@ const Day3State = {
 	}
 };
 
-
-// ==========================================
-// DAY 2: WARM-UP LOGIC
-// ==========================================
-
-/**
- * Checks Day 2 warm-up answers
- */
-function checkDay2Warmup() {
-	if (Day2State.warmupCompleted) {
-		showMessage('day2-warmup-result', 'You already completed this section!', 'partial');
-		return;
-	}
-
-	let correctCount = 0;
-	const answers = [];
-
-	// Question 1 (Input)
-	const input1 = document.getElementById('day2-warmup-1');
-	const answer1 = input1.value.trim();
-	answers.push(answer1);
-
-	if (answer1 === input1.dataset.answer) {
-		input1.classList.add('correct');
-		correctCount++;
-	} else {
-		input1.classList.add('incorrect');
-	}
-	input1.disabled = true;
-
-	// Question 2 (MCQ)
-	const selected2 = document.querySelector('input[name="day2-warmup-2"]:checked');
-	const answer2 = selected2 ? selected2.value : null;
-	answers.push(answer2);
-
-	if (answer2 === 'b') {
-		correctCount++;
-	}
-
-	const correct2 = document.querySelector('#day2-warmup-section .radio-option[data-answer="b"]');
-	if (correct2) correct2.classList.add('show-correct');
-
-	document.querySelectorAll('input[name="day2-warmup-2"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Store answers
-	Day2State.userAnswers.warmup = answers;
-
-	// Calculate XP
-	const xpEarned = correctCount * AppState.xpValues.warmup;
-	updateXP(xpEarned);
-
-	// Show result
-	const message = `You got ${correctCount}/2 correct! Earned ${xpEarned} XP 🎯`;
-	showMessage('day2-warmup-result', message, 'success');
-
-	Day2State.warmupCompleted = true;
-	event.target.disabled = true;
-	event.target.textContent = 'Completed ✓';
-}
-
-// ==========================================
-// DAY 2: PRACTICE ARENA LOGIC
-// ==========================================
-
-/**
- * Checks Day 2 practice MCQ answers
- */
-function checkDay2Practice() {
-	if (Day2State.practiceCompleted) {
-		showMessage('day2-practice-result', 'You already completed this section!', 'partial');
-		return;
-	}
-
-	const questions = ['day2-q1', 'day2-q2', 'day2-q3', 'day2-q4'];
-	const correctAnswers = {
-		'day2-q1': 'b',
-		'day2-q2': 'c',
-		'day2-q3': 'b',
-		'day2-q4': 'b'
-	};
-
-	let correctCount = 0;
-	const answers = [];
-
-	questions.forEach(q => {
-		const selected = document.querySelector(`input[name="${q}"]:checked`);
-		const userAnswer = selected ? selected.value : null;
-		answers.push(userAnswer);
-
-		// Highlight correct answer
-		const correctOption = document.querySelector(`#day2-practice-section .radio-option[data-answer="${correctAnswers[q]}"]`);
-		if (correctOption) {
-			correctOption.classList.add('show-correct');
-		}
-
-		// Show explanation
-		const questionCard = selected ? selected.closest('.question-card') : document.querySelector(`input[name="${q}"]`).closest('.question-card');
-		const explanation = questionCard.querySelector('.explanation');
-		if (explanation) {
-			explanation.classList.add('show');
-		}
-
-		// Check if correct
-		if (userAnswer === correctAnswers[q]) {
-			correctCount++;
-		}
-
-		// Disable all radio buttons
-		document.querySelectorAll(`input[name="${q}"]`).forEach(radio => {
-			radio.disabled = true;
-		});
-	});
-
-	Day2State.userAnswers.practice = answers;
-
-	const xpEarned = correctCount * AppState.xpValues.practice;
-	updateXP(xpEarned);
-
-	const message = `You got ${correctCount}/4 correct! Earned ${xpEarned} XP 💪`;
-	showMessage('day2-practice-result', message, 'success');
-
-	Day2State.practiceCompleted = true;
-	event.target.disabled = true;
-	event.target.textContent = 'Completed ✓';
-}
-
-// ==========================================
-// DAY 2: BOSS FIGHT LOGIC
-// ==========================================
-
-/**
- * Checks Day 2 boss fight answers
- */
-function checkDay2Boss() {
-	if (Day2State.bossCompleted) {
-		showMessage('day2-boss-result', 'You already defeated the boss!', 'partial');
-		return;
-	}
-
-	let correctCount = 0;
-	const answers = [];
-
-	// Question 1 (Input)
-	const boss1Input = document.getElementById('day2-boss-1');
-	const boss1Answer = boss1Input.value.trim();
-	answers.push(boss1Answer);
-
-	if (boss1Answer === '60') {
-		correctCount++;
-		boss1Input.classList.add('correct');
-	} else {
-		boss1Input.classList.add('incorrect');
-	}
-	boss1Input.disabled = true;
-
-	const boss1Explanation = document.querySelector('.boss-card:nth-of-type(1) .explanation');
-	if (boss1Explanation) boss1Explanation.classList.add('show');
-
-	// Question 2 (MCQ)
-	const boss2 = document.querySelector('input[name="day2-boss2"]:checked');
-	const boss2Answer = boss2 ? boss2.value : null;
-	answers.push(boss2Answer);
-
-	if (boss2Answer === 'c') {
-		correctCount++;
-	}
-
-	const boss2Correct = document.querySelector('#day2-boss-section .boss-card:nth-of-type(2) .radio-option[data-answer="c"]');
-	if (boss2Correct) boss2Correct.classList.add('show-correct');
-
-	const boss2Explanation = document.querySelector('#day2-boss-section .boss-card:nth-of-type(2) .explanation');
-	if (boss2Explanation) boss2Explanation.classList.add('show');
-
-	document.querySelectorAll('input[name="day2-boss2"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Question 3 (MCQ)
-	const boss3 = document.querySelector('input[name="day2-boss3"]:checked');
-	const boss3Answer = boss3 ? boss3.value : null;
-	answers.push(boss3Answer);
-
-	if (boss3Answer === 'b') {
-		correctCount++;
-	}
-
-	const boss3Correct = document.querySelector('#day2-boss-section .boss-card:nth-of-type(3) .radio-option[data-answer="b"]');
-	if (boss3Correct) boss3Correct.classList.add('show-correct');
-
-	const boss3Explanation = document.querySelector('#day2-boss-section .boss-card:nth-of-type(3) .explanation');
-	if (boss3Explanation) boss3Explanation.classList.add('show');
-
-	document.querySelectorAll('input[name="day2-boss3"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Question 4 (MCQ)
-	const boss4 = document.querySelector('input[name="day2-boss4"]:checked');
-	const boss4Answer = boss4 ? boss4.value : null;
-	answers.push(boss4Answer);
-
-	if (boss4Answer === 'c') {
-		correctCount++;
-	}
-
-	const boss4Correct = document.querySelector('#day2-boss-section .boss-card:nth-of-type(4) .radio-option[data-answer="c"]');
-	if (boss4Correct) boss4Correct.classList.add('show-correct');
-
-	const boss4Explanation = document.querySelector('#day2-boss-section .boss-card:nth-of-type(4) .explanation');
-	if (boss4Explanation) boss4Explanation.classList.add('show');
-
-	document.querySelectorAll('input[name="day2-boss4"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Question 5 (Input)
-	const boss5Input = document.getElementById('day2-boss-5');
-	const boss5Answer = boss5Input.value.trim();
-	answers.push(boss5Answer);
-
-	if (boss5Answer === '60') {
-		correctCount++;
-		boss5Input.classList.add('correct');
-	} else {
-		boss5Input.classList.add('incorrect');
-	}
-	boss5Input.disabled = true;
-
-	const boss5Explanation = document.querySelector('#day2-boss-section .boss-card:nth-of-type(5) .explanation');
-	if (boss5Explanation) boss5Explanation.classList.add('show');
-
-	Day2State.userAnswers.boss = answers;
-
-	const xpEarned = correctCount * AppState.xpValues.boss;
-	updateXP(xpEarned);
-
-	let message;
-	if (correctCount === 5) {
-		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
-	} else if (correctCount >= 3) {
-		message = `💪 Good fight! ${correctCount}/5 correct. Earned ${xpEarned} XP!`;
-	} else {
-		message = `Keep practicing! ${correctCount}/5 correct. Earned ${xpEarned} XP.`;
-	}
-
-	showMessage('day2-boss-result', message, correctCount >= 3 ? 'success' : 'partial');
-
-	Day2State.bossCompleted = true;
-	event.target.disabled = true;
-	event.target.textContent = 'Boss Defeated ✓';
-}
-
-
-// ==========================================
-// DAY 3: BOSS FIGHT LOGIC
-// ==========================================
-
-/**
- * Checks Day 3 boss fight answers
- */
-function checkDay3Boss() {
-	if (Day3State.bossCompleted) {
-		showMessage('day3-boss-result', 'You already defeated the boss!', 'partial');
-		return;
-	}
-
-	let correctCount = 0;
-	const answers = [];
-
-	// Question 1 (MCQ)
-	const boss1 = document.querySelector('input[name="day3-boss1"]:checked');
-	let boss1Answer = null;
-
-	if (boss1) {
-		boss1Answer = boss1.value;
-	}
-
-	answers.push(boss1Answer);
-
-	if (boss1Answer === 'b') {
-		correctCount++;
-	}
-
-	const boss1Correct = document.querySelector('#day3-boss-section .boss-card:nth-of-type(1) .radio-option[data-answer="b"]');
-	if (boss1Correct) {
-		boss1Correct.classList.add('show-correct');
-	}
-
-	const boss1Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(1) .explanation');
-	if (boss1Explanation) {
-		boss1Explanation.classList.add('show');
-	}
-
-	document.querySelectorAll('input[name="day3-boss1"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Question 2 (Input)
-	const boss2Input = document.getElementById('day3-boss-2');
-	const boss2Answer = boss2Input.value.trim();
-	answers.push(boss2Answer);
-
-	if (boss2Answer === '80') {
-		correctCount++;
-		boss2Input.classList.add('correct');
-	} else {
-		boss2Input.classList.add('incorrect');
-	}
-	boss2Input.disabled = true;
-
-	const boss2Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(2) .explanation');
-	if (boss2Explanation) {
-		boss2Explanation.classList.add('show');
-	}
-
-	// Question 3 (MCQ)
-	const boss3 = document.querySelector('input[name="day3-boss3"]:checked');
-	let boss3Answer = null;
-
-	if (boss3) {
-		boss3Answer = boss3.value;
-	}
-
-	answers.push(boss3Answer);
-
-	if (boss3Answer === 'a') {
-		correctCount++;
-	}
-
-	const boss3Correct = document.querySelector('#day3-boss-section .boss-card:nth-of-type(3) .radio-option[data-answer="a"]');
-	if (boss3Correct) {
-		boss3Correct.classList.add('show-correct');
-	}
-
-	const boss3Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(3) .explanation');
-	if (boss3Explanation) {
-		boss3Explanation.classList.add('show');
-	}
-
-	document.querySelectorAll('input[name="day3-boss3"]').forEach(radio => {
-		radio.disabled = true;
-	});
-
-	// Question 4 (Input)
-	const boss4Input = document.getElementById('day3-boss-4');
-	const boss4Answer = boss4Input.value.trim();
-	answers.push(boss4Answer);
-
-	if (boss4Answer === '150') {
-		correctCount++;
-		boss4Input.classList.add('correct');
-	} else {
-		boss4Input.classList.add('incorrect');
-	}
-	boss4Input.disabled = true;
-
-	const boss4Explanation = document.querySelector('#day3-boss-section .boss-card:nth-of-type(4) .explanation');
-	if (boss4Explanation) {
-		boss4Explanation.classList.add('show');
-	}
-
-	Day3State.userAnswers.boss = answers;
-
-	const xpEarned = correctCount * AppState.xpValues.boss;
-	updateXP(xpEarned);
-
-	let message;
-	if (correctCount === 4) {
-		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
-	} else if (correctCount >= 3) {
-		message = `💪 Good fight! ${correctCount}/4 correct. Earned ${xpEarned} XP!`;
-	} else {
-		message = `Keep practicing! ${correctCount}/4 correct. Earned ${xpEarned} XP.`;
-	}
-
-	if (correctCount >= 3) {
-		showMessage('day3-boss-result', message, 'success');
-	} else {
-		showMessage('day3-boss-result', message, 'partial');
-	}
-
-	Day3State.bossCompleted = true;
-	event.target.disabled = true;
-	event.target.textContent = 'Boss Defeated ✓';
-}
-
 /**
  * Wrapper: single boss-check function for all days
  * @param {number} dayNumber - Day number (1/2/3)
  */
-function checkBossFight(dayNumber, btn)
-{
+function checkBossFight(dayNumber, btn) {
 	checkBossGeneric(dayNumber, btn);
 }
 
 
-function checkBossGeneric(dayNumber, btn)
-{
+function checkBossGeneric(dayNumber, btn) {
 	let config = BossConfig[dayNumber];
 
-	if (!config)
-	{
+	if (!config) {
 		return;
 	}
 
 	let state = config.state();
 
-	if (state.bossCompleted)
-	{
+	if (state.bossCompleted) {
 		showMessage(config.resultId, 'You already defeated the boss!', 'partial');
 		return;
 	}
@@ -823,63 +413,52 @@ function checkBossGeneric(dayNumber, btn)
 
 	let section = document.querySelector(config.sectionSelector);
 
-	if (!section)
-	{
+	if (!section) {
 		return;
 	}
 
 	let bossCards = Array.from(section.querySelectorAll('.boss-card'));
 
-	config.questions.forEach(q =>
-	{
+	config.questions.forEach(q => {
 		let card = bossCards[q.cardIndex];
 
-		if (!card)
-		{
+		if (!card) {
 			answers.push(null);
 			return;
 		}
 
-		if (q.type === 'mcq')
-		{
+		if (q.type === 'mcq') {
 			let selected = document.querySelector('input[name="' + q.name + '"]:checked');
 			let selectedValue = null;
 
-			if (selected)
-			{
+			if (selected) {
 				selectedValue = selected.value;
 			}
 
 			answers.push(selectedValue);
 
-			if (selectedValue === q.correctValue)
-			{
+			if (selectedValue === q.correctValue) {
 				correctCount++;
 			}
 
 			let correctOption = card.querySelector(q.correctSelector);
-			if (correctOption)
-			{
+			if (correctOption) {
 				correctOption.classList.add('show-correct');
 			}
 
 			let explanation = card.querySelector('.explanation');
-			if (explanation)
-			{
+			if (explanation) {
 				explanation.classList.add('show');
 			}
 
-			document.querySelectorAll('input[name="' + q.name + '"]').forEach(radio =>
-			{
+			document.querySelectorAll('input[name="' + q.name + '"]').forEach(radio => {
 				radio.disabled = true;
 			});
 		}
-		else if (q.type === 'input')
-		{
+		else if (q.type === 'input') {
 			let input = document.getElementById(q.id);
 
-			if (!input)
-			{
+			if (!input) {
 				answers.push(null);
 				return;
 			}
@@ -889,29 +468,24 @@ function checkBossGeneric(dayNumber, btn)
 
 			let isCorrect = false;
 
-			q.correctValues.forEach(cv =>
-			{
-				if (value === cv)
-				{
+			q.correctValues.forEach(cv => {
+				if (value === cv) {
 					isCorrect = true;
 				}
 			});
 
-			if (isCorrect)
-			{
+			if (isCorrect) {
 				correctCount++;
 				input.classList.add('correct');
 			}
-			else
-			{
+			else {
 				input.classList.add('incorrect');
 			}
 
 			input.disabled = true;
 
 			let explanation = card.querySelector('.explanation');
-			if (explanation)
-			{
+			if (explanation) {
 				explanation.classList.add('show');
 			}
 		}
@@ -923,32 +497,26 @@ function checkBossGeneric(dayNumber, btn)
 	updateXP(xpEarned);
 
 	let message = '';
-	if (correctCount === config.totalQuestions)
-	{
+	if (correctCount === config.totalQuestions) {
 		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
 	}
-	else if (correctCount >= 3)
-	{
+	else if (correctCount >= 3) {
 		message = `💪 Good fight! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP!`;
 	}
-	else
-	{
+	else {
 		message = `Keep practicing! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP.`;
 	}
 
-	if (correctCount >= 3)
-	{
+	if (correctCount >= 3) {
 		showMessage(config.resultId, message, 'success');
 	}
-	else
-	{
+	else {
 		showMessage(config.resultId, message, 'partial');
 	}
 
 	state.bossCompleted = true;
 
-	if (btn)
-	{
+	if (btn) {
 		btn.disabled = true;
 		btn.textContent = config.buttonText;
 	}
@@ -1195,230 +763,18 @@ function requestUnlockNextDay(dayNumber)
 	}
 }
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
-
-/**
- * Initialize the app when page loads
- */
-document.addEventListener('DOMContentLoaded', function () {
-	console.log('NTPC Mission Mode - Day 1 Loaded');
-	console.log('Current State:', AppState);
-
-	// Initialize XP display
-	updateXP(0);
-
-	// Add event listeners for radio button selection highlighting
-	document.querySelectorAll('.radio-option input[type="radio"]').forEach(radio => {
-		radio.addEventListener('change', function () {
-			// Remove selected class from all options in this question
-			const questionName = this.name;
-			document.querySelectorAll(`input[name="${questionName}"]`).forEach(r => {
-				r.parentElement.classList.remove('selected');
-			});
-
-			// Add selected class to chosen option
-			this.parentElement.classList.add('selected');
-		});
-	});
-
-	// Smooth scroll to sections when clicking (future enhancement)
-	// Can be used for navigation menu
-});
-
-// ==========================================
-// FUTURE BACKEND INTEGRATION POINTS
-// ==========================================
-
-/**
- * Example function for saving progress to backend
- * To be implemented when backend is ready
- */
-async function saveProgress() {
-	const progressData = {
-		userId: 'USER_ID', // Will come from auth system
-		day: AppState.currentDay,
-		xp: AppState.totalXP,
-		answers: AppState.userAnswers,
-		completedSections: {
-			warmup: AppState.warmupCompleted,
-			practice: AppState.practiceCompleted,
-			boss: AppState.bossCompleted
-		},
-		timestamp: new Date().toISOString()
-	};
-
-	// Future API call
-	// const response = await fetch('/api/save-progress', {
-	//     method: 'POST',
-	//     headers: { 'Content-Type': 'application/json' },
-	//     body: JSON.stringify(progressData)
-	// });
-
-	console.log('Progress to be saved:', progressData);
-}
-
-/**
- * Example function for loading user progress
- * To be implemented when backend is ready
- */
-async function loadProgress(userId) {
-	// Future API call
-	// const response = await fetch(`/api/load-progress/${userId}`);
-	// const data = await response.json();
-
-	// Update AppState with loaded data
-	// AppState.totalXP = data.xp;
-	// AppState.warmupCompleted = data.completedSections.warmup;
-	// etc.
-
-	console.log('Load progress for user:', userId);
-}
-
-/**
- * Example function for checking if Day 2 should be unlocked
- * To be implemented when backend is ready
- */
-function checkDayUnlock() {
-	// Check if all sections are completed
-	const allCompleted = AppState.warmupCompleted &&
-		AppState.practiceCompleted &&
-		AppState.bossCompleted;
-
-	// Future: Check with backend if day is unlocked
-	// Can implement minimum XP requirement, time-based unlocks, etc.
-
-	return allCompleted;
-}
-
-/**
- * Proceeds to next day
- * @param {number} nextDay - The day number to navigate to
- */
-function proceedToNextDay(nextDay) {
-	if (AppState.currentDay === 1 && nextDay === 2) {
-		const day1Sections = [
-			'warmup-section',
-			'core-mission-section',
-			'practice-section',
-			'powerup-section',
-			'boss-section',
-			'confidence-section',
-			'proceedToDay2'
-		];
-
-		day1Sections.forEach(sectionId => {
-			const section = document.getElementById(sectionId);
-			if (section) {
-				section.style.display = 'none';
-			}
-		});
-
-		const day2Container = document.getElementById('day2-container');
-		if (day2Container) {
-			day2Container.style.display = 'block';
-		}
-
-		AppState.currentDay = 2;
-		updateHeaderForDay(2);
-
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
-	} else if (AppState.currentDay === 2 && nextDay === 3) {
-		const day2Container = document.getElementById('day2-container');
-		if (day2Container) {
-			day2Container.style.display = 'none';
-		}
-
-		const day3Container = document.getElementById('day3-container');
-		if (day3Container) {
-			day3Container.style.display = 'block';
-		}
-
-		AppState.currentDay = 3;
-		updateHeaderForDay(3);
-
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
-	} else if (AppState.currentDay === 3 && nextDay === 4) {
-		const day4Locked = document.getElementById('day4-locked');
-		if (day4Locked) {
-			day4Locked.scrollIntoView({ behavior: 'smooth' });
-		}
-	}
-}
-
-/**
- * Goes back to previous day
- * @param {number} previousDay - The day number to navigate back to
- */
-function backToPreviousDay(previousDay) {
-	if (AppState.currentDay === 2 && previousDay === 1) {
-		const day1Sections = [
-			'warmup-section',
-			'core-mission-section',
-			'practice-section',
-			'powerup-section',
-			'boss-section',
-			'confidence-section',
-			'proceedToDay2'
-		];
-
-		day1Sections.forEach(sectionId => {
-			const section = document.getElementById(sectionId);
-			if (section) {
-				section.style.display = 'block';
-			}
-		});
-
-		const day2Container = document.getElementById('day2-container');
-		if (day2Container) {
-			day2Container.style.display = 'none';
-		}
-
-		AppState.currentDay = 1;
-		updateHeaderForDay(1);
-
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
-	} else if (AppState.currentDay === 3 && previousDay === 2) {
-		const day3Container = document.getElementById('day3-container');
-		if (day3Container) {
-			day3Container.style.display = 'none';
-		}
-
-		const day2Container = document.getElementById('day2-container');
-		if (day2Container) {
-			day2Container.style.display = 'block';
-		}
-
-		AppState.currentDay = 2;
-		updateHeaderForDay(2);
-
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
-	}
-}
-
 /**
  * Updates header subtitle and day indicator
  * @param {number} dayNumber - Current day number
  */
+
 function updateHeaderForDay(dayNumber) {
 	const subtitle = document.querySelector('.subtitle');
 	if (subtitle) {
 		if (dayNumber === 1) {
 			subtitle.textContent = 'Level 1 – Foundation';
-		} else {
+		}
+		else {
 			subtitle.textContent = `Level 1 – Foundation (Day ${dayNumber})`;
 		}
 	}
@@ -1433,8 +789,7 @@ const BossConfig =
 {
 	1:
 	{
-		state: function()
-		{
+		state: function () {
 			return AppState;
 		},
 		resultId: 'boss-result',
@@ -1442,46 +797,45 @@ const BossConfig =
 		totalQuestions: 5,
 		buttonText: 'Boss Defeated ✓',
 		questions:
-		[
-			{
-				type: 'mcq',
-				name: 'boss1',
-				correctValue: 'b',
-				cardIndex: 0,
-				correctSelector: '.radio-option[data-answer="b"]'
-			},
-			{
-				type: 'input',
-				id: 'boss-2',
-				correctValues: ['0.5', '.5'],
-				cardIndex: 1
-			},
-			{
-				type: 'mcq',
-				name: 'boss3',
-				correctValue: 'd',
-				cardIndex: 2,
-				correctSelector: '.radio-option[data-answer="d"]'
-			},
-			{
-				type: 'input',
-				id: 'boss-4',
-				correctValues: ['35'],
-				cardIndex: 3
-			},
-			{
-				type: 'input',
-				id: 'boss-5',
-				correctValues: ['1'],
-				cardIndex: 4
-			}
-		]
+			[
+				{
+					type: 'mcq',
+					name: 'boss1',
+					correctValue: 'b',
+					cardIndex: 0,
+					correctSelector: '.radio-option[data-answer="b"]'
+				},
+				{
+					type: 'input',
+					id: 'boss-2',
+					correctValues: ['0.5', '.5'],
+					cardIndex: 1
+				},
+				{
+					type: 'mcq',
+					name: 'boss3',
+					correctValue: 'd',
+					cardIndex: 2,
+					correctSelector: '.radio-option[data-answer="d"]'
+				},
+				{
+					type: 'input',
+					id: 'boss-4',
+					correctValues: ['35'],
+					cardIndex: 3
+				},
+				{
+					type: 'input',
+					id: 'boss-5',
+					correctValues: ['1'],
+					cardIndex: 4
+				}
+			]
 	},
 
 	2:
 	{
-		state: function()
-		{
+		state: function () {
 			return Day2State;
 		},
 		resultId: 'day2-boss-result',
@@ -1489,47 +843,46 @@ const BossConfig =
 		totalQuestions: 5,
 		buttonText: 'Boss Defeated ✓',
 		questions:
-		[
-			{
-				type: 'input',
-				id: 'day2-boss-1',
-				correctValues: ['60'],
-				cardIndex: 0
-			},
-			{
-				type: 'mcq',
-				name: 'day2-boss2',
-				correctValue: 'c',
-				cardIndex: 1,
-				correctSelector: '.radio-option[data-answer="c"]'
-			},
-			{
-				type: 'mcq',
-				name: 'day2-boss3',
-				correctValue: 'b',
-				cardIndex: 2,
-				correctSelector: '.radio-option[data-answer="b"]'
-			},
-			{
-				type: 'mcq',
-				name: 'day2-boss4',
-				correctValue: 'c',
-				cardIndex: 3,
-				correctSelector: '.radio-option[data-answer="c"]'
-			},
-			{
-				type: 'input',
-				id: 'day2-boss-5',
-				correctValues: ['60'],
-				cardIndex: 4
-			}
-		]
+			[
+				{
+					type: 'input',
+					id: 'day2-boss-1',
+					correctValues: ['60'],
+					cardIndex: 0
+				},
+				{
+					type: 'mcq',
+					name: 'day2-boss2',
+					correctValue: 'c',
+					cardIndex: 1,
+					correctSelector: '.radio-option[data-answer="c"]'
+				},
+				{
+					type: 'mcq',
+					name: 'day2-boss3',
+					correctValue: 'b',
+					cardIndex: 2,
+					correctSelector: '.radio-option[data-answer="b"]'
+				},
+				{
+					type: 'mcq',
+					name: 'day2-boss4',
+					correctValue: 'c',
+					cardIndex: 3,
+					correctSelector: '.radio-option[data-answer="c"]'
+				},
+				{
+					type: 'input',
+					id: 'day2-boss-5',
+					correctValues: ['60'],
+					cardIndex: 4
+				}
+			]
 	},
 
 	3:
 	{
-		state: function()
-		{
+		state: function () {
 			return Day3State;
 		},
 		resultId: 'day3-boss-result',
@@ -1537,33 +890,50 @@ const BossConfig =
 		totalQuestions: 4,
 		buttonText: 'Boss Defeated ✓',
 		questions:
-		[
-			{
-				type: 'mcq',
-				name: 'day3-boss1',
-				correctValue: 'b',
-				cardIndex: 0,
-				correctSelector: '.radio-option[data-answer="b"]'
-			},
-			{
-				type: 'input',
-				id: 'day3-boss-2',
-				correctValues: ['80'],
-				cardIndex: 1
-			},
-			{
-				type: 'mcq',
-				name: 'day3-boss3',
-				correctValue: 'a',
-				cardIndex: 2,
-				correctSelector: '.radio-option[data-answer="a"]'
-			},
-			{
-				type: 'input',
-				id: 'day3-boss-4',
-				correctValues: ['150'],
-				cardIndex: 3
-			}
-		]
+			[
+				{
+					type: 'mcq',
+					name: 'day3-boss1',
+					correctValue: 'b',
+					cardIndex: 0,
+					correctSelector: '.radio-option[data-answer="b"]'
+				},
+				{
+					type: 'input',
+					id: 'day3-boss-2',
+					correctValues: ['80'],
+					cardIndex: 1
+				},
+				{
+					type: 'mcq',
+					name: 'day3-boss3',
+					correctValue: 'a',
+					cardIndex: 2,
+					correctSelector: '.radio-option[data-answer="a"]'
+				},
+				{
+					type: 'input',
+					id: 'day3-boss-4',
+					correctValues: ['150'],
+					cardIndex: 3
+				}
+			]
 	}
 };
+
+function goToDay(dayNumber)
+{
+	document.querySelectorAll('.day-container').forEach(day => {
+		day.style.display = 'none';
+	});
+
+	const targetDay = document.getElementById(`day${dayNumber}-container`);
+	if (!targetDay) return;
+
+	targetDay.style.display = 'block';
+
+	AppState.currentDay = dayNumber;
+	updateHeaderForDay(dayNumber);
+
+	window.scrollTo({ top: 0, behavior: 'smooth' });
+}

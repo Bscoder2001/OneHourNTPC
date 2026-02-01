@@ -208,7 +208,7 @@ body {
 }
 
 /* Input Fields */
-.answer-input {
+.warmup-input {
     width: 100%;
     padding: var(--spacing-sm);
     border: 2px solid rgba(255, 255, 255, 0.2);
@@ -219,18 +219,18 @@ body {
     transition: border-color var(--transition-fast);
 }
 
-.answer-input:focus {
+.warmup-input:focus {
     outline: none;
     border-color: var(--highlight-color);
     background: rgba(255, 255, 255, 0.15);
 }
 
-.answer-input.correct {
+.warmup-input.correct {
     border-color: var(--success-color);
     background: rgba(46, 204, 113, 0.1);
 }
 
-.answer-input.incorrect {
+.warmup-input.incorrect {
     border-color: var(--highlight-color);
     background: rgba(233, 69, 96, 0.1);
 }
