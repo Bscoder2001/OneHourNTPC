@@ -634,105 +634,241 @@ function checkBossGeneric(dayNumber, btn) {
 /**
  * Question database for ChatGPT prompts
  */
-const questionDatabase = {
+const questionDatabase =
+{
 	// Day 2 Warmup
-	'day2-warmup-1': {
+	'day2-warmup-1':
+	{
 		question: 'What is the HCF of 12 and 18?',
 		context: 'HCF (Highest Common Factor)'
 	},
-	'day2-warmup-2': {
+	'day2-warmup-2':
+	{
 		question: 'Which of these is a living thing? Options: Rock, Tree, Water',
 		context: 'Biology - Living vs Non-living'
 	},
 
 	// Day 2 Practice
-	'day2-practice-q1': {
+	'day2-practice-q1':
+	{
 		question: 'What is the HCF of 24 and 36? Options: 6, 12, 8, 18',
 		context: 'HCF calculation'
 	},
-	'day2-practice-q2': {
+	'day2-practice-q2':
+	{
 		question: 'What is the LCM of 5 and 7? Options: 12, 70, 35, 14',
 		context: 'LCM with prime numbers'
 	},
-	'day2-practice-q3': {
+	'day2-practice-q3':
+	{
 		question: 'Two bells ring at intervals of 4 and 6 minutes. If they ring together now, after how many minutes will they ring together again? Options: 10, 12, 24, 2',
 		context: 'LCM real-life application'
 	},
-	'day2-practice-q4': {
+	'day2-practice-q4':
+	{
 		question: 'The HCF of two numbers is 5 and their LCM is 150. If one number is 25, what is the other number? Options: 20, 30, 15, 35',
 		context: 'HCF × LCM = Product formula'
 	},
 
 	// Day 2 Boss
-	'day2-boss-q1': {
+	'day2-boss-q1':
+	{
 		question: 'Find the smallest number that is divisible by both 12 and 15',
 		context: 'LCM application'
 	},
-	'day2-boss-q2': {
+	'day2-boss-q2':
+	{
 		question: 'Which of the following is NOT a characteristic of living things? Options: Respiration, Growth, Rusting, Reproduction',
 		context: 'Living things characteristics'
 	},
-	'day2-boss-q3': {
+	'day2-boss-q3':
+	{
 		question: 'Three runners complete a lap in 12, 18, and 24 minutes respectively. After how many minutes will they all meet at the starting point? Options: 54, 72, 144, 36',
 		context: 'LCM with three numbers'
 	},
-	'day2-boss-q4': {
+	'day2-boss-q4':
+	{
 		question: 'Which organism can make its own food? Options: Lion, Mushroom, Green plant, Bacteria',
 		context: 'Autotrophs and photosynthesis'
 	},
-	'day2-boss-q5': {
+	'day2-boss-q5':
+	{
 		question: 'The product of two numbers is 360 and their HCF is 6. What is their LCM?',
 		context: 'HCF × LCM formula application'
 	},
 
 	// Day 3 Warmup
-	'day3-warmup-1': {
+	'day3-warmup-1':
+	{
 		question: 'What is 50% of 100?',
 		context: 'Percentage basics (50% = half)'
 	},
-	'day3-warmup-2': {
+	'day3-warmup-2':
+	{
 		question: 'Find the next number: 2, 4, 6, 8, ?',
 		context: 'Number series (add 2 each time)'
 	},
 
 	// Day 3 Practice
-	'day3-practice-q1': {
+	'day3-practice-q1':
+	{
 		question: 'What is 25% of 200? Options: 25, 50, 75, 100',
 		context: '25% = 1/4, so 200 ÷ 4 = 50'
 	},
-	'day3-practice-q2': {
+	'day3-practice-q2':
+	{
 		question: 'Convert 3/5 to percentage: Options: 30%, 50%, 60%, 35%',
 		context: 'Fraction to percentage (multiply by 100)'
 	},
-	'day3-practice-q3': {
+	'day3-practice-q3':
+	{
 		question: 'If 20% of a number is 40, what is the number? Options: 80, 200, 100, 160',
 		context: 'Find whole from percentage (reverse calculation)'
 	},
-	'day3-practice-q4': {
+	'day3-practice-q4':
+	{
 		question: 'What is 10% of 500? Options: 50, 100, 5, 25',
 		context: '10% = 1/10, so 500 ÷ 10 = 50'
 	},
-	'day3-practice-q5': {
+	'day3-practice-q5':
+	{
 		question: '0.75 expressed as percentage is: Options: 7.5%, 75%, 0.75%, 750%',
 		context: 'Decimal to percentage (×100)'
 	},
 
 	// Day 3 Boss
-	'day3-boss-q1': {
+	'day3-boss-q1':
+	{
 		question: 'A student scored 360 marks out of 600. What is his percentage? Options: 50%, 60%, 65%, 70%',
 		context: 'Percentage formula: (part/whole) × 100'
 	},
-	'day3-boss-q2': {
+	'day3-boss-q2':
+	{
 		question: 'Find the next number: 5, 10, 20, 40, ?',
 		context: 'Number series (×2 each time)'
 	},
-	'day3-boss-q3': {
+	'day3-boss-q3':
+	{
 		question: 'Which is larger: 0.6 or 0.58? (Revision from Day 1)',
 		context: 'Compare decimals by equal digits: 0.60 vs 0.58'
 	},
-	'day3-boss-q4': {
+	'day3-boss-q4':
+	{
 		question: 'If 30% of a number is 90, find 50% of that number:',
 		context: 'Find 100% first, then calculate 50%'
+	},
+
+	// Day 4 Warmup
+	'day4-warmup-1':
+	{
+		question: 'What is 10% of 250?',
+		context: 'Percentage basics (10% means divide by 10)'
+	},
+	'day4-warmup-2':
+	{
+		question: 'Convert 0.2 into percentage:',
+		context: 'Decimal to percentage (×100)'
+	},
+
+	// Day 4 Practice
+	'day4-practice-q1':
+	{
+		question: 'What is 20% of 450? Options: 45, 90, 100, 75',
+		context: '20% = 1/5, so 450 ÷ 5 = 90'
+	},
+	'day4-practice-q2':
+	{
+		question: 'If 40% of a number is 160, find the number. Options: 200, 400, 320, 160',
+		context: 'Find whole from percentage (reverse calculation)'
+	},
+	'day4-practice-q3':
+	{
+		question: '75% of a number is 300. What is 25% of that number? Options: 75, 100, 150, 200',
+		context: 'Find 100% first, then take 25% (1/4)'
+	},
+
+	// Day 4 Boss
+	'day4-boss-q1':
+	{
+		question: 'A shopkeeper gives 20% discount on a ₹500 item. What is the selling price? Options: ₹350, ₹400, ₹450, ₹300',
+		context: 'Discount concept (Selling Price = Marked Price − Discount)'
+	},
+
+	// Day 5 Warmup
+	'day5-warmup-1':
+	{
+		question: 'What is 50% of 300?',
+		context: 'Percentage basics (50% = half)'
+	},
+	'day5-warmup-2':
+	{
+		question: 'Find the next number: 1, 4, 9, 16, ?',
+		context: 'Number series (perfect squares)'
+	},
+
+	// Day 5 Practice
+	'day5-practice-q1':
+	{
+		question: 'What is 20% of 600? Options: 100, 120, 150, 200',
+		context: '20% = 1/5, so 600 ÷ 5 = 120'
+	},
+	'day5-practice-q2':
+	{
+		question: 'Find the odd one out: 2, 4, 8, 16, 18. Options: 2, 4, 16, 18',
+		context: 'Pattern recognition (powers of 2)'
+	},
+	'day5-practice-q3':
+	{
+		question: 'Which of the following is a non-renewable resource? Options: Wind, Solar, Coal, Water',
+		context: 'General Science (renewable vs non-renewable)'
+	},
+
+	// Day 5 Boss
+	'day5-boss-q1':
+	{
+		question: 'If the price of an item increases by 20%, what happens to the selling price of ₹200? Options: ₹220, ₹240, ₹250, ₹260',
+		context: 'Percentage increase (New Value = Old Value + Increase)'
+	},
+
+	// Day 6 Warmup
+	'day6-warmup-1':
+	{
+		question: 'What is 25% of 400?',
+		context: '25% = 1/4, so divide by 4'
+	},
+	'day6-warmup-2':
+	{
+		question: 'Find the next number: 3, 6, 12, 24, ?',
+		context: 'Number series (×2 each time)'
+	},
+
+	// Day 6 Practice
+	'day6-practice-q1':
+	{
+		question: 'What is 10% of 800? Options: 40, 80, 100, 160',
+		context: '10% means divide by 10'
+	},
+	'day6-practice-q2':
+	{
+		question: 'Find the odd one out: 5, 10, 20, 40, 45. Options: 10, 20, 40, 45',
+		context: 'Pattern recognition (×2 sequence, one breaks it)'
+	},
+	'day6-practice-q3':
+	{
+		question: 'Which gas is essential for respiration? Options: Oxygen, Nitrogen, Carbon dioxide, Hydrogen',
+		context: 'General Science (respiration basics)'
+	},
+	'day6-practice-q4':
+	{
+		question: 'What is 60% of 150? Options: 60, 90, 120, 75',
+		context: 'Percentage calculation (60% = 0.6)'
+	},
+
+	// Day 6 Boss
+	'day6-boss-q1':
+	{
+		question: 'If the cost price of an item is ₹200 and profit is 25%, what is the selling price? Options: ₹225, ₹250, ₹275, ₹300',
+		context: 'Profit concept (Selling Price = Cost Price + Profit)'
 	}
 };
 
@@ -740,10 +876,17 @@ const questionDatabase = {
  * Generates ChatGPT prompt and redirects to ChatGPT
  * @param {string} questionId - ID of the question
  */
-function askChatGPT(questionId) {
+function askChatGPT(questionId)
+{
+	if (window.event)
+	{
+		window.event.preventDefault();
+	}
+
 	const questionData = questionDatabase[questionId];
 
-	if (!questionData) {
+	if (!questionData)
+	{
 		alert('Question not found in database');
 		return;
 	}
@@ -765,14 +908,11 @@ function askChatGPT(questionId) {
 		Use simple language and assume I'm learning from scratch.
 	`;
 
-	// Copy to clipboard
 	copyToClipboard(prompt);
-
-	// Show notification
 	showCopyNotification();
 
-	// Redirect to ChatGPT after a short delay
-	setTimeout(() => {
+	setTimeout(() =>
+	{
 		window.open('https://chat.openai.com/', '_blank');
 	}, 1000);
 }
