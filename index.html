@@ -1394,17 +1394,170 @@
 					</div>
 				</section>
 
-				<!-- DAY 7 LOCK -->
-				<section class="locked-section" id="day7-locked">
-					<div class="locked-card">
-						<h2>Day 7 – Mock Day 🔒</h2>
-						<p>Complete Day 6 to unlock Full Mock Test</p>
-						<button class="unlock-btn" onclick="requestUnlockNextDay(7)">
-							Request Unlock for Day 7
-						</button>
+				<div style="text-align: center;">
+					<button class="proceed-btn" onclick="goToDay(7)">
+						Proceed to Day 7 →
+					</button>
+				</div>
+			</div>
+
+			<!-- DAY 7: FULL MOCK DAY – NTPC SIMULATION -->
+			<div id="day7-container" class="day-container" style="display: none;">
+				<div class="day-divider">
+					<h2 class="day-title">📅 DAY 7 – Level 4: Mock Day</h2>
+					<p class="day-subtitle">NTPC Full Mock + Analysis + Revision</p>
+
+					<!-- Button to go back to Day 6 -->
+					<button class="back-btn" onclick="goToDay(6)">
+						← Back to Day 6
+					</button>
+				</div>
+
+				<p class="boss-warning">⚠️ Once answered, you cannot change your option – just like NTPC CBT</p>
+				<div id="exam-timer" class="exam-timer">
+				⏳ Preparing Exam...
+				</div>
+
+				<!-- MOCK DAY INTRO -->
+				<section class="mission-section">
+					<div class="content-card highlight-card">
+						<h3>🧪 Mock Day Rules</h3>
+						<ul class="concept-list">
+							<li>Total time: <strong>60 minutes</strong></li>
+							<li>Do not pause or overthink</li>
+							<li>Skip questions if stuck</li>
+							<li>This mock tests <strong>exam temperament</strong></li>
+						</ul>
 					</div>
 				</section>
+
+				<!-- PART 1: FULL MOCK TEST -->
+				<section class="mission-section boss-section">
+					<div class="section-header">
+						<h2>📝 Part 1 – Full Mock Test</h2>
+						<span class="time-badge">30 min</span>
+					</div>
+
+					<div class="boss-warning">
+						<p>⚠️ Simulate real exam conditions. No distractions.</p>
+					</div>
+
+					<form id="day7-mock-form">
+
+						<!-- Q1 -->
+						<div class="question-card boss-card">
+							<p class="question-text">1. What is 15% of 400?</p>
+							<label class="radio-option"><input type="radio" name="day7-q1"> 40</label>
+							<label class="radio-option"><input type="radio" name="day7-q1"> 50</label>
+							<label class="radio-option correct-answer"><input type="radio" name="day7-q1"> 60</label>
+							<label class="radio-option"><input type="radio" name="day7-q1"> 80</label>
+						</div>
+
+						<!-- Q2 -->
+						<div class="question-card boss-card">
+							<p class="question-text">2. Find the next number: 7, 14, 28, 56, ?</p>
+							<label class="radio-option"><input type="radio" name="day7-q2"> 84</label>
+							<label class="radio-option correct-answer"><input type="radio" name="day7-q2"> 112</label>
+							<label class="radio-option"><input type="radio" name="day7-q2"> 96</label>
+							<label class="radio-option"><input type="radio" name="day7-q2"> 70</label>
+						</div>
+
+						<!-- Q3 -->
+						<div class="question-card boss-card">
+							<p class="question-text">3. Which of the following is NOT a renewable resource?</p>
+							<label class="radio-option"><input type="radio" name="day7-q3"> Solar</label>
+							<label class="radio-option"><input type="radio" name="day7-q3"> Wind</label>
+							<label class="radio-option correct-answer"><input type="radio" name="day7-q3"> Coal</label>
+							<label class="radio-option"><input type="radio" name="day7-q3"> Water</label>
+						</div>
+
+						<!-- Q4 -->
+						<div class="question-card boss-card">
+							<p class="question-text">4. If the cost price is ₹500 and profit is 20%, find selling price.</p>
+							<label class="radio-option"><input type="radio" name="day7-q4"> ₹550</label>
+							<label class="radio-option correct-answer"><input type="radio" name="day7-q4"> ₹600</label>
+							<label class="radio-option"><input type="radio" name="day7-q4"> ₹650</label>
+							<label class="radio-option"><input type="radio" name="day7-q4"> ₹700</label>
+						</div>
+
+						<!-- Q5 -->
+						<div class="question-card boss-card">
+							<p class="question-text">5. Which is larger: 0.75 or 3/4?</p>
+							<label class="radio-option"><input type="radio" name="day7-q5"> 0.75</label>
+							<label class="radio-option"><input type="radio" name="day7-q5"> 3/4</label>
+							<label class="radio-option correct-answer"><input type="radio" name="day7-q5"> Both are equal</label>
+							<label class="radio-option"><input type="radio" name="day7-q5"> Cannot say</label>
+						</div>
+
+						<button type="button" class="submit-btn boss-btn" onclick="checkBossFight(7, this)">
+							Submit Full Mock
+						</button>
+						<div class="result-message" id="day7-mock-result"></div>
+					</form>
+				</section>
+
+				<!-- PART 2: ANALYSIS -->
+				<section class="mission-section">
+					<div class="section-header">
+						<h2>📊 Part 2 – Mock Analysis</h2>
+						<span class="time-badge">20 min</span>
+					</div>
+
+					<div class="content-card">
+						<h3>🔍 Analyze Your Performance</h3>
+						<ul class="concept-list">
+							<li>Which questions took too long?</li>
+							<li>Where did you guess?</li>
+							<li>Which topic felt uncomfortable?</li>
+							<li>Accuracy vs speed balance</li>
+						</ul>
+					</div>
+
+					<div class="content-card highlight-card">
+						<h3>✍️ Write Down</h3>
+						<ul class="concept-list">
+							<li>Top 3 mistakes</li>
+							<li>1 strength you noticed</li>
+							<li>1 topic to revise tomorrow</li>
+						</ul>
+					</div>
+				</section>
+
+				<!-- PART 3: REVISION -->
+				<section class="mission-section">
+					<div class="section-header">
+						<h2>🔁 Part 3 – Quick Revision</h2>
+						<span class="time-badge">10 min</span>
+					</div>
+
+					<div class="question-card">
+						<p class="question-text">1. What is 25% of 200?</p>
+						<input type="number" class="warmup-input" data-answer="50">
+					</div>
+
+					<div class="question-card">
+						<p class="question-text">2. Find the next number: 10, 20, 40, ?</p>
+						<input type="number" class="warmup-input" data-answer="80">
+					</div>
+				</section>
+
+				<!-- DAY 7: FINAL CONFIDENCE -->
+				<section class="mission-section confidence-section">
+					<div class="confidence-card">
+						<h2>🏁 Level 1 Complete!</h2>
+						<p class="confidence-text">
+							You completed <strong>7 days of disciplined preparation</strong>.<br>
+							This is exactly how NTPC toppers train. 🚆💪
+						</p>
+						<div class="achievement-badge">
+							<span class="badge-icon">🏆</span>
+							<span class="badge-text">Foundation Level Cleared</span>
+						</div>
+					</div>
+				</section>
+
 			</div>
+
 
 		</div>
 	</main>
@@ -1415,6 +1568,7 @@
 	</footer>
 
 	<script src="script.js"></script>
+	<script src="exam.js"></script>
 	<!-- <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js" type="text/javascript"></script> -->
 </body>
 </html>
