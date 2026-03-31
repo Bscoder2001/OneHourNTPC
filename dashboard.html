@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Teacher Dashboard – OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="admin/dashboard.css">
+</head>
+<body class="dashboard-page">
+	<div class="dashboard-layout">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main">
+			<div class="breadcrumb">
+				<span>Dashboard</span>
+				<span class="breadcrumb-sep">/</span>
+				<span class="breadcrumb-current">Teachers</span>
+			</div>
+
+			<div class="dashboard-toolbar">
+				<div class="title-block">
+					<h1>Teachers</h1>
+					<p class="subtitle" id="teacher-count">0 teachers</p>
+				</div>
+				<button class="primary-btn" id="add-teacher-btn">Add Teacher</button>
+			</div>
+
+			<div class="table-card">
+				<table class="teacher-table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Username</th>
+							<th>Password</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="teacher-table-body"></tbody>
+				</table>
+			</div>
+
+			<div class="dashboard-message" id="dashboard-message"></div>
+		</main>
+	</div>
+
+	<div class="modal-overlay" id="teacher-modal-overlay">
+		<div class="teacher-modal">
+			<div class="modal-header">
+				<h2 id="teacher-modal-title">Add Teacher</h2>
+				<button type="button" class="icon-btn" id="teacher-modal-close">×</button>
+			</div>
+			<div class="modal-form">
+				<input type="hidden" id="teacher-id">
+				<div class="form-group">
+					<label for="teacher-name" class="form-label">Name</label>
+					<input type="text" id="teacher-name" class="form-input" placeholder="Teacher name">
+				</div>
+				<div class="form-group">
+					<label for="teacher-email" class="form-label">Email</label>
+					<input type="email" id="teacher-email" class="form-input" placeholder="Teacher email">
+				</div>
+				<div class="form-group" id="teacher-username-group">
+					<label for="teacher-username" class="form-label">Username</label>
+					<input type="text" id="teacher-username" class="form-input" placeholder="Teacher username">
+				</div>
+				<div class="form-group" id="teacher-password-group">
+					<label for="teacher-password" class="form-label">Password</label>
+					<input type="text" id="teacher-password" class="form-input" placeholder="Enter password">
+				</div>
+				<div class="modal-actions">
+					<button type="button" class="secondary-btn" id="teacher-modal-cancel">Cancel</button>
+					<button type="button" class="primary-btn" id="teacher-modal-save">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="/ntpc-constants.js"></script>
+	<script src="/ntpc-framework.js"></script>
+	<script src="admin/dashboard.js"></script>
+</body>
+</html>

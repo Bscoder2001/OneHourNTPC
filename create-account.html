@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Create Account – OneHourNTPC Admin</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="./styles.css">
+	<link rel="stylesheet" href="/admin/create-account.css">
+</head>
+<body class="admin-login-page">
+	<main class="admin-login-container">
+		<div class="login-wrapper">
+			<div class="login-header">
+				<div class="brand-row">
+					<div class="brand-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="none">
+							<path d="M12 3l7 4v5c0 4.2-2.7 7.6-7 9-4.3-1.4-7-4.8-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M9.5 12.2l1.8 1.8 3.4-3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+					<h1 class="login-title">Create Account</h1>
+				</div>
+				<p class="login-subtitle">Set up your secure NTPC admin account</p>
+			</div>
+
+			<section class="login-card">
+				<form id="create-account-form" class="login-form" novalidate>
+					<div class="name-grid">
+						<div class="form-group">
+							<label for="first-name" class="form-label">First name</label>
+							<input
+								type="text"
+								id="first-name"
+								class="form-input"
+								placeholder="First name"
+								autocomplete="given-name"
+							>
+						</div>
+						<div class="form-group">
+							<label for="last-name" class="form-label">Last name</label>
+							<input
+								type="text"
+								id="last-name"
+								class="form-input"
+								placeholder="Last name"
+								autocomplete="family-name"
+							>
+						</div>
+					</div>
+					<input type="hidden" id="full-name" name="full-name" required>
+					<span class="form-error" id="full-name-error"></span>
+
+					<div class="form-group">
+						<label for="username" class="form-label">Username</label>
+						<input
+							type="text"
+							id="username"
+							name="username"
+							class="form-input"
+							placeholder="Choose a username"
+							required
+							autocomplete="username"
+						>
+						<span class="form-error" id="username-error"></span>
+					</div>
+
+					<!-- Email Field -->
+					<div class="form-group">
+						<label for="email" class="form-label">Email Address</label>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							class="form-input"
+							placeholder="Enter your email address"
+							required
+							autocomplete="email"
+						>
+						<span class="form-error" id="email-error"></span>
+					</div>
+
+					<div class="form-group">
+						<label for="password" class="form-label">Password</label>
+						<div class="input-wrap">
+							<input
+								type="password"
+								id="password"
+								name="password"
+								class="form-input"
+								placeholder="Create a strong password"
+								required
+								autocomplete="new-password"
+							>
+							<button type="button" class="password-toggle" data-target="password" aria-label="Show password">Show</button>
+						</div>
+						<div class="password-strength" aria-hidden="true">
+							<div id="password-strength-fill" class="password-strength-fill"></div>
+						</div>
+						<span class="form-error" id="password-error"></span>
+					</div>
+
+					<div class="form-group">
+						<label for="confirm-password" class="form-label">Confirm Password</label>
+						<div class="input-wrap">
+							<input
+								type="password"
+								id="confirm-password"
+								name="confirm-password"
+								class="form-input"
+								placeholder="Confirm your password"
+								required
+								autocomplete="new-password"
+							>
+							<button type="button" class="password-toggle" data-target="confirm-password" aria-label="Show password">Show</button>
+						</div>
+						<span class="form-error" id="confirm-password-error"></span>
+					</div>
+
+					<div class="form-group checkbox-group">
+						<input
+							type="checkbox"
+							id="terms-agree"
+							name="terms-agree"
+							class="form-checkbox"
+							required
+						>
+						<label for="terms-agree" class="checkbox-label">
+							I agree to the <a href="#" class="terms-link">Terms and Conditions</a> and <a href="#" class="terms-link">Privacy Policy</a>
+						</label>
+					</div>
+
+					<button type="submit" class="login-btn" id="createAccount">Create Account</button>
+
+					<div class="form-error-message" id="form-error"></div>
+					<div class="form-success-message" id="form-success"></div>
+				</form>
+
+				<div class="login-footer">
+					<p class="signin-text">Already have an account? <a href="admin.html" class="login-link">Sign in</a></p>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<!-- SCRIPTS -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="admin/create-account.js"></script>
+	<script src="/ntpc-constants.js"></script>
+	<script src="/ntpc-framework.js"></script>
+
+</body>
+</html>

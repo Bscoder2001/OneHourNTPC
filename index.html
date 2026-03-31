@@ -4,34 +4,50 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 	<!-- HEADER SECTION -->
 	<header class="header">
 		<div class="container">
-			<h1 class="title">NTPC Mission Mode</h1>
-			<p class="subtitle">Level 1 – Foundation</p>
-
-			<!-- Progress Indicators -->
-			<div class="progress-stats">
-				<div class="stat">
-					<span class="stat-label">Day</span>
-					<span class="stat-value">1 / 7</span>
+			<div class="header-top">
+				<div class="header-title-row">
+					<span class="header-badge">Foundation</span>
+					<h1 class="title">NTPC Mission Mode</h1>
 				</div>
-				<div class="stat">
-					<span class="stat-label">XP Target</span>
-					<span class="stat-value" id="xp-display">0 / 200</span>
-				</div>
-				<div class="stat">
-					<span class="stat-label">Streak</span>
-					<span class="stat-value">1 Day 🔥</span>
-				</div>
+				<p class="subtitle">Level 1 · Day 1 of 7</p>
 			</div>
 
-			<!-- XP Progress Bar -->
-			<div class="xp-bar-container">
-				<div class="xp-bar" id="xp-bar"></div>
+			<div class="header-bottom" aria-label="Progress stats and XP">
+				<div class="header-stats">
+					<div class="header-stat">
+						<div class="header-stat-label">Progress</div>
+						<div class="header-stat-value mono" id="xp-display">0 / 200 XP</div>
+					</div>
+					<div class="header-divider" aria-hidden="true"></div>
+					<div class="header-stat">
+						<div class="header-stat-label">Streak</div>
+						<div class="header-stat-value mono streak-value">1 day</div>
+					</div>
+					<div class="header-divider" aria-hidden="true"></div>
+					<div class="header-stat">
+						<div class="header-stat-label">Days</div>
+						<div class="header-stat-value">
+							<div id="day-dots" class="day-dots" aria-label="Day progress dots"></div>
+						</div>
+					</div>
+					<div class="header-divider" aria-hidden="true"></div>
+				</div>
+				<div class="xp-inline">
+					<div class="xp-today-label">XP today</div>
+					<div class="xp-track" aria-label="XP progress">
+						<div class="xp-fill" id="xp-bar"></div>
+					</div>
+					<div class="xp-today-percent mono" id="xp-percent">0%</div>
+				</div>
 			</div>
 		</div>
 	</header>
@@ -543,7 +559,7 @@
 						<button class="chatgpt-btn" onclick="askChatGPT('day3-warmup-2')">Make this clear with ChatGPT</button>
 					</div>
 					
-					<button class="submit-btn" onclick="checkDay3Warmup()">Submit Warm-up</button>
+					<button class="submit-btn" onclick="checkWarmup(this)">Submit Warm-up</button>
 					<div class="result-message" id="day3-warmup-result"></div>
 				</section>
 
@@ -1567,8 +1583,9 @@
 		<p>NTPC Mission Mode © 2026 | Keep grinding, future railway champion! 🚂</p>
 	</footer>
 
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 	<script src="script.js"></script>
 	<script src="exam.js"></script>
-	<!-- <script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js" type="text/javascript"></script> -->
+
 </body>
 </html>

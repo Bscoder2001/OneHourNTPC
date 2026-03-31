@@ -33,24 +33,36 @@ const AppState = {
  * Updates the XP display and progress bar
  * @param {number} xpToAdd - XP points to add
  */
-function updateXP(xpToAdd) {
+function updateXP(xpToAdd)
+{
 	AppState.totalXP += xpToAdd;
 
-	if (AppState.totalXP > AppState.targetXP) {
+	if (AppState.totalXP > AppState.targetXP)
+	{
 		AppState.totalXP = AppState.targetXP;
 	}
 
 	// Update display
-	const xpDisplay = document.getElementById('xp-display');
-	xpDisplay.textContent = `${AppState.totalXP} / ${AppState.targetXP}`;
+	const xpDisplay = $('#xp-display');
+	if (xpDisplay.length > 0)
+	{
+		xpDisplay.text(`${AppState.totalXP} / ${AppState.targetXP} XP`);
+	}
 
 	// Update progress bar
-	const progressBar = document.getElementById('xp-bar');
+	const progressBar = $('#xp-bar');
 	const percentage = (AppState.totalXP / AppState.targetXP) * 100;
-	progressBar.style.width = `${percentage}%`;
+	progressBar.css('width', `${percentage}%`);
+
+	const xpPercent = $('#xp-percent');
+	if (xpPercent.length > 0)
+	{
+		xpPercent.text(`${Math.round(percentage)}%`);
+	}
 
 	// Add celebratory effect when reaching target
-	if (AppState.totalXP === AppState.targetXP) {
+	if (AppState.totalXP === AppState.targetXP)
+	{
 		celebrateCompletion();
 	}
 }
@@ -58,18 +70,20 @@ function updateXP(xpToAdd) {
 /**
  * Visual celebration when XP target is reached
  */
-function celebrateCompletion() {
-	const progressBar = document.getElementById('xp-bar');
-	progressBar.style.boxShadow = '0 0 25px rgba(46, 204, 113, 0.8)';
+function celebrateCompletion()
+{
+	const progressBar = $('#xp-bar');
+	progressBar.css('box-shadow', '0 0 25px rgba(46, 204, 113, 0.8)');
 
 	// Flash effect
 	let count = 0;
 	const flashInterval = setInterval(() => {
-		progressBar.style.opacity = progressBar.style.opacity === '1' ? '0.6' : '1';
+		progressBar.css('opacity', progressBar.css('opacity') === '1' ? '0.6' : '1');
 		count++;
-		if (count > 6) {
+		if (count > 6)
+		{
 			clearInterval(flashInterval);
-			progressBar.style.opacity = '1';
+			progressBar.css('opacity', '1');
 		}
 	}, 200);
 }
@@ -83,45 +97,39 @@ function celebrateCompletion() {
  */
 function checkWarmup(btn)
 {
-    const section =
-        btn.closest('.mission-section');
+	const section = $(btn).closest('.mission-section');
+	const inputs = section.find('input[data-answer]');
 
-    const inputs =
-        section.querySelectorAll('input[data-answer]');
+	let correctCount = 0;
+	let answers = [];
 
-    let correctCount = 0;
-    let answers = [];
+	inputs.each(function()
+	{
+		const userAnswer = $(this).val().trim();
+		const correctAnswer = $(this).data('answer');
 
-    inputs.forEach(input =>
-    {
-        const userAnswer = input.value.trim();
-        const correctAnswer = input.dataset.answer;
+		answers.push(userAnswer);
 
-        answers.push(userAnswer);
+		if (userAnswer === correctAnswer)
+		{
+			correctCount++;
+			$(this).addClass('correct');
+		}
+		else
+		{
+			$(this).addClass('incorrect');
+		}
 
-        if (userAnswer === correctAnswer)
-        {
-            correctCount++;
-            input.classList.add('correct');
-        }
-        else
-        {
-            input.classList.add('incorrect');
-        }
+		$(this).prop('disabled', true);
+	});
 
-        input.disabled = true;
-    });
+	const xpEarned = correctCount * AppState.xpValues.warmup;
+	updateXP(xpEarned);
 
-    const xpEarned =
-        correctCount * AppState.xpValues.warmup;
+	section.find('.result-message').text(`You got ${correctCount}/${inputs.length} correct. XP +${xpEarned}`);
 
-    updateXP(xpEarned);
-
-    section.querySelector('.result-message').textContent =
-        `You got ${correctCount}/${inputs.length} correct. XP +${xpEarned}`;
-
-    btn.disabled = true;
-    btn.textContent = 'Completed ✓';
+	$(btn).prop('disabled', true);
+	$(btn).text('Completed ✓');
 }
 
 // ==========================================
@@ -142,7 +150,7 @@ function checkPracticeGeneric(btn)
 
 	if (btn)
 	{
-		section = btn.closest('.mission-section');
+		section = $(btn).closest('.mission-section');
 	}
 
 	if (!section)
@@ -153,9 +161,9 @@ function checkPracticeGeneric(btn)
 	let dayContainer = section.closest('.day-container');
 	let dayNumber = 1;
 
-	if (dayContainer && dayContainer.id)
+	if (dayContainer && dayContainer.attr('id'))
 	{
-		let match = dayContainer.id.match(/^day(\d+)-container$/);
+		let match = dayContainer.attr('id').match(/^day(\d+)-container$/);
 		if (match && match[1])
 		{
 			dayNumber = parseInt(match[1], 10);
@@ -166,22 +174,22 @@ function checkPracticeGeneric(btn)
 
 	if (state.practiceCompleted)
 	{
-		let resultEl = section.querySelector('.result-message');
-		if (resultEl && resultEl.id)
+		let resultEl = section.find('.result-message');
+		if (resultEl && resultEl.attr('id'))
 		{
-			showMessage(resultEl.id, 'You already completed this section!', 'partial');
+			showMessage(resultEl.attr('id'), 'You already completed this section!', 'partial');
 		}
 		return;
 	}
 
-	let questionCards = Array.from(section.querySelectorAll('.question-card'));
+	let questionCards = section.find('.question-card');
 	let correctCount = 0;
 	let totalCount = 0;
 	let answers = [];
 
-	questionCards.forEach(card =>
+	questionCards.each(function()
 	{
-		let radios = Array.from(card.querySelectorAll('input[type="radio"]'));
+		let radios = $(this).find('input[type="radio"]');
 
 		if (radios.length <= 0)
 		{
@@ -190,32 +198,32 @@ function checkPracticeGeneric(btn)
 
 		totalCount++;
 
-		let selectedRadio = card.querySelector('input[type="radio"]:checked');
+		let selectedRadio = $(this).find('input[type="radio"]:checked');
 		let selectedLabel = null;
 
-		if (selectedRadio)
+		if (selectedRadio.length > 0)
 		{
 			selectedLabel = selectedRadio.closest('.radio-option');
 		}
 
-		let correctLabel = card.querySelector('.radio-option.correct-answer');
+		let correctLabel = $(this).find('.radio-option.correct-answer');
 
-		if (!correctLabel)
+		if (correctLabel.length === 0)
 		{
-			correctLabel = card.querySelector('.radio-option[data-answer]');
+			correctLabel = $(this).find('.radio-option[data-answer]');
 		}
 
 		let isCorrect = false;
 
-		if (selectedLabel && selectedLabel.classList.contains('correct-answer'))
+		if (selectedLabel && selectedLabel.hasClass('correct-answer'))
 		{
 			isCorrect = true;
 		}
 
-		if (!isCorrect && selectedRadio && correctLabel && correctLabel.classList.contains('correct-answer') === false)
+		if (!isCorrect && selectedRadio.length > 0 && correctLabel.length > 0 && !correctLabel.hasClass('correct-answer'))
 		{
-			let expected = correctLabel.getAttribute('data-answer');
-			if (expected && selectedRadio.value === expected)
+			let expected = correctLabel.data('answer');
+			if (expected && selectedRadio.val() === expected)
 			{
 				isCorrect = true;
 			}
@@ -226,30 +234,27 @@ function checkPracticeGeneric(btn)
 			correctCount++;
 		}
 
-		if (correctLabel)
+		if (correctLabel.length > 0)
 		{
-			correctLabel.classList.add('show-correct');
+			correctLabel.addClass('show-correct');
 		}
 
-		let explanation = card.querySelector('.explanation');
-		if (explanation)
+		let explanation = $(this).find('.explanation');
+		if (explanation.length > 0)
 		{
-			explanation.classList.add('show');
+			explanation.addClass('show');
 		}
 
-		if (selectedRadio)
+		if (selectedRadio.length > 0)
 		{
-			answers.push(selectedRadio.value);
+			answers.push(selectedRadio.val());
 		}
 		else
 		{
 			answers.push(null);
 		}
 
-		radios.forEach(r =>
-		{
-			r.disabled = true;
-		});
+		radios.prop('disabled', true);
 	});
 
 	state.userAnswers.practice = answers;
@@ -257,12 +262,12 @@ function checkPracticeGeneric(btn)
 	let xpEarned = correctCount * AppState.xpValues.practice;
 	updateXP(xpEarned);
 
-	let resultEl = section.querySelector('.result-message');
+	let resultEl = section.find('.result-message');
 
-	if (resultEl && resultEl.id)
+	if (resultEl && resultEl.attr('id'))
 	{
 		let message = `You got ${correctCount}/${totalCount} correct! Earned ${xpEarned} XP 💪`;
-		showMessage(resultEl.id, message, 'success');
+		showMessage(resultEl.attr('id'), message, 'success');
 	}
 
 	state.practiceCompleted = true;
@@ -275,8 +280,8 @@ function checkPracticeGeneric(btn)
 
 	if (btn)
 	{
-		btn.disabled = true;
-		btn.textContent = 'Completed ✓';
+		$(btn).prop('disabled', true);
+		$(btn).text('Completed ✓');
 	}
 }
 
@@ -291,13 +296,11 @@ function getOrCreateDayState(dayNumber)
 
 	if (!window[key])
 	{
-		window[key] =
-		{
+		window[key] = {
 			warmupCompleted: false,
 			practiceCompleted: false,
 			bossCompleted: false,
-			userAnswers:
-			{
+			userAnswers: {
 				warmup: [],
 				practice: [],
 				boss: []
@@ -315,9 +318,11 @@ function getOrCreateDayState(dayNumber)
 /**
  * Checks boss fight answers (mixed MCQ and input)
  */
-function checkBoss() {
+function checkBoss()
+{
 	// Prevent multiple submissions
-	if (AppState.bossCompleted) {
+	if (AppState.bossCompleted)
+	{
 		showMessage('boss-result', 'You already defeated the boss!', 'partial');
 		return;
 	}
@@ -326,92 +331,99 @@ function checkBoss() {
 	const answers = [];
 
 	// Question 1 (MCQ)
-	const boss1 = document.querySelector('input[name="boss1"]:checked');
-	const boss1Answer = boss1 ? boss1.value : null;
+	const boss1 = $('input[name="boss1"]:checked');
+	const boss1Answer = boss1.length > 0 ? boss1.val() : null;
 	answers.push(boss1Answer);
 
-	if (boss1Answer === 'b') {
+	if (boss1Answer === 'b')
+	{
 		correctCount++;
 	}
 
 	// Highlight correct answer and show explanation
-	const boss1Correct = document.querySelector('.boss-card:nth-of-type(1) .radio-option[data-answer="b"]');
-	if (boss1Correct) boss1Correct.classList.add('show-correct');
+	const boss1Correct = $('.boss-card:nth-of-type(1) .radio-option[data-answer="b"]');
+	if (boss1Correct.length > 0) boss1Correct.addClass('show-correct');
 
-	const boss1Explanation = document.querySelector('.boss-card:nth-of-type(1) .explanation');
-	if (boss1Explanation) boss1Explanation.classList.add('show');
+	const boss1Explanation = $('.boss-card:nth-of-type(1) .explanation');
+	if (boss1Explanation.length > 0) boss1Explanation.addClass('show');
 
 	// Disable radio buttons
-	document.querySelectorAll('input[name="boss1"]').forEach(radio => {
-		radio.disabled = true;
-	});
+	$('input[name="boss1"]').prop('disabled', true);
 
 	// Question 2 (Input - decimal)
-	const boss2Input = document.getElementById('boss-2');
-	const boss2Answer = boss2Input.value.trim();
+	const boss2Input = $('#boss-2');
+	const boss2Answer = boss2Input.val().trim();
 	answers.push(boss2Answer);
 
-	if (boss2Answer === '0.5' || boss2Answer === '.5') {
+	if (boss2Answer === '0.5' || boss2Answer === '.5')
+	{
 		correctCount++;
-		boss2Input.classList.add('correct');
-	} else {
-		boss2Input.classList.add('incorrect');
+		boss2Input.addClass('correct');
+	}
+	else
+	{
+		boss2Input.addClass('incorrect');
 	}
 
-	boss2Input.disabled = true;
-	const boss2Explanation = document.querySelector('.boss-card:nth-of-type(2) .explanation');
-	if (boss2Explanation) boss2Explanation.classList.add('show');
+	boss2Input.prop('disabled', true);
+	const boss2Explanation = $('.boss-card:nth-of-type(2) .explanation');
+	if (boss2Explanation.length > 0) boss2Explanation.addClass('show');
 
 	// Question 3 (MCQ)
-	const boss3 = document.querySelector('input[name="boss3"]:checked');
-	const boss3Answer = boss3 ? boss3.value : null;
+	const boss3 = $('input[name="boss3"]:checked');
+	const boss3Answer = boss3.length > 0 ? boss3.val() : null;
 	answers.push(boss3Answer);
 
-	if (boss3Answer === 'd') {
+	if (boss3Answer === 'd')
+	{
 		correctCount++;
 	}
 
-	const boss3Correct = document.querySelector('.boss-card:nth-of-type(3) .radio-option[data-answer="d"]');
-	if (boss3Correct) boss3Correct.classList.add('show-correct');
+	const boss3Correct = $('.boss-card:nth-of-type(3) .radio-option[data-answer="d"]');
+	if (boss3Correct.length > 0) boss3Correct.addClass('show-correct');
 
-	const boss3Explanation = document.querySelector('.boss-card:nth-of-type(3) .explanation');
-	if (boss3Explanation) boss3Explanation.classList.add('show');
+	const boss3Explanation = $('.boss-card:nth-of-type(3) .explanation');
+	if (boss3Explanation.length > 0) boss3Explanation.addClass('show');
 
-	document.querySelectorAll('input[name="boss3"]').forEach(radio => {
-		radio.disabled = true;
-	});
+	$('input[name="boss3"]').prop('disabled', true);
 
 	// Question 4 (Input - number)
-	const boss4Input = document.getElementById('boss-4');
-	const boss4Answer = boss4Input.value.trim();
+	const boss4Input = $('#boss-4');
+	const boss4Answer = boss4Input.val().trim();
 	answers.push(boss4Answer);
 
-	if (boss4Answer === '35') {
+	if (boss4Answer === '35')
+	{
 		correctCount++;
-		boss4Input.classList.add('correct');
-	} else {
-		boss4Input.classList.add('incorrect');
+		boss4Input.addClass('correct');
+	}
+	else
+	{
+		boss4Input.addClass('incorrect');
 	}
 
-	boss4Input.disabled = true;
-	const boss4Explanation = document.querySelector('.boss-card:nth-of-type(4) .explanation');
-	if (boss4Explanation) boss4Explanation.classList.add('show');
+	boss4Input.prop('disabled', true);
+	const boss4Explanation = $('.boss-card:nth-of-type(4) .explanation');
+	if (boss4Explanation.length > 0) boss4Explanation.addClass('show');
 
 	// Question 5 (Input - number)
-	const boss5Input = document.getElementById('boss-5');
-	const boss5Answer = boss5Input.value.trim();
+	const boss5Input = $('#boss-5');
+	const boss5Answer = boss5Input.val().trim();
 	answers.push(boss5Answer);
 
-	if (boss5Answer === '1') {
+	if (boss5Answer === '1')
+	{
 		correctCount++;
-		boss5Input.classList.add('correct');
-	} else {
-		boss5Input.classList.add('incorrect');
+		boss5Input.addClass('correct');
+	}
+	else
+	{
+		boss5Input.addClass('incorrect');
 	}
 
-	boss5Input.disabled = true;
-	const boss5Explanation = document.querySelector('.boss-card:nth-of-type(5) .explanation');
-	if (boss5Explanation) boss5Explanation.classList.add('show');
+	boss5Input.prop('disabled', true);
+	const boss5Explanation = $('.boss-card:nth-of-type(5) .explanation');
+	if (boss5Explanation.length > 0) boss5Explanation.addClass('show');
 
 	// Store answers (future: send to backend)
 	AppState.userAnswers.boss = answers;
@@ -422,11 +434,16 @@ function checkBoss() {
 
 	// Show result
 	let message;
-	if (correctCount === 5) {
+	if (correctCount === 5)
+	{
 		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
-	} else if (correctCount >= 3) {
+	}
+	else if (correctCount >= 3)
+	{
 		message = `💪 Good fight! ${correctCount}/5 correct. Earned ${xpEarned} XP!`;
-	} else {
+	}
+	else
+	{
 		message = `Keep practicing! ${correctCount}/5 correct. Earned ${xpEarned} XP.`;
 	}
 
@@ -450,16 +467,18 @@ function checkBoss() {
  * @param {string} message - Message to display
  * @param {string} type - Type of message (success/partial)
  */
-function showMessage(elementId, message, type) {
-	const messageEl = document.getElementById(elementId);
-	messageEl.textContent = message;
-	messageEl.className = `result-message show ${type}`;
+function showMessage(elementId, message, type)
+{
+	const messageEl = $('#' + elementId);
+	messageEl.text(message);
+	messageEl.attr('class', `result-message show ${type}`);
 }
 
 /**
  * Redirects to WhatsApp to request Day 2 unlock
  */
-function requestUnlock() {
+function requestUnlock()
+{
 	const phoneNumber = '919051521161'; // India format
 	const message = encodeURIComponent("I've completed day 1, please unlock day 2");
 	const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
@@ -494,21 +513,25 @@ const Day3State = {
  * Wrapper: single boss-check function for all days
  * @param {number} dayNumber - Day number (1/2/3)
  */
-function checkBossFight(dayNumber, btn) {
+function checkBossFight(dayNumber, btn)
+{
 	checkBossGeneric(dayNumber, btn);
 }
 
 
-function checkBossGeneric(dayNumber, btn) {
+function checkBossGeneric(dayNumber, btn)
+{
 	let config = BossConfig[dayNumber];
 
-	if (!config) {
+	if (!config)
+	{
 		return;
 	}
 
 	let state = config.state();
 
-	if (state.bossCompleted) {
+	if (state.bossCompleted)
+	{
 		showMessage(config.resultId, 'You already defeated the boss!', 'partial');
 		return;
 	}
@@ -516,82 +539,93 @@ function checkBossGeneric(dayNumber, btn) {
 	let correctCount = 0;
 	let answers = [];
 
-	let section = document.querySelector(config.sectionSelector);
+	let section = $(config.sectionSelector);
 
-	if (!section) {
+	if (section.length === 0)
+	{
 		return;
 	}
 
-	let bossCards = Array.from(section.querySelectorAll('.boss-card'));
+	let bossCards = section.find('.boss-card');
 
 	config.questions.forEach(q => {
-		let card = bossCards[q.cardIndex];
+		let card = bossCards.eq(q.cardIndex);
 
-		if (!card) {
+		if (card.length === 0)
+		{
 			answers.push(null);
 			return;
 		}
 
-		if (q.type === 'mcq') {
-			let selected = document.querySelector('input[name="' + q.name + '"]:checked');
+		if (q.type === 'mcq')
+		{
+			let selected = $('input[name="' + q.name + '"]:checked');
 			let selectedValue = null;
 
-			if (selected) {
-				selectedValue = selected.value;
+			if (selected.length > 0)
+			{
+				selectedValue = selected.val();
 			}
 
 			answers.push(selectedValue);
 
-			if (selectedValue === q.correctValue) {
+			if (selectedValue === q.correctValue)
+			{
 				correctCount++;
 			}
 
-			let correctOption = card.querySelector(q.correctSelector);
-			if (correctOption) {
-				correctOption.classList.add('show-correct');
+			let correctOption = card.find(q.correctSelector);
+			if (correctOption.length > 0)
+			{
+				correctOption.addClass('show-correct');
 			}
 
-			let explanation = card.querySelector('.explanation');
-			if (explanation) {
-				explanation.classList.add('show');
+			let explanation = card.find('.explanation');
+			if (explanation.length > 0)
+			{
+				explanation.addClass('show');
 			}
 
-			document.querySelectorAll('input[name="' + q.name + '"]').forEach(radio => {
-				radio.disabled = true;
-			});
+			$('input[name="' + q.name + '"]').prop('disabled', true);
 		}
-		else if (q.type === 'input') {
-			let input = document.getElementById(q.id);
+		else if (q.type === 'input')
+		{
+			let input = $('#' + q.id);
 
-			if (!input) {
+			if (input.length === 0)
+			{
 				answers.push(null);
 				return;
 			}
 
-			let value = input.value.trim();
+			let value = input.val().trim();
 			answers.push(value);
 
 			let isCorrect = false;
 
 			q.correctValues.forEach(cv => {
-				if (value === cv) {
+				if (value === cv)
+				{
 					isCorrect = true;
 				}
 			});
 
-			if (isCorrect) {
+			if (isCorrect)
+			{
 				correctCount++;
-				input.classList.add('correct');
+				input.addClass('correct');
 			}
-			else {
-				input.classList.add('incorrect');
+			else
+			{
+				input.addClass('incorrect');
 			}
 
-			input.disabled = true;
+			input.prop('disabled', true);
 
-			let explanation = card.querySelector('.explanation');
-			if (explanation) {
-				explanation.classList.add('show');
+			let explanation = card.find('.explanation');
+			if (explanation.length > 0)
+			{
+				explanation.addClass('show');
 			}
 		}
 	});
@@ -602,28 +636,34 @@ function checkBossGeneric(dayNumber, btn) {
 	updateXP(xpEarned);
 
 	let message = '';
-	if (correctCount === config.totalQuestions) {
+	if (correctCount === config.totalQuestions)
+	{
 		message = `🎉 PERFECT! Boss defeated! Earned ${xpEarned} XP!`;
 	}
-	else if (correctCount >= 3) {
+	else if (correctCount >= 3)
+	{
 		message = `💪 Good fight! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP!`;
 	}
-	else {
+	else
+	{
 		message = `Keep practicing! ${correctCount}/${config.totalQuestions} correct. Earned ${xpEarned} XP.`;
 	}
 
-	if (correctCount >= 3) {
+	if (correctCount >= 3)
+	{
 		showMessage(config.resultId, message, 'success');
 	}
-	else {
+	else
+	{
 		showMessage(config.resultId, message, 'partial');
 	}
 
 	state.bossCompleted = true;
 
-	if (btn) {
-		btn.disabled = true;
-		btn.textContent = config.buttonText;
+	if (btn)
+	{
+		$(btn).prop('disabled', true);
+		$(btn).text(config.buttonText);
 	}
 }
 
@@ -634,239 +674,197 @@ function checkBossGeneric(dayNumber, btn) {
 /**
  * Question database for ChatGPT prompts
  */
-const questionDatabase =
-{
+const questionDatabase = {
 	// Day 2 Warmup
-	'day2-warmup-1':
-	{
+	'day2-warmup-1': {
 		question: 'What is the HCF of 12 and 18?',
 		context: 'HCF (Highest Common Factor)'
 	},
-	'day2-warmup-2':
-	{
+	'day2-warmup-2': {
 		question: 'Which of these is a living thing? Options: Rock, Tree, Water',
 		context: 'Biology - Living vs Non-living'
 	},
 
 	// Day 2 Practice
-	'day2-practice-q1':
-	{
+	'day2-practice-q1': {
 		question: 'What is the HCF of 24 and 36? Options: 6, 12, 8, 18',
 		context: 'HCF calculation'
 	},
-	'day2-practice-q2':
-	{
+	'day2-practice-q2': {
 		question: 'What is the LCM of 5 and 7? Options: 12, 70, 35, 14',
 		context: 'LCM with prime numbers'
 	},
-	'day2-practice-q3':
-	{
+	'day2-practice-q3': {
 		question: 'Two bells ring at intervals of 4 and 6 minutes. If they ring together now, after how many minutes will they ring together again? Options: 10, 12, 24, 2',
 		context: 'LCM real-life application'
 	},
-	'day2-practice-q4':
-	{
+	'day2-practice-q4': {
 		question: 'The HCF of two numbers is 5 and their LCM is 150. If one number is 25, what is the other number? Options: 20, 30, 15, 35',
 		context: 'HCF × LCM = Product formula'
 	},
 
 	// Day 2 Boss
-	'day2-boss-q1':
-	{
+	'day2-boss-q1': {
 		question: 'Find the smallest number that is divisible by both 12 and 15',
 		context: 'LCM application'
 	},
-	'day2-boss-q2':
-	{
+	'day2-boss-q2': {
 		question: 'Which of the following is NOT a characteristic of living things? Options: Respiration, Growth, Rusting, Reproduction',
 		context: 'Living things characteristics'
 	},
-	'day2-boss-q3':
-	{
+	'day2-boss-q3': {
 		question: 'Three runners complete a lap in 12, 18, and 24 minutes respectively. After how many minutes will they all meet at the starting point? Options: 54, 72, 144, 36',
 		context: 'LCM with three numbers'
 	},
-	'day2-boss-q4':
-	{
+	'day2-boss-q4': {
 		question: 'Which organism can make its own food? Options: Lion, Mushroom, Green plant, Bacteria',
 		context: 'Autotrophs and photosynthesis'
 	},
-	'day2-boss-q5':
-	{
+	'day2-boss-q5': {
 		question: 'The product of two numbers is 360 and their HCF is 6. What is their LCM?',
 		context: 'HCF × LCM formula application'
 	},
 
 	// Day 3 Warmup
-	'day3-warmup-1':
-	{
+	'day3-warmup-1': {
 		question: 'What is 50% of 100?',
 		context: 'Percentage basics (50% = half)'
 	},
-	'day3-warmup-2':
-	{
+	'day3-warmup-2': {
 		question: 'Find the next number: 2, 4, 6, 8, ?',
 		context: 'Number series (add 2 each time)'
 	},
 
 	// Day 3 Practice
-	'day3-practice-q1':
-	{
+	'day3-practice-q1': {
 		question: 'What is 25% of 200? Options: 25, 50, 75, 100',
 		context: '25% = 1/4, so 200 ÷ 4 = 50'
 	},
-	'day3-practice-q2':
-	{
+	'day3-practice-q2': {
 		question: 'Convert 3/5 to percentage: Options: 30%, 50%, 60%, 35%',
 		context: 'Fraction to percentage (multiply by 100)'
 	},
-	'day3-practice-q3':
-	{
+	'day3-practice-q3': {
 		question: 'If 20% of a number is 40, what is the number? Options: 80, 200, 100, 160',
 		context: 'Find whole from percentage (reverse calculation)'
 	},
-	'day3-practice-q4':
-	{
+	'day3-practice-q4': {
 		question: 'What is 10% of 500? Options: 50, 100, 5, 25',
 		context: '10% = 1/10, so 500 ÷ 10 = 50'
 	},
-	'day3-practice-q5':
-	{
+	'day3-practice-q5': {
 		question: '0.75 expressed as percentage is: Options: 7.5%, 75%, 0.75%, 750%',
 		context: 'Decimal to percentage (×100)'
 	},
 
 	// Day 3 Boss
-	'day3-boss-q1':
-	{
+	'day3-boss-q1': {
 		question: 'A student scored 360 marks out of 600. What is his percentage? Options: 50%, 60%, 65%, 70%',
 		context: 'Percentage formula: (part/whole) × 100'
 	},
-	'day3-boss-q2':
-	{
+	'day3-boss-q2': {
 		question: 'Find the next number: 5, 10, 20, 40, ?',
 		context: 'Number series (×2 each time)'
 	},
-	'day3-boss-q3':
-	{
+	'day3-boss-q3': {
 		question: 'Which is larger: 0.6 or 0.58? (Revision from Day 1)',
 		context: 'Compare decimals by equal digits: 0.60 vs 0.58'
 	},
-	'day3-boss-q4':
-	{
+	'day3-boss-q4': {
 		question: 'If 30% of a number is 90, find 50% of that number:',
 		context: 'Find 100% first, then calculate 50%'
 	},
 
 	// Day 4 Warmup
-	'day4-warmup-1':
-	{
+	'day4-warmup-1': {
 		question: 'What is 10% of 250?',
 		context: 'Percentage basics (10% means divide by 10)'
 	},
-	'day4-warmup-2':
-	{
+	'day4-warmup-2': {
 		question: 'Convert 0.2 into percentage:',
 		context: 'Decimal to percentage (×100)'
 	},
 
 	// Day 4 Practice
-	'day4-practice-q1':
-	{
+	'day4-practice-q1': {
 		question: 'What is 20% of 450? Options: 45, 90, 100, 75',
 		context: '20% = 1/5, so 450 ÷ 5 = 90'
 	},
-	'day4-practice-q2':
-	{
+	'day4-practice-q2': {
 		question: 'If 40% of a number is 160, find the number. Options: 200, 400, 320, 160',
 		context: 'Find whole from percentage (reverse calculation)'
 	},
-	'day4-practice-q3':
-	{
+	'day4-practice-q3': {
 		question: '75% of a number is 300. What is 25% of that number? Options: 75, 100, 150, 200',
 		context: 'Find 100% first, then take 25% (1/4)'
 	},
 
 	// Day 4 Boss
-	'day4-boss-q1':
-	{
+	'day4-boss-q1': {
 		question: 'A shopkeeper gives 20% discount on a ₹500 item. What is the selling price? Options: ₹350, ₹400, ₹450, ₹300',
 		context: 'Discount concept (Selling Price = Marked Price − Discount)'
 	},
 
 	// Day 5 Warmup
-	'day5-warmup-1':
-	{
+	'day5-warmup-1': {
 		question: 'What is 50% of 300?',
 		context: 'Percentage basics (50% = half)'
 	},
-	'day5-warmup-2':
-	{
+	'day5-warmup-2': {
 		question: 'Find the next number: 1, 4, 9, 16, ?',
 		context: 'Number series (perfect squares)'
 	},
 
 	// Day 5 Practice
-	'day5-practice-q1':
-	{
+	'day5-practice-q1': {
 		question: 'What is 20% of 600? Options: 100, 120, 150, 200',
 		context: '20% = 1/5, so 600 ÷ 5 = 120'
 	},
-	'day5-practice-q2':
-	{
+	'day5-practice-q2': {
 		question: 'Find the odd one out: 2, 4, 8, 16, 18. Options: 2, 4, 16, 18',
 		context: 'Pattern recognition (powers of 2)'
 	},
-	'day5-practice-q3':
-	{
+	'day5-practice-q3': {
 		question: 'Which of the following is a non-renewable resource? Options: Wind, Solar, Coal, Water',
 		context: 'General Science (renewable vs non-renewable)'
 	},
 
 	// Day 5 Boss
-	'day5-boss-q1':
-	{
+	'day5-boss-q1': {
 		question: 'If the price of an item increases by 20%, what happens to the selling price of ₹200? Options: ₹220, ₹240, ₹250, ₹260',
 		context: 'Percentage increase (New Value = Old Value + Increase)'
 	},
 
 	// Day 6 Warmup
-	'day6-warmup-1':
-	{
+	'day6-warmup-1': {
 		question: 'What is 25% of 400?',
 		context: '25% = 1/4, so divide by 4'
 	},
-	'day6-warmup-2':
-	{
+	'day6-warmup-2': {
 		question: 'Find the next number: 3, 6, 12, 24, ?',
 		context: 'Number series (×2 each time)'
 	},
 
 	// Day 6 Practice
-	'day6-practice-q1':
-	{
+	'day6-practice-q1': {
 		question: 'What is 10% of 800? Options: 40, 80, 100, 160',
 		context: '10% means divide by 10'
 	},
-	'day6-practice-q2':
-	{
+	'day6-practice-q2': {
 		question: 'Find the odd one out: 5, 10, 20, 40, 45. Options: 10, 20, 40, 45',
 		context: 'Pattern recognition (×2 sequence, one breaks it)'
 	},
-	'day6-practice-q3':
-	{
+	'day6-practice-q3': {
 		question: 'Which gas is essential for respiration? Options: Oxygen, Nitrogen, Carbon dioxide, Hydrogen',
 		context: 'General Science (respiration basics)'
 	},
-	'day6-practice-q4':
-	{
+	'day6-practice-q4': {
 		question: 'What is 60% of 150? Options: 60, 90, 120, 75',
 		context: 'Percentage calculation (60% = 0.6)'
 	},
 
 	// Day 6 Boss
-	'day6-boss-q1':
-	{
+	'day6-boss-q1': {
 		question: 'If the cost price of an item is ₹200 and profit is 25%, what is the selling price? Options: ₹225, ₹250, ₹275, ₹300',
 		context: 'Profit concept (Selling Price = Cost Price + Profit)'
 	}
@@ -921,7 +919,8 @@ function askChatGPT(questionId)
  * Copies text to clipboard
  * @param {string} text - Text to copy
  */
-function copyToClipboard(text) {
+function copyToClipboard(text)
+{
 	// Create temporary textarea
 	const textarea = document.createElement('textarea');
 	textarea.value = text;
@@ -940,7 +939,8 @@ function copyToClipboard(text) {
 /**
  * Shows a notification that prompt was copied
  */
-function showCopyNotification() {
+function showCopyNotification()
+{
 	// Create notification element
 	const notification = document.createElement('div');
 	notification.textContent = '✓ Prompt copied! Opening ChatGPT...';
@@ -974,8 +974,7 @@ function requestUnlockNextDay(dayNumber)
 	const email = 'bsubham408@gmail.com';
 	const subjectText = `Request to Unlock Day ${dayNumber} - OneHourNTPC`;
 
-	const bodyText =
-		`Hi Team OneHourNTPC,
+	const bodyText = `Hi Team OneHourNTPC,
 
 		I've successfully completed Day ${dayNumber - 1} of my NTPC preparation on OneHourNTPC.
 
@@ -985,14 +984,12 @@ function requestUnlockNextDay(dayNumber)
 		A OneHourNTPC Learner
 	`;
 
-	const gmailUrl =
-		"https://mail.google.com/mail/?view=cm&fs=1" +
+	const gmailUrl = "https://mail.google.com/mail/?view=cm&fs=1" +
 		"&to=" + encodeURIComponent(email) +
 		"&su=" + encodeURIComponent(subjectText) +
 		"&body=" + encodeURIComponent(bodyText);
 
-	const mailtoUrl =
-		"mailto:" + encodeURIComponent(email) +
+	const mailtoUrl = "mailto:" + encodeURIComponent(email) +
 		"?subject=" + encodeURIComponent(subjectText) +
 		"&body=" + encodeURIComponent(bodyText);
 
@@ -1003,7 +1000,8 @@ function requestUnlockNextDay(dayNumber)
 	if (!confirmSend) return;
 	const win = window.open(gmailUrl, "_blank");
 
-	if (!win) {
+	if (!win)
+	{
 		window.location.href = mailtoUrl;
 	}
 }
@@ -1013,169 +1011,170 @@ function requestUnlockNextDay(dayNumber)
  * @param {number} dayNumber - Current day number
  */
 
-function updateHeaderForDay(dayNumber) {
-	const subtitle = document.querySelector('.subtitle');
-	if (subtitle) {
-		if (dayNumber === 1) {
-			subtitle.textContent = 'Level 1 – Foundation';
-		}
-		else {
-			subtitle.textContent = `Level 1 – Foundation (Day ${dayNumber})`;
-		}
+function updateHeaderForDay(dayNumber)
+{
+	const subtitle = $('.subtitle');
+	if (subtitle.length > 0)
+	{
+		subtitle.text(`Level 1 · Day ${dayNumber} of 7`);
 	}
 
-	const dayValue = document.querySelector('.progress-stats .stat:first-child .stat-value');
-	if (dayValue) {
-		dayValue.textContent = `${dayNumber} / 7`;
+	const totalDays = 7;
+	const currentDay = dayNumber;
+
+	const dayDots = document.getElementById('day-dots');
+	if (dayDots)
+	{
+		dayDots.innerHTML = '';
+		for (let i = 1; i <= totalDays; i++)
+		{
+			const d = document.createElement('div');
+			d.className = 'dot' + (i < currentDay ? ' done' : i === currentDay ? ' active' : '');
+			dayDots.appendChild(d);
+		}
 	}
 }
 
-const BossConfig =
-{
-	1:
-	{
-		state: function () {
+const BossConfig = {
+	1: {
+		state: function()
+		{
 			return AppState;
 		},
 		resultId: 'boss-result',
 		sectionSelector: '#boss-section',
 		totalQuestions: 5,
 		buttonText: 'Boss Defeated ✓',
-		questions:
-			[
-				{
-					type: 'mcq',
-					name: 'boss1',
-					correctValue: 'b',
-					cardIndex: 0,
-					correctSelector: '.radio-option[data-answer="b"]'
-				},
-				{
-					type: 'input',
-					id: 'boss-2',
-					correctValues: ['0.5', '.5'],
-					cardIndex: 1
-				},
-				{
-					type: 'mcq',
-					name: 'boss3',
-					correctValue: 'd',
-					cardIndex: 2,
-					correctSelector: '.radio-option[data-answer="d"]'
-				},
-				{
-					type: 'input',
-					id: 'boss-4',
-					correctValues: ['35'],
-					cardIndex: 3
-				},
-				{
-					type: 'input',
-					id: 'boss-5',
-					correctValues: ['1'],
-					cardIndex: 4
-				}
-			]
+		questions: [
+			{
+				type: 'mcq',
+				name: 'boss1',
+				correctValue: 'b',
+				cardIndex: 0,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'input',
+				id: 'boss-2',
+				correctValues: ['0.5', '.5'],
+				cardIndex: 1
+			},
+			{
+				type: 'mcq',
+				name: 'boss3',
+				correctValue: 'd',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="d"]'
+			},
+			{
+				type: 'input',
+				id: 'boss-4',
+				correctValues: ['35'],
+				cardIndex: 3
+			},
+			{
+				type: 'input',
+				id: 'boss-5',
+				correctValues: ['1'],
+				cardIndex: 4
+			}
+		]
 	},
 
-	2:
-	{
-		state: function () {
+	2: {
+		state: function()
+		{
 			return Day2State;
 		},
 		resultId: 'day2-boss-result',
 		sectionSelector: '#day2-boss-section',
 		totalQuestions: 5,
 		buttonText: 'Boss Defeated ✓',
-		questions:
-			[
-				{
-					type: 'input',
-					id: 'day2-boss-1',
-					correctValues: ['60'],
-					cardIndex: 0
-				},
-				{
-					type: 'mcq',
-					name: 'day2-boss2',
-					correctValue: 'c',
-					cardIndex: 1,
-					correctSelector: '.radio-option[data-answer="c"]'
-				},
-				{
-					type: 'mcq',
-					name: 'day2-boss3',
-					correctValue: 'b',
-					cardIndex: 2,
-					correctSelector: '.radio-option[data-answer="b"]'
-				},
-				{
-					type: 'mcq',
-					name: 'day2-boss4',
-					correctValue: 'c',
-					cardIndex: 3,
-					correctSelector: '.radio-option[data-answer="c"]'
-				},
-				{
-					type: 'input',
-					id: 'day2-boss-5',
-					correctValues: ['60'],
-					cardIndex: 4
-				}
-			]
+		questions: [
+			{
+				type: 'input',
+				id: 'day2-boss-1',
+				correctValues: ['60'],
+				cardIndex: 0
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss2',
+				correctValue: 'c',
+				cardIndex: 1,
+				correctSelector: '.radio-option[data-answer="c"]'
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss3',
+				correctValue: 'b',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'mcq',
+				name: 'day2-boss4',
+				correctValue: 'c',
+				cardIndex: 3,
+				correctSelector: '.radio-option[data-answer="c"]'
+			},
+			{
+				type: 'input',
+				id: 'day2-boss-5',
+				correctValues: ['60'],
+				cardIndex: 4
+			}
+		]
 	},
 
-	3:
-	{
-		state: function () {
+	3: {
+		state: function()
+		{
 			return Day3State;
 		},
 		resultId: 'day3-boss-result',
 		sectionSelector: '#day3-boss-section',
 		totalQuestions: 4,
 		buttonText: 'Boss Defeated ✓',
-		questions:
-			[
-				{
-					type: 'mcq',
-					name: 'day3-boss1',
-					correctValue: 'b',
-					cardIndex: 0,
-					correctSelector: '.radio-option[data-answer="b"]'
-				},
-				{
-					type: 'input',
-					id: 'day3-boss-2',
-					correctValues: ['80'],
-					cardIndex: 1
-				},
-				{
-					type: 'mcq',
-					name: 'day3-boss3',
-					correctValue: 'a',
-					cardIndex: 2,
-					correctSelector: '.radio-option[data-answer="a"]'
-				},
-				{
-					type: 'input',
-					id: 'day3-boss-4',
-					correctValues: ['150'],
-					cardIndex: 3
-				}
-			]
+		questions: [
+			{
+				type: 'mcq',
+				name: 'day3-boss1',
+				correctValue: 'b',
+				cardIndex: 0,
+				correctSelector: '.radio-option[data-answer="b"]'
+			},
+			{
+				type: 'input',
+				id: 'day3-boss-2',
+				correctValues: ['80'],
+				cardIndex: 1
+			},
+			{
+				type: 'mcq',
+				name: 'day3-boss3',
+				correctValue: 'a',
+				cardIndex: 2,
+				correctSelector: '.radio-option[data-answer="a"]'
+			},
+			{
+				type: 'input',
+				id: 'day3-boss-4',
+				correctValues: ['150'],
+				cardIndex: 3
+			}
+		]
 	}
 };
 
 function goToDay(dayNumber)
 {
-	document.querySelectorAll('.day-container').forEach(day => {
-		day.style.display = 'none';
-	});
+	$('.day-container').hide();
 
-	const targetDay = document.getElementById(`day${dayNumber}-container`);
-	if (!targetDay) return;
+	const targetDay = $('#day' + dayNumber + '-container');
+	if (targetDay.length === 0) return;
 
-	targetDay.style.display = 'block';
+	targetDay.show();
 
 	AppState.currentDay = dayNumber;
 	updateHeaderForDay(dayNumber);

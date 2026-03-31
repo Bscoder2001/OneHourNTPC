@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin Login – OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="admin/admin.css">
+</head>
+<body class="admin-login-page">
+	<main class="admin-login-container">
+		<div class="login-wrapper">
+			<div class="login-header">
+				<div class="brand-row">
+					<div class="brand-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" fill="none">
+							<path d="M12 3l7 4v5c0 4.2-2.7 7.6-7 9-4.3-1.4-7-4.8-7-9V7l7-4z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M9.5 12.2l1.8 1.8 3.4-3.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+					<h1 class="login-title">OneHourNTPC Admin</h1>
+				</div>
+				<p class="login-subtitle">Secure access to Mission Mode control panel</p>
+			</div>
+
+			<section class="login-card">
+				<form id="admin-login-form" class="login-form" novalidate>
+					<div class="form-group">
+						<label for="username" class="form-label">Username</label>
+						<input
+							type="text"
+							id="username"
+							name="username"
+							class="form-input"
+							placeholder="Enter your username"
+							required
+							autocomplete="username"
+						>
+						<span class="form-error" id="username-error"></span>
+					</div>
+
+					<div class="form-group">
+						<label for="password" class="form-label">Password</label>
+						<div class="input-wrap">
+							<input
+								type="password"
+								id="password"
+								name="password"
+								class="form-input"
+								placeholder="Enter your password"
+								required
+								autocomplete="current-password"
+							>
+							<button type="button" class="password-toggle" data-target="password" aria-label="Show password">Show</button>
+						</div>
+						<span class="form-error" id="password-error"></span>
+					</div>
+
+					<div class="form-row">
+						<div class="checkbox-group">
+							<input
+								type="checkbox"
+								id="remember-me"
+								name="remember-me"
+								class="form-checkbox"
+							>
+							<label for="remember-me" class="checkbox-label">Remember me</label>
+						</div>
+						<a href="#" class="login-link forgot-link" id="forgot-password-link">Forgot password?</a>
+					</div>
+
+					<button type="submit" class="login-btn">Sign in</button>
+
+					<div class="form-error-message" id="form-error"></div>
+					<div class="form-success-message" id="form-success"></div>
+				</form>
+
+				<div class="otp-panel" id="otp-panel" aria-live="polite">
+					<div class="otp-panel-header">
+						<h3>Reset Password OTP</h3>
+						<p>Enter your registered email to receive a 6-digit code.</p>
+					</div>
+
+					<div class="otp-form-grid">
+						<div class="form-group">
+							<label for="otp-email" class="form-label">Email address</label>
+							<input
+								type="email"
+								id="otp-email"
+								class="form-input"
+								placeholder="Enter your registered email"
+								autocomplete="email"
+							>
+							<span class="form-error" id="otp-email-error"></span>
+						</div>
+
+						<button type="button" class="otp-btn" id="send-otp-btn">Send OTP</button>
+					</div>
+
+					<div class="otp-verify-wrap" id="otp-verify-wrap">
+						<div class="form-group">
+							<label for="otp-code" class="form-label">OTP code</label>
+							<input
+								type="text"
+								id="otp-code"
+								class="form-input otp-input"
+								placeholder="Enter 6-digit OTP"
+								inputmode="numeric"
+								maxlength="6"
+								autocomplete="one-time-code"
+							>
+							<span class="form-error" id="otp-code-error"></span>
+						</div>
+						<button type="button" class="otp-btn" id="verify-otp-btn">Verify OTP</button>
+					</div>
+
+					<div class="otp-reset-wrap" id="otp-reset-wrap">
+						<div class="form-group">
+							<label for="reset-password" class="form-label">New password</label>
+							<input
+								type="password"
+								id="reset-password"
+								class="form-input"
+								placeholder="Enter new password"
+								autocomplete="new-password"
+							>
+							<span class="form-error" id="reset-password-error"></span>
+						</div>
+						<div class="form-group">
+							<label for="reset-confirm-password" class="form-label">Confirm password</label>
+							<input
+								type="password"
+								id="reset-confirm-password"
+								class="form-input"
+								placeholder="Confirm new password"
+								autocomplete="new-password"
+							>
+							<span class="form-error" id="reset-confirm-password-error"></span>
+						</div>
+						<button type="button" class="otp-btn" id="reset-password-btn">Reset Password</button>
+					</div>
+
+					<div class="otp-message" id="otp-message"></div>
+				</div>
+
+				<div class="or-divider"><span>or</span></div>
+				<div class="login-footer">
+					<a href="#" class="login-link" id="create-account-link">Create new account</a>
+				</div>
+			</section>
+
+			<div class="login-warning" role="note" aria-label="security warning">
+				<div class="warning-icon" aria-hidden="true">!</div>
+				<div class="warning-text">
+					<strong>Authorized personnel only.</strong>
+					<span>All activities are logged.</span>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<!-- SCRIPTS -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="admin/admin.js"></script>
+	<script src="/ntpc-constants.js"></script>
+	<script src="/ntpc-framework.js"></script>
+</body>
+</html>
