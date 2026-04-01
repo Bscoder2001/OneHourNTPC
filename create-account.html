@@ -6,9 +6,9 @@
 	<title>Create Account – OneHourNTPC Admin</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="./styles.css">
-	<link rel="stylesheet" href="https://bscoder2001.github.io/OneHourNTPC/admin/create-account.css">
+	<link rel="stylesheet" href="./admin/create-account.css">
 </head>
 <body class="admin-login-page">
 	<main class="admin-login-container">
@@ -138,6 +138,34 @@
 					<div class="form-success-message" id="form-success"></div>
 				</form>
 
+				<section id="academic-year-panel" class="academic-year-panel is-hidden" aria-labelledby="academic-year-heading">
+					<div class="academic-year-divider" role="presentation"></div>
+					<h2 id="academic-year-heading" class="academic-year-heading">Academic year</h2>
+					<p class="academic-year-hint">Add your school&apos;s current academic session. You can change this later from the dashboard.</p>
+					<form id="academic-year-form" class="login-form academic-year-form" novalidate>
+						<div class="form-group">
+							<label for="academic-year-name" class="form-label">Academic year name</label>
+							<input type="text" id="academic-year-name" class="form-input" placeholder="e.g. 2025–2026" required autocomplete="off">
+							<span class="form-error" id="academic-year-name-error"></span>
+						</div>
+						<div class="date-grid">
+							<div class="form-group">
+								<label for="session-start" class="form-label">Session start</label>
+								<input type="date" id="session-start" class="form-input" required>
+								<span class="form-error" id="session-start-error"></span>
+							</div>
+							<div class="form-group">
+								<label for="session-end" class="form-label">Session end</label>
+								<input type="date" id="session-end" class="form-input" required>
+								<span class="form-error" id="session-end-error"></span>
+							</div>
+						</div>
+						<button type="submit" class="login-btn" id="saveAcademicYear">Save &amp; continue</button>
+						<div class="form-error-message" id="academic-form-error"></div>
+						<div class="form-success-message" id="academic-form-success"></div>
+					</form>
+				</section>
+
 				<div class="login-footer">
 					<p class="signin-text">Already have an account? <a href="admin.html" class="login-link">Sign in</a></p>
 				</div>
@@ -147,9 +175,9 @@
 
 	<!-- SCRIPTS -->
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-	<script src="https://bscoder2001.github.io/OneHourNTPC/admin/create-account.js"></script>
-	<script src="/ntpc-constants.js"></script>
-	<script src="/ntpc-framework.js"></script>
+	<script src="./admin/create-account.js"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
 
 </body>
 </html>

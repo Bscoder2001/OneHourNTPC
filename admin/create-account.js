@@ -27,6 +27,17 @@ const formErrorDiv = $('#form-error');
 const formSuccessDiv = $('#form-success');
 const passwordStrengthFill = $('#password-strength-fill');
 
+const academicYearPanel = $('#academic-year-panel');
+const academicYearForm = $('#academic-year-form');
+const academicYearNameInput = $('#academic-year-name');
+const sessionStartInput = $('#session-start');
+const sessionEndInput = $('#session-end');
+const academicFormErrorDiv = $('#academic-form-error');
+const academicFormSuccessDiv = $('#academic-form-success');
+
+/** @type {{ user_id: number, institute_id: number } | null} */
+let pendingSignup = null;
+
 // ==========================================
 // FORM VALIDATION CONFIGURATION
 // ==========================================
@@ -96,6 +107,7 @@ $(document).ready(() =>
 
 	// Form submission
 	createAccountForm.on('submit', handleFormSubmit);
+	academicYearForm.on('submit', handleAcademicYearSubmit);
 
 	// Real-time validation on input
 	fullNameInput.on('blur', () => validateFullName());
@@ -631,22 +643,159 @@ async function handleFormSubmit(event)
  */
 function handleAccountCreationSuccess(data)
 {
-	showFormSuccess('✓ Account created successfully! Redirecting to login...');
+	const userId = data.user_id ?? data.userId;
+	const instituteId = data.institute_id ?? data.instituteId;
 
-	// Save user info temporarily (if needed)
-	if (data.userId)
+	if (!userId || !instituteId)
 	{
-		LocalStorage.setItem('currentUserId', data.userId);
-		console.log('New user ID saved temporarily');
+		showFormError('Account was created but missing identifiers. Please contact support.');
+		return;
 	}
 
-	// Redirect after brief delay
-	setTimeout(() =>
+	pendingSignup = {
+		user_id: Number(userId),
+		institute_id: Number(instituteId)
+	};
+
+	try
 	{
-		console.log('Redirecting to login page...');
-		// Redirect to login page
-		window.location.href = 'admin.html';
-	}, 2000);
+		localStorage.setItem('currentUserId', String(userId));
+		localStorage.setItem('currentInstituteId', String(instituteId));
+	}
+	catch (e)
+	{
+		console.warn('Could not persist signup ids', e);
+	}
+
+	showFormSuccess('✓ Account created. Now add your academic year below.');
+
+	createAccountForm.addClass('signup-step-disabled');
+	const submitBtn = createAccountForm.find('#createAccount');
+	submitBtn.prop('disabled', true);
+
+	academicYearPanel.removeClass('is-hidden');
+
+	// Focus first field in the new section
+	setTimeout(() => academicYearNameInput.trigger('focus'), 100);
+}
+
+/**
+ * Validates academic year step
+ * @returns {boolean}
+ */
+function validateAcademicYearFields()
+{
+	let ok = true;
+	const name = academicYearNameInput.val().trim();
+	const start = sessionStartInput.val();
+	const end = sessionEndInput.val();
+
+	academicFormErrorDiv.removeClass('show').text('');
+	academicYearNameInput.removeClass('error');
+	sessionStartInput.removeClass('error');
+	sessionEndInput.removeClass('error');
+	$('#academic-year-name-error').removeClass('show').text('');
+	$('#session-start-error').removeClass('show').text('');
+	$('#session-end-error').removeClass('show').text('');
+
+	if (!name || name.length < 2)
+	{
+		academicYearNameInput.addClass('error');
+		$('#academic-year-name-error').text('Enter a name for the academic year').addClass('show');
+		ok = false;
+	}
+	if (!start)
+	{
+		sessionStartInput.addClass('error');
+		$('#session-start-error').text('Session start is required').addClass('show');
+		ok = false;
+	}
+	if (!end)
+	{
+		sessionEndInput.addClass('error');
+		$('#session-end-error').text('Session end is required').addClass('show');
+		ok = false;
+	}
+	if (start && end && start > end)
+	{
+		sessionEndInput.addClass('error');
+		$('#session-end-error').text('Session end must be on or after session start').addClass('show');
+		ok = false;
+	}
+
+	return ok;
+}
+
+/**
+ * @param {Event} event
+ */
+async function handleAcademicYearSubmit(event)
+{
+	event.preventDefault();
+	academicFormErrorDiv.removeClass('show').text('');
+	academicFormSuccessDiv.removeClass('show').text('');
+
+	if (!pendingSignup)
+	{
+		academicFormErrorDiv.text('Session expired. Refresh the page and create your account again.').addClass('show');
+		return;
+	}
+
+	if (!validateAcademicYearFields())
+	{
+		return;
+	}
+
+	const saveBtn = academicYearForm.find('#saveAcademicYear');
+	const originalText = saveBtn.text();
+	saveBtn.prop('disabled', true);
+	saveBtn.text('Saving...');
+
+	try
+	{
+		const url = BASE_URL_LIVE + 'users/addAcademicYear';
+		const payload = {
+			institute_id: pendingSignup.institute_id,
+			school_user_id: pendingSignup.user_id,
+			name: academicYearNameInput.val().trim(),
+			session_start: sessionStartInput.val(),
+			session_end: sessionEndInput.val(),
+			status: 'active'
+		};
+
+		const response = await promisingAjaxCall(url, 'POST', payload, 'application/json');
+
+		if (response.isOk)
+		{
+			academicFormSuccessDiv.text('✓ Academic year saved. Redirecting to sign in...').addClass('show');
+			try
+			{
+				if (response.data && response.data.academic_year_id)
+				{
+					localStorage.setItem('currentAcademicYearId', String(response.data.academic_year_id));
+				}
+			}
+			catch (e) { /* ignore */ }
+
+			setTimeout(() =>
+			{
+				window.location.href = 'admin.html';
+			}, 1600);
+		}
+		else
+		{
+			academicFormErrorDiv.text(response.message || 'Could not save academic year.').addClass('show');
+			saveBtn.prop('disabled', false);
+			saveBtn.text(originalText);
+		}
+	}
+	catch (error)
+	{
+		academicFormErrorDiv.text(error.message || 'Could not save academic year. Please try again.').addClass('show');
+		saveBtn.prop('disabled', false);
+		saveBtn.text(originalText);
+		console.error('Academic year error:', error);
+	}
 }
 
 // ==========================================

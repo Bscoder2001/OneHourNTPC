@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Teachers – OneHourNTPC</title>
+	<title>Students – OneHourNTPC</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,18 +19,18 @@
 				<nav class="breadcrumb" aria-label="Breadcrumb">
 					<a href="dashboard.html">Institution</a>
 					<span class="breadcrumb-sep">/</span>
-					<a href="dashboard.html">Teachers</a>
+					<a href="students-add.html">Students</a>
 					<span class="breadcrumb-sep">/</span>
-					<span class="breadcrumb-current">Add Teacher</span>
+					<span class="breadcrumb-current">Add Student</span>
 				</nav>
 			</div>
 			<div class="dashboard-main-body">
 				<div class="dashboard-toolbar">
 					<div class="title-block">
-						<h1>Teachers</h1>
-						<p class="subtitle" id="member-count">0 teachers</p>
+						<h1>Students</h1>
+						<p class="subtitle" id="member-count">0 students</p>
 					</div>
-					<button class="primary-btn" id="add-member-btn" type="button">Add Teacher</button>
+					<button class="primary-btn" id="add-member-btn" type="button">Add Student</button>
 				</div>
 
 				<div class="table-card">
@@ -56,7 +56,7 @@
 	<div class="modal-overlay" id="member-modal-overlay">
 		<div class="member-modal">
 			<div class="modal-header">
-				<h2 id="member-modal-title">Add Teacher</h2>
+				<h2 id="member-modal-title">Add Student</h2>
 				<button type="button" class="icon-btn" id="member-modal-close" aria-label="Close">×</button>
 			</div>
 			<div class="modal-form">
@@ -101,12 +101,12 @@
 	<script src="./admin/sidebar-init.js"></script>
 	<script>
 		window.MEMBER_PAGE = {
-			userTypeId: typeof USER_TYPE_ID_TEACHER !== 'undefined' ? USER_TYPE_ID_TEACHER : 3,
-			entitySingular: 'teacher',
-			entityPlural: 'teachers',
-			title: 'Teachers',
-			modalAddTitle: 'Add Teacher',
-			modalEditTitle: 'Edit Teacher'
+			userTypeId: typeof USER_TYPE_ID_STUDENT !== 'undefined' ? USER_TYPE_ID_STUDENT : 4,
+			entitySingular: 'student',
+			entityPlural: 'students',
+			title: 'Students',
+			modalAddTitle: 'Add Student',
+			modalEditTitle: 'Edit Student'
 		};
 	</script>
 	<script src="./admin/members-dashboard.js"></script>

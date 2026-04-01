@@ -1,4 +1,9 @@
-<aside class="sidebar">
+<button type="button" class="sidebar-menu-btn" id="sidebar-menu-btn" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar-panel">
+	<img class="sidebar-menu-icon" src="admin/icons/menu.svg" alt="" width="20" height="20" decoding="async">
+</button>
+<div class="sidebar-backdrop" id="sidebar-backdrop" hidden aria-hidden="true"></div>
+
+<aside class="sidebar" id="sidebar-panel">
 	<div class="sidebar-brand">
 		<div class="sidebar-brand-icon">N</div>
 		<div class="sidebar-brand-text">
@@ -6,8 +11,79 @@
 			<span>Admin Panel</span>
 		</div>
 	</div>
-	<nav class="sidebar-nav">
-		<a href="dashboard.html" class="sidebar-link active">Teachers</a>
-		<a href="admin.html" class="sidebar-link">Logout</a>
+
+	<nav class="sidebar-nav" aria-label="Main">
+		<p class="sidebar-section-label">Institution</p>
+
+		<div class="sidebar-module-body">
+			<div class="sidebar-group-card">
+				<details class="sidebar-group" open>
+					<summary class="sidebar-group-summary">
+						<span class="sidebar-group-summary-inner">
+							<img class="sidebar-group-icon" src="admin/icons/nav-teachers.svg" alt="" width="13" height="13" decoding="async">
+							<span class="sidebar-group-label">Teachers</span>
+						</span>
+						<img class="sidebar-group-chevron" src="admin/icons/chevron-down.svg" alt="" width="10" height="10" decoding="async">
+					</summary>
+					<div class="sidebar-group-links">
+						<a href="dashboard.html" class="sidebar-sublink" data-page="dashboard.html" data-nav="">Add Teacher</a>
+					</div>
+				</details>
+			</div>
+
+			<div class="sidebar-group-card">
+				<details class="sidebar-group" open>
+					<summary class="sidebar-group-summary">
+						<span class="sidebar-group-summary-inner">
+							<img class="sidebar-group-icon" src="admin/icons/nav-students.svg" alt="" width="13" height="13" decoding="async">
+							<span class="sidebar-group-label">Students</span>
+						</span>
+						<img class="sidebar-group-chevron" src="admin/icons/chevron-down.svg" alt="" width="10" height="10" decoding="async">
+					</summary>
+					<div class="sidebar-group-links">
+						<a href="students-add.html" class="sidebar-sublink" data-page="students-add.html" data-nav="">Add Student</a>
+					</div>
+				</details>
+			</div>
+
+			<div class="sidebar-group-card">
+				<details class="sidebar-group" open>
+					<summary class="sidebar-group-summary">
+						<span class="sidebar-group-summary-inner">
+							<img class="sidebar-group-icon" src="admin/icons/nav-configure.svg" alt="" width="13" height="13" decoding="async">
+							<span class="sidebar-group-label">Configure</span>
+						</span>
+						<img class="sidebar-group-chevron" src="admin/icons/chevron-down.svg" alt="" width="10" height="10" decoding="async">
+					</summary>
+					<div class="sidebar-group-links">
+						<a href="configure.html" class="sidebar-sublink" data-page="configure.html" data-nav="">Configuration home</a>
+						<a href="configure-academic-year.html" class="sidebar-sublink" data-page="configure-academic-year.html" data-nav="">Academic year</a>
+					</div>
+				</details>
+			</div>
+
+			<div class="sidebar-group-card">
+				<details class="sidebar-group" open>
+					<summary class="sidebar-group-summary">
+						<span class="sidebar-group-summary-inner">
+							<img class="sidebar-group-icon" src="admin/icons/nav-reports.svg" alt="" width="13" height="13" decoding="async">
+							<span class="sidebar-group-label">Reports</span>
+						</span>
+						<img class="sidebar-group-chevron" src="admin/icons/chevron-down.svg" alt="" width="10" height="10" decoding="async">
+					</summary>
+					<div class="sidebar-group-links">
+						<a href="reports.html" class="sidebar-sublink" data-page="reports.html" data-nav="">Overview</a>
+						<span class="sidebar-sublink disabled">More reports soon</span>
+					</div>
+				</details>
+			</div>
+		</div>
 	</nav>
+
+	<div class="sidebar-footer">
+		<a href="admin.html" class="sidebar-link-logout">
+			<img class="sidebar-logout-icon" src="admin/icons/logout.svg" alt="" width="13" height="13" decoding="async">
+			<span>Logout</span>
+		</a>
+	</div>
 </aside>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Academic Year – OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+</head>
+<body class="dashboard-page">
+	<div class="dashboard-layout">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main">
+			<div class="dashboard-breadcrumb-bar">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="dashboard.html">Institution</a>
+					<span class="breadcrumb-sep">/</span>
+					<a href="configure.html">Configure</a>
+					<span class="breadcrumb-sep">/</span>
+					<span class="breadcrumb-current">Academic Year</span>
+				</nav>
+			</div>
+			<div class="dashboard-main-body">
+				<div class="dashboard-toolbar">
+					<div class="title-block">
+						<h1>Academic years</h1>
+						<p class="subtitle">Years linked to your institution are highlighted. New entries here can be kept for future use without changing the active mapping.</p>
+					</div>
+					<button class="primary-btn" id="ay-add-btn" type="button">Add academic year</button>
+				</div>
+
+				<div class="table-card">
+					<table class="member-table ay-table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Session start</th>
+								<th>Session end</th>
+								<th>Status</th>
+								<th>Mapping</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody id="ay-table-body"></tbody>
+					</table>
+				</div>
+
+				<div class="dashboard-message" id="ay-dashboard-message"></div>
+			</div>
+		</main>
+	</div>
+
+	<div class="modal-overlay" id="ay-modal-overlay">
+		<div class="member-modal">
+			<div class="modal-header">
+				<h2>Add academic year</h2>
+				<button type="button" class="icon-btn" id="ay-modal-close" aria-label="Close">×</button>
+			</div>
+			<div class="modal-form">
+				<div class="form-group">
+					<label for="ay-name" class="form-label">Name</label>
+					<input type="text" id="ay-name" class="form-input" placeholder="e.g. 2025–2026">
+				</div>
+				<div class="date-grid">
+					<div class="form-group">
+						<label for="ay-start" class="form-label">Session start</label>
+						<input type="date" id="ay-start" class="form-input">
+					</div>
+					<div class="form-group">
+						<label for="ay-end" class="form-label">Session end</label>
+						<input type="date" id="ay-end" class="form-input">
+					</div>
+				</div>
+				<p class="ay-modal-hint">Saved for this institution; not automatically set as the active mapping unless you assign it elsewhere.</p>
+				<div class="modal-actions">
+					<button type="button" class="secondary-btn" id="ay-modal-cancel">Cancel</button>
+					<button type="button" class="primary-btn" id="ay-modal-save">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/academic-year-config.js"></script>
+</body>
+</html>

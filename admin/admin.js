@@ -387,6 +387,26 @@ function handleLoginSuccess(data, rememberMe)
 		console.log('Auth token saved');
 	}
 
+	try
+	{
+		if (data.user_id !== undefined && data.user_id !== null)
+		{
+			localStorage.setItem('ntpc_user_id', String(data.user_id));
+		}
+		if (data.institute_id !== undefined && data.institute_id !== null)
+		{
+			localStorage.setItem('ntpc_institute_id', String(data.institute_id));
+		}
+		if (data.user_type_id !== undefined && data.user_type_id !== null)
+		{
+			localStorage.setItem('ntpc_user_type_id', String(data.user_type_id));
+		}
+	}
+	catch (e)
+	{
+		console.warn('Failed to persist session', e);
+	}
+
 	// Redirect after brief delay
 	setTimeout(() =>
 	{

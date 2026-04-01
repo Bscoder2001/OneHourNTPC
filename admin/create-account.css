@@ -19,7 +19,7 @@
 
 .login-wrapper {
 	width: 100%;
-	max-width: 360px;
+	max-width: 400px;
 }
 
 .login-header {
@@ -241,12 +241,61 @@
 	display: block;
 }
 
+.academic-year-panel {
+	margin-top: 8px;
+}
+
+.academic-year-panel.is-hidden {
+	display: none;
+}
+
+.academic-year-divider {
+	height: 1px;
+	background: var(--border-color);
+	margin: 18px 0 14px;
+}
+
+.academic-year-heading {
+	font-family: "Sora", var(--font-family-sans);
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #0f172a;
+	margin: 0 0 4px;
+}
+
+.academic-year-hint {
+	font-size: 12px;
+	color: #64748b;
+	margin: 0 0 14px;
+	line-height: 1.45;
+}
+
+.date-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+}
+
+.academic-year-form {
+	margin-top: 4px;
+}
+
+.signup-step-disabled {
+	opacity: 0.55;
+	pointer-events: none;
+	user-select: none;
+}
+
 @media (max-width: 480px) {
 	.login-card {
 		padding: 20px 16px;
 	}
 
 	.name-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.date-grid {
 		grid-template-columns: 1fr;
 	}
 

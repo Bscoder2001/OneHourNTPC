@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Reports – OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+</head>
+<body class="dashboard-page">
+	<div class="dashboard-layout">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main">
+			<div class="dashboard-breadcrumb-bar">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="dashboard.html">Institution</a>
+					<span class="breadcrumb-sep">/</span>
+					<a href="reports.html">Reports</a>
+					<span class="breadcrumb-sep">/</span>
+					<span class="breadcrumb-current">Overview</span>
+				</nav>
+			</div>
+			<div class="dashboard-main-body">
+				<div class="dashboard-toolbar">
+					<div class="title-block">
+						<h1>Reports</h1>
+						<p class="subtitle">Reporting modules will appear here.</p>
+					</div>
+				</div>
+
+				<div class="table-card reports-empty-card">
+					<p class="reports-empty-text">No reports available yet. Check back later.</p>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script>
+		$(function ()
+		{
+			$('#sidebar-host').load('sidebar.html', function ()
+			{
+				if (typeof window.initSidebarNav === 'function') window.initSidebarNav();
+			});
+		});
+	</script>
+</body>
+</html>
