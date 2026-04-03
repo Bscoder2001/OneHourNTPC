@@ -1,11 +1,14 @@
 /**
- * Highlights active sidebar link and opens the parent disclosure for that section.
+ * Highlights active sidebar link and opens parent disclosure(s).
  */
 window.initSidebarNav = function initSidebarNav()
 {
 	const path = window.location.pathname || '';
 	let file = (path.split('/').pop() || '').toLowerCase();
-	if (!file || file === '') file = 'dashboard.html';
+	if (!file || file === '')
+	{
+		file = 'dashboard.html';
+	}
 
 	$('.sidebar-sublink[data-page]').removeClass('active');
 
@@ -13,17 +16,7 @@ window.initSidebarNav = function initSidebarNav()
 	{
 		const $link = $(this);
 		const p = ($link.data('page') || '').toString().toLowerCase();
-		const navRaw = $link.data('nav');
-		const nav = (navRaw !== undefined && navRaw !== null)
-			? String(navRaw).toLowerCase()
-			: '';
-
-		if (!p || p !== file)
-		{
-			return;
-		}
-
-		if (!nav)
+		if (p && p === file)
 		{
 			$link.addClass('active');
 		}
@@ -33,10 +26,34 @@ window.initSidebarNav = function initSidebarNav()
 	if ($active.length)
 	{
 		$active.closest('details.sidebar-group').prop('open', true);
+		const $inst = $active.closest('.erp-module-collapse--institution');
+		if ($inst.length)
+		{
+			$inst.addClass('is-open');
+			$inst.find('.erp-institution-summary').attr('aria-expanded', 'true');
+		}
 	}
 
+	initInstitutionToggle();
 	initSidebarMobile();
 };
+
+function initInstitutionToggle()
+{
+	const $root = $('.erp-module-collapse--institution');
+	const $btn = $root.find('.erp-institution-summary').first();
+	if (!$root.length || !$btn.length)
+	{
+		return;
+	}
+
+	$btn.off('click.institutionToggle').on('click.institutionToggle', function ()
+	{
+		const open = !$root.hasClass('is-open');
+		$root.toggleClass('is-open', open);
+		$btn.attr('aria-expanded', open ? 'true' : 'false');
+	});
+}
 
 function initSidebarMobile()
 {
@@ -79,12 +96,3 @@ function initSidebarMobile()
 		}
 	});
 }
-
-$(window).on('hashchange', function ()
-{
-	if ($('.sidebar').length && typeof window.initSidebarNav === 'function')
-	{
-		window.initSidebarNav();
-	}
-});
-

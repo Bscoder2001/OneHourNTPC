@@ -28,3 +28,13 @@ function promisingAjaxCall(url, method, data, contentType)
         });
     });
 }
+
+function logout()
+{
+	localStorage.removeItem('user_id');
+	localStorage.removeItem('institute_id');
+	localStorage.removeItem('user_type_id');
+	localStorage.removeItem('academic_year_id');
+	localStorage.removeItem('admin-username-saved');
+	window.location.href = 'admin.html';
+}

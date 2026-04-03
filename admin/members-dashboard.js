@@ -27,6 +27,13 @@ const memberCount = $('#member-count');
 /** Plain passwords for table eye toggle (decoded from API base64 per row id). */
 let memberTablePasswordCache = {};
 
+/** Last members array from API (for export / search). */
+let lastMembersList = [];
+
+const MEMBER_PAGE_SIZE = 10;
+
+let memberCurrentPage = 1;
+
 const memberState = {
 	mode: 'add',
 	isSaving: false
@@ -55,12 +62,6 @@ $(document).ready(() =>
 		return;
 	}
 
-	const instituteId = requireInstituteSession();
-	if (instituteId === null)
-	{
-		showSessionGate();
-	}
-
 	sidebarHost.load('sidebar.html', () =>
 	{
 		if (typeof window.initSidebarNav === 'function')
@@ -77,7 +78,25 @@ $(document).ready(() =>
 	memberPasswordToggle.on('click', toggleMemberPasswordVisibility);
 	memberTableBody.on('click', '.cell-pass-toggle', toggleTablePasswordVisibility);
 
-	if (instituteId !== null)
+	$(document).on('click', '.dashboard-alert-dismiss', function ()
+	{
+		dashboardMessage.removeClass('show success error dashboard-message--erp-success').empty();
+	});
+
+	$('#member-search-input').on('input', function ()
+	{
+		memberCurrentPage = 1;
+		renderMembersTable();
+	});
+
+	$('#export-member-btn').on('click', exportMembersCsv);
+
+	bindMemberPagination();
+
+	$(window).on('hashchange', syncHashToMemberModal);
+	syncHashToMemberModal();
+
+	if (INSTITUTE_ID !== null)
 	{
 		loadMembers();
 	}
@@ -101,32 +120,33 @@ function showSessionGate()
 
 function showDashboardMessage(message, type)
 {
-	dashboardMessage.removeClass('success error').addClass('show');
+	dashboardMessage.removeClass('success error dashboard-message--erp-success').empty();
 	if (type === 'success')
 	{
-		dashboardMessage.addClass('success');
+		dashboardMessage.addClass('success show dashboard-message--erp-success').removeClass('error');
+		dashboardMessage.html(
+			'<div class="dashboard-alert-ico" aria-hidden="true">'
+			+ '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>'
+			+ '</div>'
+			+ '<span class="dashboard-alert-msg">' + escapeHtml(message) + '</span>'
+			+ '<button type="button" class="dashboard-alert-dismiss" aria-label="Dismiss">&times;</button>'
+		);
 	}
 	else
 	{
-		dashboardMessage.addClass('error');
+		dashboardMessage.addClass('error show').removeClass('success dashboard-message--erp-success');
+		dashboardMessage.text(message);
 	}
-	dashboardMessage.text(message);
 }
 
 async function loadMembers()
 {
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		return;
-	}
-
 	try
 	{
 		const apiUrl = BASE_URL_LIVE + 'v2users/getMembers';
 		const payload = {
 			userTypeId: userTypeId(),
-			instituteId: instituteId
+			instituteId: INSTITUTE_ID
 		};
 		const response = await promisingAjaxCall(apiUrl, 'POST', payload, 'application/json');
 
@@ -209,19 +229,211 @@ function toggleTablePasswordVisibility()
 	}
 }
 
+function memberInitials(name)
+{
+	const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+	if (!parts.length)
+	{
+		return '?';
+	}
+	if (parts.length === 1)
+	{
+		return parts[0].slice(0, 2).toUpperCase();
+	}
+	return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function updateStatsFromMembers(members)
+{
+	lastMembersList = members.slice();
+	const n = members.length;
+	const ut = userTypeId();
+	const teacherT = typeof USER_TYPE_ID_TEACHER !== 'undefined' ? USER_TYPE_ID_TEACHER : 3;
+	const studentT = typeof USER_TYPE_ID_STUDENT !== 'undefined' ? USER_TYPE_ID_STUDENT : 4;
+	if (ut === teacherT)
+	{
+		const $st = $('#stat-card-teachers');
+		if ($st.length)
+		{
+			$st.text(n);
+		}
+		const $b = $('#stat-badge-teachers');
+		if ($b.length)
+		{
+			if (n > 0)
+			{
+				$b.text('+' + n + ' new');
+			}
+			else
+			{
+				$b.text('—');
+			}
+		}
+	}
+	else if (ut === studentT)
+	{
+		const $st = $('#stat-card-students');
+		if ($st.length)
+		{
+			$st.text(n);
+		}
+		const $b = $('#stat-badge-students');
+		if ($b.length)
+		{
+			if (n > 0)
+			{
+				$b.text('+' + n + ' new');
+			}
+			else
+			{
+				$b.text('—');
+			}
+		}
+	}
+}
+
+function clearAddMemberHash()
+{
+	const file = (window.location.pathname || '').split('/').pop() || '';
+	if (file === 'dashboard.html' && window.location.hash.toLowerCase() === '#add-teacher')
+	{
+		history.replaceState(null, '', 'dashboard.html');
+	}
+	else if (file === 'students-add.html' && window.location.hash.toLowerCase() === '#add-student')
+	{
+		history.replaceState(null, '', 'students-add.html');
+	}
+}
+
+function syncHashToMemberModal()
+{
+	const file = (window.location.pathname || '').split('/').pop() || '';
+	const hash = (window.location.hash || '').toLowerCase();
+	const teacherT = typeof USER_TYPE_ID_TEACHER !== 'undefined' ? USER_TYPE_ID_TEACHER : 3;
+	const studentT = typeof USER_TYPE_ID_STUDENT !== 'undefined' ? USER_TYPE_ID_STUDENT : 4;
+	if (file === 'dashboard.html' && userTypeId() === teacherT && hash === '#add-teacher')
+	{
+		openAddMemberModal();
+	}
+	else if (file === 'students-add.html' && userTypeId() === studentT && hash === '#add-student')
+	{
+		openAddMemberModal();
+	}
+}
+
+function exportMembersCsv()
+{
+	const exportList = getFilteredMembers();
+	if (!exportList.length)
+	{
+		return;
+	}
+	const rows = [['Name', 'Email', 'Username', 'Id'].join(',')];
+	exportList.forEach((row) =>
+	{
+		const line = [
+			'"' + String(row.name || '').replace(/"/g, '""') + '"',
+			'"' + String(row.email || '').replace(/"/g, '""') + '"',
+			'"' + String(row.user_name || '').replace(/"/g, '""') + '"',
+			row.id
+		].join(',');
+		rows.push(line);
+	});
+	const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+	const a = document.createElement('a');
+	a.href = URL.createObjectURL(blob);
+	a.download = entityPlural() + '-export.csv';
+	document.body.appendChild(a);
+	a.click();
+	document.body.removeChild(a);
+	URL.revokeObjectURL(a.href);
+}
+
+function getFilteredMembers()
+{
+	const q = ($('#member-search-input').val() || '').toLowerCase().trim();
+	if (!q)
+	{
+		return lastMembersList.slice();
+	}
+	return lastMembersList.filter((row) =>
+	{
+		const t = [row.name, row.email, row.user_name].join(' ').toLowerCase();
+		return t.indexOf(q) !== -1;
+	});
+}
+
+function bindMemberPagination()
+{
+	$('#member-page-first').on('click', () =>
+	{
+		memberCurrentPage = 1;
+		renderMembersTable();
+	});
+	$('#member-page-prev').on('click', () =>
+	{
+		memberCurrentPage = Math.max(1, memberCurrentPage - 1);
+		renderMembersTable();
+	});
+	$('#member-page-next').on('click', () =>
+	{
+		memberCurrentPage += 1;
+		renderMembersTable();
+	});
+	$('#member-page-last').on('click', () =>
+	{
+		const filtered = getFilteredMembers();
+		const totalPages = Math.max(1, Math.ceil(filtered.length / MEMBER_PAGE_SIZE));
+		memberCurrentPage = totalPages;
+		renderMembersTable();
+	});
+}
+
+function updateMemberPaginationBar(totalItems, page, totalPages, startIdx, endIdx)
+{
+	const $bar = $('#member-table-pagination');
+	const $meta = $('#member-pagination-meta');
+	const $status = $('#member-page-status');
+	if (totalItems === 0)
+	{
+		$bar.attr('hidden', true);
+		return;
+	}
+	$bar.removeAttr('hidden');
+	const label = entityPlural();
+	$meta.text(`Showing ${startIdx}–${endIdx} of ${totalItems} ${totalItems === 1 ? entitySingular() : label}`);
+	$status.text(`Page ${page} of ${totalPages}`);
+	const atFirst = page <= 1;
+	const atLast = page >= totalPages;
+	$('#member-page-first, #member-page-prev').prop('disabled', atFirst);
+	$('#member-page-next, #member-page-last').prop('disabled', atLast);
+}
 
 function renderMembers(members)
+{
+	lastMembersList = members.slice();
+	memberCurrentPage = 1;
+	updateStatsFromMembers(members);
+	renderMembersTable();
+}
+
+function renderMembersTable()
 {
 	memberTableBody.empty();
 	memberTablePasswordCache = {};
 	const label = entityPlural();
-	memberCount.text(`${members.length} ${members.length === 1 ? entitySingular() : label}`);
+	const filtered = getFilteredMembers();
+	const total = filtered.length;
+	memberCount.text(`${total} ${total === 1 ? entitySingular() : label}`);
 
-	if (!members.length)
+	const $pagination = $('#member-table-pagination');
+
+	if (!lastMembersList.length)
 	{
+		$pagination.attr('hidden', true);
 		const emptyStateHtml = `
 			<tr>
-				<td colspan="5">
+				<td colspan="6">
 					<div class="empty-state">
 						<div class="empty-illus" aria-hidden="true">
 							<svg viewBox="0 0 24 24" fill="none">
@@ -241,7 +453,41 @@ function renderMembers(members)
 		return;
 	}
 
-	members.forEach((row) =>
+	if (!total)
+	{
+		$pagination.attr('hidden', true);
+		memberTableBody.append(`
+			<tr>
+				<td colspan="6">
+					<div class="empty-state">
+						<div class="empty-title">No results match your search</div>
+						<div class="empty-subtitle">Try a different name, email, or username.</div>
+					</div>
+				</td>
+			</tr>
+		`);
+		return;
+	}
+
+	const totalPages = Math.max(1, Math.ceil(total / MEMBER_PAGE_SIZE));
+	if (memberCurrentPage > totalPages)
+	{
+		memberCurrentPage = totalPages;
+	}
+	if (memberCurrentPage < 1)
+	{
+		memberCurrentPage = 1;
+	}
+	const start = (memberCurrentPage - 1) * MEMBER_PAGE_SIZE;
+	const pageRows = filtered.slice(start, start + MEMBER_PAGE_SIZE);
+	const startIdx = start + 1;
+	const endIdx = start + pageRows.length;
+
+	updateMemberPaginationBar(total, memberCurrentPage, totalPages, startIdx, endIdx);
+
+	const roleLabel = capitalize(entitySingular());
+
+	pageRows.forEach((row) =>
 	{
 		const plainPw = decodeMemberPasswordB64(row.password);
 		if (plainPw && row.id != null)
@@ -250,10 +496,10 @@ function renderMembers(members)
 		}
 		const passCellHtml = plainPw
 			? `<td class="cell-pass">
-					<div class="cell-pass-row">
+					<div class="cell-pass-row pwcell-erp">
 						<span class="cell-pass-mask">••••••••</span>
 						<span class="cell-pass-plain" hidden></span>
-						<button type="button" class="cell-pass-toggle" data-member-id="${row.id}" aria-label="Show password" aria-pressed="false">
+						<button type="button" class="cell-pass-toggle eyebtn-erp" data-member-id="${row.id}" aria-label="Show password" aria-pressed="false">
 							<span class="cell-pass-toggle__icon cell-pass-toggle__icon--show" aria-hidden="true">
 								<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 							</span>
@@ -263,28 +509,41 @@ function renderMembers(members)
 						</button>
 					</div>
 				</td>`
-			: '<td class="cell-pass">••••••••</td>';
+			: '<td class="cell-pass"><span class="pwcell-erp">••••••••</span></td>';
+		const initials = escapeHtml(memberInitials(row.name));
 		const rowHtml = `
 			<tr>
-				<td class="cell-name">${escapeHtml(row.name || '')}</td>
-				<td class="cell-muted">${escapeHtml(row.email || '')}</td>
-				<td class="cell-muted">${escapeHtml(row.user_name || '')}</td>
+				<td class="cell-teacher-erp">
+					<div class="ncell">
+						<div class="member-av" aria-hidden="true">${initials}</div>
+						<div>
+							<div class="nname">${escapeHtml(row.name || '')}</div>
+							<div class="nrole">${escapeHtml(roleLabel)}</div>
+						</div>
+					</div>
+				</td>
+				<td class="cell-email-erp">${escapeHtml(row.email || '')}</td>
+				<td class="cell-user-erp">
+					<span class="username-pill">
+						<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+						${escapeHtml(row.user_name || '')}
+					</span>
+				</td>
 				${passCellHtml}
-				<td>
-					<div class="action-group">
-						<button class="action-btn edit" data-action="edit" data-id="${row.id}" aria-label="Edit ${entitySingular()}">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M4 20h4l10.5-10.5a1.5 1.5 0 00-4.2-4.2L4 15.8V20z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-								<path d="M13.5 6.5l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+				<td class="cell-status-erp"><span class="member-status-pill">Active</span></td>
+				<td class="cell-actions-erp">
+					<div class="action-group action-group--erp">
+						<button class="action-btn edit erp-abtn erp-abtn--edit" data-action="edit" data-id="${row.id}" aria-label="Edit ${entitySingular()}">
+							<svg viewBox="0 0 24 24" fill="none" width="13" height="13">
+								<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" stroke="currentColor" stroke-width="2"/>
+								<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</button>
-						<button class="action-btn delete" data-action="delete" data-id="${row.id}" aria-label="Delete ${entitySingular()}">
-							<svg viewBox="0 0 24 24" fill="none">
-								<path d="M4 7h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-								<path d="M10 11v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-								<path d="M14 11v7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-								<path d="M6 7l1 14h10l1-14" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-								<path d="M9 7V4h6v3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+						<button class="action-btn delete erp-abtn erp-abtn--delete" data-action="delete" data-id="${row.id}" aria-label="Delete ${entitySingular()}">
+							<svg viewBox="0 0 24 24" fill="none" width="13" height="13">
+								<polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2"/>
+								<path d="M19 6v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2"/>
+								<path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" stroke="currentColor" stroke-width="2"/>
 							</svg>
 						</button>
 					</div>
@@ -297,7 +556,7 @@ function renderMembers(members)
 	memberTableBody.find('[data-action="edit"]').on('click', function ()
 	{
 		const memberId = $(this).data('id');
-		const member = members.find((item) => Number(item.id) === Number(memberId));
+		const member = lastMembersList.find((item) => Number(item.id) === Number(memberId));
 		if (member)
 		{
 			openEditMemberModal(member);
@@ -348,6 +607,7 @@ function closeMemberModal()
 {
 	memberModalOverlay.removeClass('open');
 	resetMemberPasswordVisibility();
+	clearAddMemberHash();
 }
 
 function validateMemberForm()
@@ -389,13 +649,6 @@ async function saveMember()
 		return;
 	}
 
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		showDashboardMessage('Session expired. Please sign in again.', 'error');
-		return;
-	}
-
 	const name = memberNameInput.val().trim();
 	const email = memberEmailInput.val().trim();
 	const userName = memberUsernameInput.val().trim();
@@ -415,7 +668,7 @@ async function saveMember()
 			const payload = {
 				name: name,
 				email: email,
-				instituteId: instituteId,
+				instituteId: INSTITUTE_ID,
 				userName: '',
 				password: '',
 				userTypeId: userTypeId()
@@ -432,7 +685,7 @@ async function saveMember()
 				userName: userName,
 				password: password,
 				userTypeId: userTypeId(),
-				instituteId: instituteId
+				instituteId: INSTITUTE_ID
 			};
 			response = await promisingAjaxCall(apiUrl, 'POST', payload, 'application/json');
 		}
@@ -488,20 +741,13 @@ async function handleDeleteMember(memberId)
 		return;
 	}
 
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		showDashboardMessage('Session expired. Please sign in again.', 'error');
-		return;
-	}
-
 	try
 	{
 		const apiUrl = BASE_URL_LIVE + 'v2users/deleteMember';
 		const payload = {
 			id: memberId,
 			userTypeId: userTypeId(),
-			instituteId: instituteId
+			instituteId: INSTITUTE_ID
 		};
 		const response = await promisingAjaxCall(apiUrl, 'POST', payload, 'application/json');
 

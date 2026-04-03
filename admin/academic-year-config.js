@@ -12,14 +12,15 @@ const ayEndInput = $('#ay-end');
 
 let linkedAcademicYearId = null;
 
+/** Cached rows for pagination */
+let lastAyRows = [];
+
+const AY_PAGE_SIZE = 10;
+
+let ayCurrentPage = 1;
+
 $(document).ready(() =>
 {
-	const instituteId = requireInstituteSession();
-	if (instituteId === null)
-	{
-		showAySessionGate();
-	}
-
 	sidebarHost.load('sidebar.html', () =>
 	{
 		if (typeof window.initSidebarNav === 'function')
@@ -33,7 +34,9 @@ $(document).ready(() =>
 	ayModalCancel.on('click', closeAyModal);
 	ayModalSave.on('click', saveAy);
 
-	if (instituteId !== null)
+	bindAyPagination();
+
+	if (INSTITUTE_ID !== null)
 	{
 		loadAcademicYears();
 	}
@@ -68,16 +71,10 @@ function showAyMessage(message, type)
 
 async function loadAcademicYears()
 {
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		return;
-	}
-
 	try
 	{
 		const url = BASE_URL_LIVE + 'users/listAcademicYears';
-		const response = await promisingAjaxCall(url, 'POST', { institute_id: instituteId }, 'application/json');
+		const response = await promisingAjaxCall(url, 'POST', { institute_id: INSTITUTE_ID }, 'application/json');
 
 		if (!response || !response.isOk)
 		{
@@ -97,12 +94,64 @@ async function loadAcademicYears()
 	}
 }
 
+function bindAyPagination()
+{
+	$('#ay-page-first').on('click', () =>
+	{
+		ayCurrentPage = 1;
+		renderAyTablePage();
+	});
+	$('#ay-page-prev').on('click', () =>
+	{
+		ayCurrentPage = Math.max(1, ayCurrentPage - 1);
+		renderAyTablePage();
+	});
+	$('#ay-page-next').on('click', () =>
+	{
+		ayCurrentPage += 1;
+		renderAyTablePage();
+	});
+	$('#ay-page-last').on('click', () =>
+	{
+		const total = lastAyRows.length;
+		const totalPages = Math.max(1, Math.ceil(total / AY_PAGE_SIZE));
+		ayCurrentPage = totalPages;
+		renderAyTablePage();
+	});
+}
+
+function updateAyPaginationBar(totalItems, page, totalPages, startIdx, endIdx)
+{
+	const $bar = $('#ay-table-pagination');
+	if (totalItems === 0)
+	{
+		$bar.attr('hidden', true);
+		return;
+	}
+	$bar.removeAttr('hidden');
+	$('#ay-pagination-meta').text(`Showing ${startIdx}–${endIdx} of ${totalItems} academic years`);
+	$('#ay-page-status').text(`Page ${page} of ${totalPages}`);
+	const atFirst = page <= 1;
+	const atLast = page >= totalPages;
+	$('#ay-page-first, #ay-page-prev').prop('disabled', atFirst);
+	$('#ay-page-next, #ay-page-last').prop('disabled', atLast);
+}
+
 function renderAyRows(rows)
 {
+	lastAyRows = rows.slice();
+	ayCurrentPage = 1;
+	renderAyTablePage();
+}
+
+function renderAyTablePage()
+{
+	const rows = lastAyRows;
 	ayTableBody.empty();
 
 	if (!rows.length)
 	{
+		$('#ay-table-pagination').attr('hidden', true);
 		ayTableBody.append(`
 			<tr>
 				<td colspan="6">
@@ -116,7 +165,24 @@ function renderAyRows(rows)
 		return;
 	}
 
-	rows.forEach((row) =>
+	const total = rows.length;
+	const totalPages = Math.max(1, Math.ceil(total / AY_PAGE_SIZE));
+	if (ayCurrentPage > totalPages)
+	{
+		ayCurrentPage = totalPages;
+	}
+	if (ayCurrentPage < 1)
+	{
+		ayCurrentPage = 1;
+	}
+	const start = (ayCurrentPage - 1) * AY_PAGE_SIZE;
+	const pageRows = rows.slice(start, start + AY_PAGE_SIZE);
+	const startIdx = start + 1;
+	const endIdx = start + pageRows.length;
+
+	updateAyPaginationBar(total, ayCurrentPage, totalPages, startIdx, endIdx);
+
+	pageRows.forEach((row) =>
 	{
 		const id = Number(row.id);
 		const isLinked = linkedAcademicYearId !== null && id === linkedAcademicYearId;
@@ -176,13 +242,6 @@ function closeAyModal()
 
 async function saveAy()
 {
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		showAyMessage('Session expired. Please sign in again.', 'error');
-		return;
-	}
-
 	const name = ayNameInput.val().trim();
 	const sessionStart = ayStartInput.val();
 	const sessionEnd = ayEndInput.val();
@@ -209,7 +268,7 @@ async function saveAy()
 		ayModalSave.prop('disabled', true).text('Saving...');
 		const url = BASE_URL_LIVE + 'users/addAcademicYear';
 		const payload = {
-			institute_id: instituteId,
+			institute_id: INSTITUTE_ID,
 			name: name,
 			session_start: sessionStart,
 			session_end: sessionEnd,
@@ -247,16 +306,10 @@ async function handleDeleteAy(id)
 		return;
 	}
 
-	const instituteId = getSessionInstituteId();
-	if (instituteId === null)
-	{
-		return;
-	}
-
 	try
 	{
 		const url = BASE_URL_LIVE + 'users/deleteAcademicYear';
-		const response = await promisingAjaxCall(url, 'POST', { id: id, institute_id: instituteId }, 'application/json');
+		const response = await promisingAjaxCall(url, 'POST', { id: id, institute_id: INSTITUTE_ID }, 'application/json');
 		if (response && response.isOk)
 		{
 			showAyMessage('Academic year removed.', 'success');

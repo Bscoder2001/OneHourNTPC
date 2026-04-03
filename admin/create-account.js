@@ -192,20 +192,20 @@ function validateUsername()
 		errorMessage = config.errorMessages.empty;
 	}
 	// Check minimum length
-	else if (username.length < config.minLength)
-	{
-		errorMessage = config.errorMessages.tooShort;
-	}
-	// Check maximum length
-	else if (username.length > config.maxLength)
-	{
-		errorMessage = config.errorMessages.tooLong;
-	}
-	// Check pattern
-	else if (!config.pattern.test(username))
-	{
-		errorMessage = config.errorMessages.invalid;
-	}
+	// else if (username.length < config.minLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooShort;
+	// }
+	// // Check maximum length
+	// else if (username.length > config.maxLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooLong;
+	// }
+	// // Check pattern
+	// else if (!config.pattern.test(username))
+	// {
+	// 	errorMessage = config.errorMessages.invalid;
+	// }
 
 	if (errorMessage)
 	{
@@ -264,20 +264,20 @@ function validatePassword()
 		errorMessage = config.errorMessages.empty;
 	}
 	// Check minimum length
-	else if (password.length < config.minLength)
-	{
-		errorMessage = config.errorMessages.tooShort;
-	}
-	// Check maximum length
-	else if (password.length > config.maxLength)
-	{
-		errorMessage = config.errorMessages.tooLong;
-	}
-	// Check pattern
-	else if (!config.pattern.test(password))
-	{
-		errorMessage = config.errorMessages.invalid;
-	}
+	// else if (password.length < config.minLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooShort;
+	// }
+	// // Check maximum length
+	// else if (password.length > config.maxLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooLong;
+	// }
+	// // Check pattern
+	// else if (!config.pattern.test(password))
+	// {
+	// 	errorMessage = config.errorMessages.invalid;
+	// }
 
 	if (errorMessage)
 	{
@@ -644,9 +644,8 @@ async function handleFormSubmit(event)
 function handleAccountCreationSuccess(data)
 {
 	const userId = data.user_id ?? data.userId;
-	const instituteId = data.institute_id ?? data.instituteId;
 
-	if (!userId || !instituteId)
+	if (!userId || !INSTITUTE_ID)
 	{
 		showFormError('Account was created but missing identifiers. Please contact support.');
 		return;
@@ -654,13 +653,13 @@ function handleAccountCreationSuccess(data)
 
 	pendingSignup = {
 		user_id: Number(userId),
-		institute_id: Number(instituteId)
+		institute_id: Number(INSTITUTE_ID)
 	};
 
 	try
 	{
 		localStorage.setItem('currentUserId', String(userId));
-		localStorage.setItem('currentInstituteId', String(instituteId));
+		localStorage.setItem('currentInstituteId', String(INSTITUTE_ID));
 	}
 	catch (e)
 	{
@@ -755,7 +754,7 @@ async function handleAcademicYearSubmit(event)
 	{
 		const url = BASE_URL_LIVE + 'users/addAcademicYear';
 		const payload = {
-			institute_id: pendingSignup.institute_id,
+			institute_id: INSTITUTE_ID,
 			school_user_id: pendingSignup.user_id,
 			name: academicYearNameInput.val().trim(),
 			session_start: sessionStartInput.val(),

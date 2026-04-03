@@ -6,49 +6,141 @@
 	<title>Students – OneHourNTPC</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="styles.css">
 	<link rel="stylesheet" href="./admin/dashboard.css">
 </head>
-<body class="dashboard-page">
-	<div class="dashboard-layout">
+<body class="dashboard-page dashboard-page--erp">
+	<div class="dashboard-layout dashboard-layout--erp">
 		<div id="sidebar-host"></div>
 
-		<main class="dashboard-main">
-			<div class="dashboard-breadcrumb-bar">
-				<nav class="breadcrumb" aria-label="Breadcrumb">
-					<a href="dashboard.html">Institution</a>
-					<span class="breadcrumb-sep">/</span>
-					<a href="students-add.html">Students</a>
-					<span class="breadcrumb-sep">/</span>
-					<span class="breadcrumb-current">Add Student</span>
+		<main class="dashboard-main dashboard-main--erp">
+			<div class="dashboard-topbar">
+				<nav class="breadcrumb dashboard-breadcrumb--erp" aria-label="Breadcrumb">
+					<ol class="breadcrumb-trail">
+						<li><a href="dashboard.html">Institution</a></li>
+						<li class="breadcrumb-sep" aria-hidden="true">/</li>
+						<li><a href="students-add.html">Students</a></li>
+						<li class="breadcrumb-sep" aria-hidden="true">/</li>
+						<li><span class="breadcrumb-current" aria-current="page">Add Student</span></li>
+					</ol>
 				</nav>
+				<div class="dashboard-topbar-actions">
+					<button type="button" class="dashboard-bell" aria-label="Notifications">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+						<span class="dashboard-bell-dot" aria-hidden="true"></span>
+					</button>
+					<div class="dashboard-user-av" aria-hidden="true">A</div>
+				</div>
 			</div>
-			<div class="dashboard-main-body">
-				<div class="dashboard-toolbar">
+
+			<div class="dashboard-main-body dashboard-main-body--erp">
+				<section class="dashboard-stats" aria-label="Summary">
+					<div class="dashboard-stat-card">
+						<div class="dashboard-stat-card-top">
+							<div class="dashboard-stat-ico dashboard-stat-ico--teachers">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+							</div>
+							<span class="dashboard-stat-badge dashboard-stat-badge--green">—</span>
+						</div>
+						<div class="dashboard-stat-value" id="stat-card-teachers">—</div>
+						<div class="dashboard-stat-label">Total teachers</div>
+					</div>
+					<div class="dashboard-stat-card">
+						<div class="dashboard-stat-card-top">
+							<div class="dashboard-stat-ico dashboard-stat-ico--students">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+							</div>
+							<span class="dashboard-stat-badge dashboard-stat-badge--green" id="stat-badge-students">—</span>
+						</div>
+						<div class="dashboard-stat-value" id="stat-card-students">0</div>
+						<div class="dashboard-stat-label">Total students</div>
+					</div>
+					<div class="dashboard-stat-card">
+						<div class="dashboard-stat-card-top">
+							<div class="dashboard-stat-ico dashboard-stat-ico--cal">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+							</div>
+							<span class="dashboard-stat-badge dashboard-stat-badge--amber">Setup</span>
+						</div>
+						<div class="dashboard-stat-value" id="stat-card-ay">—</div>
+						<div class="dashboard-stat-label">Academic year</div>
+					</div>
+					<div class="dashboard-stat-card">
+						<div class="dashboard-stat-card-top">
+							<div class="dashboard-stat-ico dashboard-stat-ico--reports">
+								<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+							</div>
+							<span class="dashboard-stat-badge dashboard-stat-badge--green">Live</span>
+						</div>
+						<div class="dashboard-stat-value" id="stat-card-reports">1</div>
+						<div class="dashboard-stat-label">Reports active</div>
+					</div>
+				</section>
+
+				<div class="dashboard-page-head">
 					<div class="title-block">
 						<h1>Students</h1>
-						<p class="subtitle" id="member-count">0 students</p>
+						<p class="subtitle">Manage all students in your institution.</p>
 					</div>
-					<button class="primary-btn" id="add-member-btn" type="button">Add Student</button>
+					<div class="dashboard-page-head-actions">
+						<button type="button" class="btn-erp-outline" id="export-member-btn">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+							Export
+						</button>
+						<button class="primary-btn btn-erp-primary" id="add-member-btn" type="button">
+							<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+							Add Student
+						</button>
+					</div>
 				</div>
 
-				<div class="table-card">
-					<table class="member-table">
-						<thead>
-							<tr>
-								<th>Name</th>
-								<th>Email</th>
-								<th>Username</th>
-								<th>Password</th>
-								<th>Action</th>
-							</tr>
-						</thead>
-						<tbody id="member-table-body"></tbody>
-					</table>
-				</div>
+				<div class="dashboard-message dashboard-message--erp" id="dashboard-message" role="status" aria-live="polite"></div>
 
-				<div class="dashboard-message" id="dashboard-message"></div>
+				<div class="table-card table-card--erp">
+					<div class="table-card-toolbar">
+						<div>
+							<div class="table-card-title">All Students</div>
+							<div class="table-card-count"><span id="member-count">0 students</span> found</div>
+						</div>
+						<div class="table-card-toolbar-right">
+							<label class="table-search-wrap">
+								<span class="visually-hidden">Search students</span>
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+								<input type="search" class="table-search-input" id="member-search-input" placeholder="Search students…" autocomplete="off">
+							</label>
+							<button type="button" class="btn-erp-filter" id="member-filter-btn" aria-expanded="false">
+								<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+								Filter
+							</button>
+						</div>
+					</div>
+					<div class="table-scroll">
+						<table class="member-table member-table--erp">
+							<thead>
+								<tr>
+									<th>Student</th>
+									<th>Email</th>
+									<th>Username</th>
+									<th>Password</th>
+									<th>Status</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody id="member-table-body"></tbody>
+						</table>
+					</div>
+					<div class="table-pagination table-pagination--erp" id="member-table-pagination" hidden>
+						<p class="table-pagination-meta" id="member-pagination-meta"></p>
+						<nav class="table-pagination-nav" aria-label="Table pagination">
+							<button type="button" class="table-pagination-btn" id="member-page-first" aria-label="First page">«</button>
+							<button type="button" class="table-pagination-btn" id="member-page-prev" aria-label="Previous page">‹</button>
+							<span class="table-pagination-status" id="member-page-status"></span>
+							<button type="button" class="table-pagination-btn" id="member-page-next" aria-label="Next page">›</button>
+							<button type="button" class="table-pagination-btn" id="member-page-last" aria-label="Last page">»</button>
+						</nav>
+					</div>
+				</div>
 			</div>
 		</main>
 	</div>

@@ -144,20 +144,20 @@ function validateUsername()
 		errorMessage = config.errorMessages.empty;
 	}
 	// Check minimum length
-	else if (username.length < config.minLength)
-	{
-		errorMessage = config.errorMessages.tooShort;
-	}
-	// Check maximum length
-	else if (username.length > config.maxLength)
-	{
-		errorMessage = config.errorMessages.tooLong;
-	}
-	// Check pattern
-	else if (!config.pattern.test(username))
-	{
-		errorMessage = config.errorMessages.invalid;
-	}
+	// else if (username.length < config.minLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooShort;
+	// }
+	// // Check maximum length
+	// else if (username.length > config.maxLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooLong;
+	// }
+	// // Check pattern
+	// else if (!config.pattern.test(username))
+	// {
+	// 	errorMessage = config.errorMessages.invalid;
+	// }
 
 	if (errorMessage)
 	{
@@ -185,21 +185,21 @@ function validatePassword()
 		errorMessage = config.errorMessages.empty;
 	}
 	// Check minimum length
-	else if (password.length < config.minLength)
-	{
-		errorMessage = config.errorMessages.tooShort;
-	}
-	// Check maximum length
-	else if (password.length > config.maxLength)
-	{
-		errorMessage = config.errorMessages.tooLong;
-	}
+	// else if (password.length < config.minLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooShort;
+	// }
+	// // Check maximum length
+	// else if (password.length > config.maxLength)
+	// {
+	// 	errorMessage = config.errorMessages.tooLong;
+	// }
 
-	if (errorMessage)
-	{
-		showFieldError('password', errorMessage);
-		return false;
-	}
+	// if (errorMessage)
+	// {
+	// 	showFieldError('password', errorMessage);
+	// 	return false;
+	// }
 
 	clearFieldError('password');
 	return true;
@@ -391,15 +391,19 @@ function handleLoginSuccess(data, rememberMe)
 	{
 		if (data.user_id !== undefined && data.user_id !== null)
 		{
-			localStorage.setItem('ntpc_user_id', String(data.user_id));
+			localStorage.setItem('user_id', String(data.user_id));
 		}
 		if (data.institute_id !== undefined && data.institute_id !== null)
 		{
-			localStorage.setItem('ntpc_institute_id', String(data.institute_id));
+			localStorage.setItem('institute_id', String(data.institute_id));
 		}
 		if (data.user_type_id !== undefined && data.user_type_id !== null)
 		{
-			localStorage.setItem('ntpc_user_type_id', String(data.user_type_id));
+			localStorage.setItem('user_type_id', String(data.user_type_id));
+		}
+		if (data.academic_year_id !== undefined && data.academic_year_id !== null)
+		{
+			localStorage.setItem('academic_year_id', String(data.academic_year_id));
 		}
 	}
 	catch (e)
@@ -583,7 +587,7 @@ async function handleSendOtp()
 		otpState.isSending = true;
 		sendOtpBtn.prop('disabled', true).text('Sending...');
 
-		const payload = createJSON(['email'], [email]);
+		const payload = createJSON(['email', 'purpose'], [email, 'password_reset']);
 		const response = await promisingAjaxCall(apiUrl, 'POST', payload, 'application/json');
 
 		if (response && response.isOk)
