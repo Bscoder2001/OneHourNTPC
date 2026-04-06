@@ -1,4 +1,4 @@
-let BASE_URL_LIVE = "http://127.0.0.1:8000/";
+let BASE_URL_LIVE = "http://localhost:8000/";
 
 let USER_TYPE_ID_ADMIN = 2;
 let USER_TYPE_ID_TEACHER = 3;

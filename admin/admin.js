@@ -605,6 +605,8 @@ async function handleSendOtp()
 	}
 	catch ( error )
 	{
+		console.log(error);
+		
 		showOtpMessage(error.message || 'Email not found.', 'error');
 	}
 	finally

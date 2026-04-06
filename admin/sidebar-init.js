@@ -29,7 +29,7 @@ window.initSidebarNav = function initSidebarNav()
 		const $inst = $active.closest('.erp-module-collapse--institution');
 		if ($inst.length)
 		{
-			$inst.addClass('is-open');
+			// $inst.addClass('is-open');
 			$inst.find('.erp-institution-summary').attr('aria-expanded', 'true');
 		}
 	}

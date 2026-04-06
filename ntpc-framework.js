@@ -23,7 +23,7 @@ function promisingAjaxCall(url, method, data, contentType)
             },
             error: function(xhr, status, error)
             {
-                reject(error);
+                reject(xhr.responseJSON || error);
             }
         });
     });
