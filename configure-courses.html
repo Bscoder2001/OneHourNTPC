@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Courses - OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+</head>
+<body class="dashboard-page">
+	<div class="dashboard-layout">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main">
+			<div class="dashboard-breadcrumb-bar">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="dashboard.html">Institution</a>
+					<span class="breadcrumb-sep">/</span>
+					<a href="configure.html">Configure</a>
+					<span class="breadcrumb-sep">/</span>
+					<span class="breadcrumb-current">Courses</span>
+				</nav>
+			</div>
+			<div class="dashboard-main-body">
+				<div class="dashboard-toolbar">
+					<div class="title-block">
+						<h1>Courses</h1>
+						<p class="subtitle">Add, update and manage course status.</p>
+					</div>
+					<button class="primary-btn" id="course-add-btn" type="button">Add course</button>
+				</div>
+
+				<div class="table-card">
+					<table class="member-table ay-table">
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody id="course-table-body"></tbody>
+					</table>
+				</div>
+
+				<div class="dashboard-message" id="course-dashboard-message"></div>
+			</div>
+		</main>
+	</div>
+
+	<div class="modal-overlay" id="course-modal-overlay">
+		<div class="member-modal">
+			<div class="modal-header">
+				<h2 id="course-modal-title">Add course</h2>
+				<button type="button" class="icon-btn" id="course-modal-close" aria-label="Close">×</button>
+			</div>
+			<div class="modal-form">
+				<input type="hidden" id="course-id">
+				<div class="form-group">
+					<label for="course-name" class="form-label">Course name</label>
+					<input type="text" id="course-name" class="form-input" placeholder="e.g. NTPC Foundation">
+				</div>
+				<div class="form-group">
+					<label for="course-status" class="form-label">Status</label>
+					<select id="course-status" class="form-input">
+						<option value="active">Active</option>
+						<option value="inactive">Inactive</option>
+					</select>
+				</div>
+				<div class="modal-actions">
+					<button type="button" class="secondary-btn" id="course-modal-cancel">Cancel</button>
+					<button type="button" class="primary-btn" id="course-modal-save">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/configure-courses.js"></script>
+</body>
+</html>

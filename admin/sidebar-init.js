@@ -22,36 +22,41 @@ window.initSidebarNav = function initSidebarNav()
 		}
 	});
 
-	const $active = $('.sidebar-sublink.active');
-	if ($active.length)
-	{
-		$active.closest('details.sidebar-group').prop('open', true);
-		const $inst = $active.closest('.erp-module-collapse--institution');
-		if ($inst.length)
-		{
-			// $inst.addClass('is-open');
-			$inst.find('.erp-institution-summary').attr('aria-expanded', 'true');
-		}
-	}
-
-	initInstitutionToggle();
+	initModuleToggles();
 	initSidebarMobile();
 };
 
-function initInstitutionToggle()
+function initModuleToggles()
 {
-	const $root = $('.erp-module-collapse--institution');
-	const $btn = $root.find('.erp-institution-summary').first();
-	if (!$root.length || !$btn.length)
-	{
-		return;
-	}
+	const roots = document.querySelectorAll('.erp-module-collapse');
+	roots.forEach((root, index) => {
+		const btn = root.querySelector('.erp-institution-summary');
+		const panel = root.querySelector('.erp-institution-anim');
+		if (!btn || !panel) return;
 
-	$btn.off('click.institutionToggle').on('click.institutionToggle', function ()
-	{
-		const open = !$root.hasClass('is-open');
-		$root.toggleClass('is-open', open);
-		$btn.attr('aria-expanded', open ? 'true' : 'false');
+		// Keep aria-controls/labelledby valid automatically for copied modules.
+		if (!panel.id)
+		{
+			panel.id = `erp-module-panel-${index + 1}`;
+		}
+		if (!btn.id)
+		{
+			btn.id = `erp-module-toggle-${index + 1}`;
+		}
+		btn.setAttribute('aria-controls', panel.id);
+		panel.setAttribute('aria-labelledby', btn.id);
+
+		const requestedExpanded = btn.getAttribute('aria-expanded') === 'true';
+		const isOpen = root.classList.contains('is-open') || requestedExpanded;
+		root.classList.toggle('is-open', isOpen);
+		btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+		btn.addEventListener('click', function ()
+		{
+			const open = !root.classList.contains('is-open');
+			root.classList.toggle('is-open', open);
+			btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+		});
 	});
 }
 

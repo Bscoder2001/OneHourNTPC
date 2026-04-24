@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Create Test - OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+</head>
+<body class="dashboard-page dashboard-page--erp" data-assessment-page="test-create">
+	<div class="dashboard-layout dashboard-layout--erp">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main dashboard-main--erp">
+			<div class="dashboard-topbar">
+				<nav class="breadcrumb dashboard-breadcrumb--erp" aria-label="Breadcrumb">
+					<ol class="breadcrumb-trail">
+						<li><a href="dashboard.html">Assessment</a></li>
+						<li class="breadcrumb-sep" aria-hidden="true">/</li>
+						<li><a href="test-list.html">Tests</a></li>
+						<li class="breadcrumb-sep" aria-hidden="true">/</li>
+						<li><span class="breadcrumb-current" aria-current="page">Create Test</span></li>
+					</ol>
+				</nav>
+				<div class="dashboard-topbar-actions">
+					<button type="button" class="dashboard-bell" aria-label="Notifications">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+						<span class="dashboard-bell-dot" aria-hidden="true"></span>
+					</button>
+					<div class="dashboard-user-av" aria-hidden="true">A</div>
+				</div>
+			</div>
+
+			<div class="dashboard-main-body dashboard-main-body--erp">
+				<div class="dashboard-page-head">
+					<div class="title-block">
+						<h1>Create Test</h1>
+						<p class="subtitle">Create tests and attach question IDs in sequence.</p>
+					</div>
+				</div>
+
+				<div class="dashboard-message dashboard-message--erp" id="assessment-message"></div>
+
+				<div class="table-card table-card--erp">
+					<div class="modal-form">
+						<div class="form-group">
+							<label class="form-label" for="test-title">Title</label>
+							<input id="test-title" class="form-input">
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="test-description">Description</label>
+							<textarea id="test-description" class="form-input" rows="3"></textarea>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="test-duration">Duration (minutes)</label>
+							<input type="number" id="test-duration" class="form-input">
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="test-question-ids">Question IDs (comma separated)</label>
+							<input id="test-question-ids" class="form-input">
+						</div>
+						<div class="modal-actions">
+							<button type="button" class="primary-btn" id="create-test-btn">Create Test</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/assessment.js"></script>
+</body>
+</html>

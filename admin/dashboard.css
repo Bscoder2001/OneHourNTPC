@@ -1203,11 +1203,11 @@ button.erp-institution-summary:hover {
 	transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.erp-module-collapse--institution:not(.is-open) .erp-module-chevron {
+.erp-module-collapse:not(.is-open) .erp-module-chevron {
 	transform: rotate(-90deg);
 }
 
-.erp-module-collapse--institution.is-open .erp-module-chevron {
+.erp-module-collapse.is-open .erp-module-chevron {
 	transform: rotate(0deg);
 }
 
@@ -1227,7 +1227,7 @@ button.erp-institution-summary:hover {
 	}
 }
 
-.erp-module-collapse--institution.is-open > .erp-institution-anim {
+.erp-module-collapse.is-open > .erp-institution-anim {
 	grid-template-rows: 1fr;
 }
 
