@@ -45,15 +45,31 @@ function showDashboardMessage(message, type)
 	}
 }
 
+function isFetchNetworkError(error)
+{
+	return error instanceof TypeError
+		&& String(error && error.message).toLowerCase().indexOf('fetch') >= 0;
+}
+
 async function loadCourses()
 {
 	try
 	{
-		const response = await fetch(BASE_URL_LIVE + 'courses?user_id=' + USER_ID, {
+		const response = await fetch(BASE_URL_LIVE + 'courses/list', {
+			method: 'POST',
 			headers: {
+				'Content-Type': 'application/json',
 				'X-User-Id': USER_ID,
 			},
+			body: JSON.stringify({
+				user_id: USER_ID != null && USER_ID !== '' ? Number(USER_ID) : null,
+			}),
 		});
+		if (!response.ok)
+		{
+			showDashboardMessage('Could not load courses (HTTP ' + response.status + ').', 'error');
+			return;
+		}
 		const result = await response.json();
 		const rows = (result && result.data) ? result.data : [];
 
@@ -129,7 +145,14 @@ async function loadCourses()
 	}
 	catch (error)
 	{
-		showDashboardMessage('Unable to load courses.', 'error');
+		if (isFetchNetworkError(error))
+		{
+			showDashboardMessage('Cannot connect to the API at ' + BASE_URL_LIVE + ' (nothing listening). Start the Laravel app: cd onehour-ntpc-api && php artisan serve. Or set localStorage api_base_url to your server URL, then reload.', 'error');
+		}
+		else
+		{
+			showDashboardMessage('Unable to load courses.', 'error');
+		}
 	}
 }
 
@@ -164,7 +187,7 @@ async function saveCourse()
 	{
 		if (mode === 'add')
 		{
-			await fetch(BASE_URL_LIVE + 'courses', {
+			const res = await fetch(BASE_URL_LIVE + 'courses', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -176,11 +199,16 @@ async function saveCourse()
 					user_id: Number(USER_ID),
 				}),
 			});
+			if (!res.ok)
+			{
+				showDashboardMessage('Save failed (HTTP ' + res.status + ').', 'error');
+				return;
+			}
 		}
 		else
 		{
 			const id = Number(courseIdInput.val());
-			await fetch(BASE_URL_LIVE + 'courses/' + id, {
+			const res = await fetch(BASE_URL_LIVE + 'courses/' + id, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
@@ -192,6 +220,11 @@ async function saveCourse()
 					user_id: Number(USER_ID),
 				}),
 			});
+			if (!res.ok)
+			{
+				showDashboardMessage('Update failed (HTTP ' + res.status + ').', 'error');
+				return;
+			}
 		}
 
 		closeModal();
@@ -200,7 +233,14 @@ async function saveCourse()
 	}
 	catch (error)
 	{
-		showDashboardMessage('Unable to save course.', 'error');
+		if (isFetchNetworkError(error))
+		{
+			showDashboardMessage('Cannot connect to the API at ' + BASE_URL_LIVE + '. Start php artisan serve in onehour-ntpc-api, or set localStorage api_base_url, then reload.', 'error');
+		}
+		else
+		{
+			showDashboardMessage('Unable to save course.', 'error');
+		}
 	}
 }
 

@@ -38,7 +38,7 @@
 				<div class="dashboard-page-head">
 					<div class="title-block">
 						<h1>Create Test</h1>
-						<p class="subtitle">Create tests and attach question IDs in sequence.</p>
+						<p class="subtitle">Create a test and add questions from the bank in the order you want them to appear.</p>
 					</div>
 				</div>
 
@@ -59,8 +59,10 @@
 							<input type="number" id="test-duration" class="form-input">
 						</div>
 						<div class="form-group">
-							<label class="form-label" for="test-question-ids">Question IDs (comma separated)</label>
-							<input id="test-question-ids" class="form-input">
+							<label class="form-label">Question bank (add to test in order)</label>
+							<div id="test-question-bank" class="table-card table-card--erp" style="max-height:220px;overflow:auto;padding:0.5rem;margin-bottom:0.75rem;"></div>
+							<label class="form-label" for="test-question-ordered">Selected questions (order = test order; remove to take out)</label>
+							<ol id="test-question-ordered" class="form-input" style="min-height:4rem;list-style:decimal;padding-left:1.5rem;margin:0;"></ol>
 						</div>
 						<div class="modal-actions">
 							<button type="button" class="primary-btn" id="create-test-btn">Create Test</button>

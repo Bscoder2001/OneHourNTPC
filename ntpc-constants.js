@@ -1,4 +1,8 @@
-let BASE_URL_LIVE = "http://localhost:8000/";
+// Default: Laravel on port 8000 (`php artisan serve`). If the API runs elsewhere, set once in the console, then reload:
+// localStorage.setItem('api_base_url', 'https://onehourntpc.page.gd');
+var _ntpcApiBase = localStorage.getItem('api_base_url');
+var _ntpcApiRaw = (_ntpcApiBase && _ntpcApiBase.trim()) ? _ntpcApiBase.trim() : 'http://localhost:8000';
+var BASE_URL_LIVE = _ntpcApiRaw.replace(/\/?$/, '/');
 
 let USER_TYPE_ID_ADMIN = 2;
 let USER_TYPE_ID_TEACHER = 3;

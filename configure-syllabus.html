@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Subjects, chapters, topics - OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+</head>
+<body class="dashboard-page">
+	<div class="dashboard-layout">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main">
+			<div class="dashboard-breadcrumb-bar">
+				<nav class="breadcrumb" aria-label="Breadcrumb">
+					<a href="dashboard.html">Institution</a>
+					<span class="breadcrumb-sep">/</span>
+					<a href="configure.html">Configure</a>
+					<span class="breadcrumb-sep">/</span>
+					<span class="breadcrumb-current">Syllabus</span>
+				</nav>
+			</div>
+			<div class="dashboard-main-body">
+				<div class="dashboard-toolbar">
+					<div class="title-block">
+						<h1>Syllabus</h1>
+						<p class="subtitle">Create course → subject → chapter → topic for the question bank and tests.</p>
+					</div>
+				</div>
+
+				<div class="dashboard-message" id="syllabus-message"></div>
+
+				<div class="table-card" style="margin-bottom:1.25rem;">
+					<div class="dashboard-toolbar" style="padding:1rem 1rem 0 1rem;">
+						<div class="title-block" style="margin:0;">
+							<h2 style="font-size:1.1rem;">Subjects</h2>
+							<p class="subtitle" style="margin:0;">Requires a course</p>
+						</div>
+					</div>
+					<div class="modal-form" style="padding:1rem;">
+						<div class="form-group">
+							<label class="form-label" for="syllabus-subject-course">Course</label>
+							<select id="syllabus-subject-course" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-subject-name">Subject name</label>
+							<input type="text" id="syllabus-subject-name" class="form-input" placeholder="e.g. Physics">
+						</div>
+						<button type="button" class="primary-btn" id="syllabus-subject-add">Add subject</button>
+					</div>
+					<table class="member-table ay-table" style="margin:0 1rem 1rem 1rem;">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody id="syllabus-subject-tbody"></tbody>
+					</table>
+				</div>
+
+				<div class="table-card" style="margin-bottom:1.25rem;">
+					<div class="dashboard-toolbar" style="padding:1rem 1rem 0 1rem;">
+						<div class="title-block" style="margin:0;">
+							<h2 style="font-size:1.1rem;">Chapters</h2>
+							<p class="subtitle" style="margin:0;">Requires a subject</p>
+						</div>
+					</div>
+					<div class="modal-form" style="padding:1rem;">
+						<div class="form-group">
+							<label class="form-label" for="syllabus-chapter-course">Course</label>
+							<select id="syllabus-chapter-course" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-chapter-subject">Subject</label>
+							<select id="syllabus-chapter-subject" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-chapter-name">Chapter name</label>
+							<input type="text" id="syllabus-chapter-name" class="form-input" placeholder="e.g. Mechanics">
+						</div>
+						<button type="button" class="primary-btn" id="syllabus-chapter-add">Add chapter</button>
+					</div>
+					<table class="member-table ay-table" style="margin:0 1rem 1rem 1rem;">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody id="syllabus-chapter-tbody"></tbody>
+					</table>
+				</div>
+
+				<div class="table-card">
+					<div class="dashboard-toolbar" style="padding:1rem 1rem 0 1rem;">
+						<div class="title-block" style="margin:0;">
+							<h2 style="font-size:1.1rem;">Topics</h2>
+							<p class="subtitle" style="margin:0;">Requires a chapter</p>
+						</div>
+					</div>
+					<div class="modal-form" style="padding:1rem;">
+						<div class="form-group">
+							<label class="form-label" for="syllabus-topic-course">Course</label>
+							<select id="syllabus-topic-course" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-topic-subject">Subject</label>
+							<select id="syllabus-topic-subject" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-topic-chapter">Chapter</label>
+							<select id="syllabus-topic-chapter" class="form-input"></select>
+						</div>
+						<div class="form-group">
+							<label class="form-label" for="syllabus-topic-name">Topic name</label>
+							<input type="text" id="syllabus-topic-name" class="form-input" placeholder="e.g. Kinematics">
+						</div>
+						<button type="button" class="primary-btn" id="syllabus-topic-add">Add topic</button>
+					</div>
+					<table class="member-table ay-table" style="margin:0 1rem 1rem 1rem;">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody id="syllabus-topic-tbody"></tbody>
+					</table>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/configure-syllabus.js"></script>
+</body>
+</html>

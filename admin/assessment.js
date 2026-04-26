@@ -1,6 +1,8 @@
 const sidebarHost = $('#sidebar-host');
 const pageName = $('body').data('assessment-page');
 const messageBox = $('#assessment-message');
+var testBuildOrder = [];
+var testBuildMap = new Map();
 
 $(document).ready(() =>
 {
@@ -31,6 +33,10 @@ $(document).ready(() =>
 	else if (pageName === 'results-overview')
 	{
 		initResultsOverviewPage();
+	}
+	else if (pageName === 'attempt-take')
+	{
+		initAttemptTakePage();
 	}
 });
 
@@ -251,8 +257,73 @@ async function loadQuestionList()
 	}
 }
 
+function renderTestOrderedList()
+{
+	const ol = $('#test-question-ordered');
+	ol.empty();
+	testBuildOrder.forEach((qid) =>
+	{
+		const row = testBuildMap.get(qid);
+		const preview = row && row.question_text ? String(row.question_text) : '';
+		const short = preview.length > 90 ? (preview.slice(0, 90) + '…') : preview;
+		const li = $('<li style="margin:0.35rem 0;"/>');
+		li.append($('<span/>').text('Q' + qid + (short ? ' — ' + short : '')));
+		const rm = $('<button type="button" class="secondary-btn" style="margin-left:0.5rem;"/>').text('Remove');
+		rm.on('click', () =>
+		{
+			testBuildOrder = testBuildOrder.filter((x) => x !== qid);
+			renderTestOrderedList();
+		});
+		li.append(rm);
+		ol.append(li);
+	});
+}
+
+function addQuestionToTestOrder(qid)
+{
+	if (testBuildOrder.indexOf(qid) >= 0)
+	{
+		showAssessmentMessage('That question is already in the test list.', 'error');
+		return;
+	}
+
+	testBuildOrder.push(qid);
+	renderTestOrderedList();
+}
+
+async function loadQuestionBankForTest()
+{
+	const res = await fetch(BASE_URL_LIVE + 'questions?per_page=500&user_id=' + encodeURIComponent(USER_ID), {
+		headers: authHeaders(),
+	});
+	const result = await res.json();
+	const rows = (result && result.data && result.data.data) ? result.data.data : [];
+	const box = $('#test-question-bank');
+	box.empty();
+	testBuildMap = new Map();
+	rows.forEach((row) =>
+	{
+		testBuildMap.set(row.id, row);
+		const rowEl = $('<div style="display:flex;align-items:center;gap:0.5rem;padding:0.35rem 0;border-bottom:1px solid rgba(0,0,0,0.07);"/>');
+		const label = (row.question_text || '').length > 100 ? (String(row.question_text).slice(0, 100) + '…') : (row.question_text || '');
+		rowEl.append($('<span style="flex:1;font-size:0.875rem;"/>').text('Q' + row.id + ' — ' + label));
+		const btn = $('<button type="button" class="secondary-btn"/>').text('Add');
+		btn.on('click', () =>
+		{
+			addQuestionToTestOrder(row.id);
+		});
+		rowEl.append(btn);
+		box.append(rowEl);
+	});
+}
+
 function initTestCreatePage()
 {
+	testBuildOrder = [];
+	testBuildMap = new Map();
+	loadQuestionBankForTest();
+	renderTestOrderedList();
+
 	$('#create-test-btn').on('click', async () =>
 	{
 		try
@@ -281,17 +352,22 @@ function initTestCreatePage()
 			}
 
 			const testId = createResult.data.test.id;
-			const questionIds = ($('#test-question-ids').val() || '').split(',').map((v) => Number(v.trim())).filter((v) => v > 0);
-			if (questionIds.length)
+			if (testBuildOrder.length)
 			{
-				await fetch(BASE_URL_LIVE + 'tests/' + testId + '/questions', {
+				const attachRes = await fetch(BASE_URL_LIVE + 'tests/' + testId + '/questions', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 						...authHeaders(),
 					},
-					body: JSON.stringify({ question_ids: questionIds, user_id: Number(USER_ID) }),
+					body: JSON.stringify({ question_ids: testBuildOrder, user_id: Number(USER_ID) }),
 				});
+				const attachResult = await attachRes.json();
+				if (!attachResult || !attachResult.isOk)
+				{
+					showAssessmentMessage((attachResult && attachResult.message) || 'Test created but attaching questions failed.', 'error');
+					return;
+				}
 			}
 
 			showAssessmentMessage('Test created successfully.', 'success');
@@ -301,6 +377,155 @@ function initTestCreatePage()
 			showAssessmentMessage('Network error while creating test.', 'error');
 		}
 	});
+}
+
+async function saveOneAttemptAnswer(attemptId, q)
+{
+	const base = { question_id: q.id, user_id: Number(USER_ID) };
+
+	if (q.question_type === 'mcq')
+	{
+		const v = $('input[name="q' + q.id + '"]:checked').val();
+		if (!v)
+		{
+			showAssessmentMessage('Select an option for question ' + q.id + '.', 'error');
+			return;
+		}
+
+		base.selected_option_id = Number(v);
+	}
+	else
+	{
+		const v = $('#num-ans-' + q.id).val();
+		if (v === undefined || v === null)
+		{
+			return;
+		}
+
+		base.numeric_answer = String(v);
+	}
+
+	const res = await fetch(BASE_URL_LIVE + 'attempts/' + attemptId + '/answer', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			...authHeaders(),
+		},
+		body: JSON.stringify(base),
+	});
+	const out = await res.json();
+	if (out && out.isOk)
+	{
+		showAssessmentMessage('Answer saved for question ' + q.id + '.', 'success');
+	}
+	else
+	{
+		showAssessmentMessage((out && out.message) || 'Could not save answer.', 'error');
+	}
+}
+
+function initAttemptTakePage()
+{
+	const p = new URLSearchParams(window.location.search);
+	const attemptId = p.get('attempt');
+	if (!attemptId)
+	{
+		showAssessmentMessage('Missing ?attempt= id in the URL. Start a test from Manage Tests.', 'error');
+		return;
+	}
+
+	$('#submit-attempt-btn').on('click', async () =>
+	{
+		try
+		{
+			const res = await fetch(BASE_URL_LIVE + 'attempts/' + attemptId + '/submit', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					...authHeaders(),
+				},
+				body: JSON.stringify({ user_id: Number(USER_ID) }),
+			});
+			const out = await res.json();
+			if (out && out.isOk)
+			{
+				const s = (out.data && (out.data.score !== undefined)) ? out.data.score : '';
+				const a = (out.data && (out.data.accuracy !== undefined)) ? out.data.accuracy : '';
+				const c = (out.data && (out.data.correct_answers !== undefined)) ? out.data.correct_answers : '';
+				const t = (out.data && (out.data.total_questions !== undefined)) ? out.data.total_questions : '';
+				showAssessmentMessage('Submitted. Score: ' + s + ' | Correct: ' + c + ' / ' + t + ' | Accuracy: ' + a + '%', 'success');
+			}
+			else
+			{
+				showAssessmentMessage((out && out.message) || 'Submit failed.', 'error');
+			}
+		}
+		catch (e)
+		{
+			showAssessmentMessage('Network error on submit.', 'error');
+		}
+	});
+
+	fetch(BASE_URL_LIVE + 'attempts/' + attemptId + '?user_id=' + encodeURIComponent(USER_ID), { headers: authHeaders() })
+		.then((r) => r.json())
+		.then((result) =>
+		{
+			if (!result || !result.isOk)
+			{
+				showAssessmentMessage((result && result.message) || 'Could not load attempt.', 'error');
+				return;
+			}
+
+			const data = result.data;
+			if (data.submitted)
+			{
+				showAssessmentMessage('This attempt is already submitted.', 'error');
+				return;
+			}
+
+			const questions = data.questions || [];
+			const container = $('#attempt-questions');
+			container.empty();
+			questions.forEach((q, i) =>
+			{
+				const card = $('<div class="table-card table-card--erp" style="margin-bottom:1rem;padding:1rem;"/>');
+				card.append($('<h3 style="font-size:0.95rem;margin:0 0 0.5rem;"/>')
+					.text('Question ' + (i + 1) + (q.question_type === 'mcq' ? ' (MCQ)' : ' (numeric)')));
+				card.append($('<p style="margin:0 0 0.75rem;white-space:pre-wrap;"/>').text(String(q.question_text || '')));
+				if (q.question_type === 'mcq')
+				{
+					(q.options || []).forEach((opt) =>
+					{
+						const rid = 'q' + q.id + 'opt' + opt.id;
+						const line = $('<div style="margin:0.25rem 0;"/>');
+						const cb = $('<input type="radio"/>')
+							.attr('name', 'q' + q.id)
+							.attr('id', rid)
+							.val(String(opt.id));
+						const lab = $('<label/>').attr('for', rid).text(String(opt.option_text || ''));
+						line.append(cb).append(' ').append(lab);
+						card.append(line);
+					});
+				}
+				else
+				{
+					card.append($('<input type="text" class="form-input" id="num-ans-' + q.id + '" placeholder="Your answer" />'));
+				}
+
+				const save = $('<button type="button" class="secondary-btn" style="margin-top:0.75rem;"/>')
+					.text('Save this answer');
+				save.on('click', () =>
+				{
+					saveOneAttemptAnswer(attemptId, q);
+				});
+				card.append(save);
+				container.append(card);
+			});
+		})
+		.catch(() =>
+		{
+			showAssessmentMessage('Could not load attempt (network).', 'error');
+		});
 }
 
 async function loadTestList()
@@ -330,7 +555,8 @@ async function loadTestList()
 			const resultStart = await responseStart.json();
 			if (resultStart && resultStart.isOk)
 			{
-				showAssessmentMessage('Attempt started. Attempt ID: ' + resultStart.data.attempt_id, 'success');
+				const aid = resultStart.data.attempt_id;
+				window.location.href = 'attempt-take.html?attempt=' + encodeURIComponent(aid);
 			}
 		});
 	}
