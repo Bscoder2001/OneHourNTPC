@@ -14,6 +14,7 @@
 	let notifyItems = [];
 	let pusherConnecting = false;
 	let audioCtx = null;
+	let audioUnlockArmed = false;
 
 	function isChatPage()
 	{
@@ -54,11 +55,37 @@
 		{
 			audioCtx = new Ctx();
 		}
-		if (audioCtx.state === 'suspended')
-		{
-			audioCtx.resume().catch(function () {});
-		}
 		return audioCtx;
+	}
+
+	/**
+	 * Browsers start AudioContext suspended without a user gesture; resume is async.
+	 */
+	function armNotificationAudioUnlock()
+	{
+		if (audioUnlockArmed)
+		{
+			return;
+		}
+		audioUnlockArmed = true;
+		function tryResume()
+		{
+			const ctx = ensureAudioContext();
+			if (ctx && ctx.state === 'suspended')
+			{
+				ctx.resume().catch(function () {});
+			}
+		}
+		document.addEventListener('pointerdown', tryResume, { capture: true, passive: true });
+		document.addEventListener('keydown', tryResume, { capture: true, passive: true });
+		document.addEventListener('touchstart', tryResume, { capture: true, passive: true });
+		document.addEventListener('visibilitychange', function ()
+		{
+			if (document.visibilityState === 'visible')
+			{
+				tryResume();
+			}
+		});
 	}
 
 	function playTone(ctx, freq, start, dur, gain)
@@ -83,14 +110,31 @@
 		{
 			return;
 		}
-		const t = ctx.currentTime;
-		try
+		function ding()
 		{
-			playTone(ctx, 784, t, 0.11, 0.09);
-			playTone(ctx, 988, t + 0.12, 0.12, 0.08);
+			const t = ctx.currentTime;
+			try
+			{
+				playTone(ctx, 784, t, 0.13, 0.12);
+				playTone(ctx, 988, t + 0.14, 0.14, 0.1);
+			}
+			catch (e)
+			{
+			}
 		}
-		catch (e)
+		if (ctx.state === 'suspended')
 		{
+			ctx.resume().then(function ()
+			{
+				ding();
+			}).catch(function ()
+			{
+				ding();
+			});
+		}
+		else
+		{
+			ding();
 		}
 	}
 
@@ -516,7 +560,11 @@
 		bell.addEventListener('click', function (e)
 		{
 			e.stopPropagation();
-			ensureAudioContext();
+			const ctx = ensureAudioContext();
+			if (ctx && ctx.state === 'suspended')
+			{
+				ctx.resume().catch(function () {});
+			}
 			togglePanel();
 		});
 		const markRead = document.getElementById('dashboard-notify-mark-read');
@@ -551,6 +599,7 @@
 			return;
 		}
 		notifyUserId = uid;
+		armNotificationAudioUnlock();
 		loadPersistedItems();
 		bindBellOnce();
 		const seeAll = document.getElementById('dashboard-notify-see-all');
