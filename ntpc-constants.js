@@ -12,10 +12,20 @@ const INSTITUTE_ID = localStorage.getItem('institute_id');
 const USER_TYPE_ID = localStorage.getItem('user_type_id');
 const USER_ID = localStorage.getItem('user_id');
 
+function ntpcIsAuthExemptPage()
+{
+	var href = (window.location.href || '').toLowerCase();
+	var path = (window.location.pathname || '').toLowerCase();
+	return href.indexOf('admin.html') !== -1
+		|| href.indexOf('create-account.html') !== -1
+		|| path.indexOf('chat.html') !== -1
+		|| href.indexOf('chat.html') !== -1;
+}
+
 if (
-    (!INSTITUTE_ID || !USER_TYPE_ID || !USER_ID) 
-	&& (!window.location.href.endsWith('admin.html')) && !window.location.href.endsWith('create-account.html')
+	(!INSTITUTE_ID || !USER_TYPE_ID || !USER_ID)
+	&& !ntpcIsAuthExemptPage()
 )
 {
-    window.location.href = 'admin.html';
+	window.location.href = 'admin.html';
 }

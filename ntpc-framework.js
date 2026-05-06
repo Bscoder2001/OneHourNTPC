@@ -15,6 +15,10 @@ function promisingAjaxCall(url, method, data, contentType)
         $.ajax({
             url: url,
             method: method,
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
             contentType: contentType || "application/json",
             data: JSON.stringify(data),
             success: function(response)
@@ -35,6 +39,7 @@ function logout()
 	localStorage.removeItem('institute_id');
 	localStorage.removeItem('user_type_id');
 	localStorage.removeItem('academic_year_id');
+	localStorage.removeItem('chat_token');
 	localStorage.removeItem('admin-username-saved');
 	window.location.href = 'admin.html';
 }

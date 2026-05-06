@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Messages – OneHourNTPC</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="./admin/dashboard.css">
+	<link rel="stylesheet" href="./admin/chat.css">
+</head>
+<body class="dashboard-page dashboard-page--erp chat-erp-page">
+	<div id="chat-auth-gate" class="chat-auth-gate" hidden>
+		<div class="chat-auth-gate-inner">
+			<div class="table-card table-card--erp chat-auth-gate-card">
+				<h2 class="chat-auth-gate-title">Sign in to use Messages</h2>
+				<p class="chat-auth-gate-text">Sign in from the admin page once. If you already signed in before chat was enabled, sign in again to refresh your messaging access.</p>
+				<div class="chat-auth-gate-actions">
+					<a class="primary-btn btn-erp-primary" href="admin.html">Go to sign in</a>
+					<a class="btn-erp-outline" href="dashboard.html">Back to dashboard</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="dashboard-layout dashboard-layout--erp">
+		<div id="sidebar-host"></div>
+
+		<main class="dashboard-main dashboard-main--erp">
+			<div id="topbar-host"></div>
+
+			<div class="dashboard-main-body dashboard-main-body--erp">
+				<div class="dashboard-page-head">
+					<div class="title-block">
+						<h1>Messages</h1>
+						<p class="subtitle">Realtime conversations with students in your institution.</p>
+					</div>
+				</div>
+
+				<div class="chat-erp-shell" id="chat-shell">
+					<aside class="chat-erp-roster table-card table-card--erp" id="chat-roster-panel" aria-label="Contacts">
+						<div class="chat-erp-roster-head">
+							<div class="chat-erp-roster-title">Contacts</div>
+							<div class="chat-erp-roster-sub">Same institute · latest activity first · unread badges update live</div>
+						</div>
+						<div class="chat-erp-roster-loading" id="chat-roster-loading">Loading directory…</div>
+						<div class="chat-erp-roster-error" id="chat-roster-error" hidden>
+							<p class="chat-erp-roster-error-msg" id="chat-roster-error-msg"></p>
+							<button type="button" class="btn-erp-outline" id="chat-roster-retry">Try again</button>
+						</div>
+						<div class="chat-erp-roster-list" id="chat-user-list" hidden></div>
+						<div class="chat-erp-archived-wrap" id="chat-archived-wrap" hidden>
+							<button type="button" class="chat-erp-archived-toggle" id="chat-archived-toggle" aria-expanded="false">Archived chats</button>
+							<div class="chat-erp-roster-list chat-erp-archived-list" id="chat-archived-list" hidden></div>
+						</div>
+					</aside>
+
+					<section class="chat-erp-thread" aria-label="Conversation">
+						<div class="chat-erp-thread-head">
+							<div class="chat-erp-thread-title" id="chat-thread-peer-name">Select a contact</div>
+							<div class="chat-erp-thread-sub" id="chat-thread-peer-sub">Choose someone from the list to start messaging.</div>
+						</div>
+
+						<div class="chat-erp-typing" id="chat-typing-line" hidden aria-live="polite"></div>
+
+						<div class="chat-erp-loading" id="chat-thread-loading" hidden>
+							<span class="chat-erp-spinner" aria-hidden="true"></span>
+							<span>Loading messages…</span>
+						</div>
+
+						<div class="chat-erp-empty" id="chat-thread-empty">
+							<strong>No conversation selected</strong>
+							<span class="chat-erp-empty-hint">Pick someone on the left (or tap <b>Contacts</b> on mobile) to load history.</span>
+						</div>
+
+						<div class="chat-erp-messages" id="chat-messages" hidden aria-live="polite"></div>
+
+						<div class="chat-erp-composer-wrap">
+							<div class="chat-erp-composer-meta">
+								<span class="chat-erp-char-count" id="chat-char-count" aria-live="polite"></span>
+							</div>
+							<div class="chat-erp-composer">
+								<label class="visually-hidden" for="chat-composer-input">Message</label>
+								<textarea id="chat-composer-input" class="chat-erp-composer-input" rows="1" placeholder="Message… (Enter to send, Shift+Enter for new line)" autocomplete="off" disabled></textarea>
+								<button type="button" class="chat-erp-send-btn" id="chat-send-btn" disabled>Send</button>
+							</div>
+						</div>
+					</section>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+	<script src="./ntpc-constants.js"></script>
+	<script src="./ntpc-framework.js"></script>
+	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/message-notifications.js"></script>
+	<script src="./admin/topbar-init.js"></script>
+	<script>
+		window.DASHBOARD_TOPBAR_BREADCRUMB = [
+			{ href: 'dashboard.html', text: 'Institution' },
+			{ href: 'students-add.html', text: 'Students' },
+			{ text: 'Messages', current: true }
+		];
+	</script>
+	<script src="./admin/chat.js"></script>
+</body>
+</html>

@@ -15,20 +15,7 @@
 		<div id="sidebar-host"></div>
 
 		<main class="dashboard-main dashboard-main--erp">
-			<div class="dashboard-topbar">
-				<nav class="breadcrumb dashboard-breadcrumb--erp" aria-label="Breadcrumb">
-					<ol class="breadcrumb-trail">
-						<li><a href="dashboard.html">Assessment</a></li>
-						<li class="breadcrumb-sep" aria-hidden="true">/</li>
-						<li><a href="test-list.html">Tests</a></li>
-						<li class="breadcrumb-sep" aria-hidden="true">/</li>
-						<li><span class="breadcrumb-current" aria-current="page">Take test</span></li>
-					</ol>
-				</nav>
-				<div class="dashboard-topbar-actions">
-					<div class="dashboard-user-av" aria-hidden="true">A</div>
-				</div>
-			</div>
+			<div id="topbar-host"></div>
 
 			<div class="dashboard-main-body dashboard-main-body--erp">
 				<div class="dashboard-page-head">
@@ -52,6 +39,15 @@
 	<script src="./ntpc-constants.js"></script>
 	<script src="./ntpc-framework.js"></script>
 	<script src="./admin/sidebar-init.js"></script>
+	<script src="./admin/message-notifications.js"></script>
+	<script src="./admin/topbar-init.js"></script>
+	<script>
+		window.DASHBOARD_TOPBAR_BREADCRUMB = [
+			{ href: 'dashboard.html', text: 'Assessment' },
+			{ href: 'test-list.html', text: 'Tests' },
+			{ text: 'Take test', current: true }
+		];
+	</script>
 	<script src="./admin/assessment.js"></script>
 </body>
 </html>

@@ -6,6 +6,7 @@
 const MP = () => window.MEMBER_PAGE || {};
 
 const sidebarHost = $('#sidebar-host');
+const topbarHost = $('#topbar-host');
 const memberTableBody = $('#member-table-body');
 const dashboardMessage = $('#dashboard-message');
 const addMemberBtn = $('#add-member-btn');
@@ -62,13 +63,25 @@ $(document).ready(() =>
 		return;
 	}
 
-	sidebarHost.load('sidebar.html', () =>
+	function loadSidebar()
 	{
-		if (typeof window.initSidebarNav === 'function')
+		sidebarHost.load('sidebar.html', () =>
 		{
-			window.initSidebarNav();
-		}
-	});
+			if (typeof window.initSidebarNav === 'function')
+			{
+				window.initSidebarNav();
+			}
+		});
+	}
+
+	if (topbarHost.length && typeof window.loadDashboardTopbar === 'function')
+	{
+		window.loadDashboardTopbar('#topbar-host', loadSidebar);
+	}
+	else
+	{
+		loadSidebar();
+	}
 
 	addMemberBtn.on('click', openAddMemberModal);
 	memberModalClose.on('click', closeMemberModal);

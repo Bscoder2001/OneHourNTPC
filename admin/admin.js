@@ -334,8 +334,8 @@ async function handleFormSubmit(event)
 	{
 		const apiUrl = BASE_URL_LIVE + 'users/login';
 		const loginData = createJSON(
-			['username', 'password'],
-			[username, password]
+			['username', 'password', 'remember'],
+			[username, password, rememberMeCheckbox.is(':checked')]
 		);
 		const response = await promisingAjaxCall(apiUrl, 'POST', loginData, 'application/json');
 
@@ -389,6 +389,10 @@ function handleLoginSuccess(data, rememberMe)
 
 	try
 	{
+		if (data.chat_token)
+		{
+			localStorage.setItem('chat_token', String(data.chat_token));
+		}
 		if (data.user_id !== undefined && data.user_id !== null)
 		{
 			localStorage.setItem('user_id', String(data.user_id));

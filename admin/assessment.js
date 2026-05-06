@@ -1,4 +1,5 @@
 const sidebarHost = $('#sidebar-host');
+const topbarHost = $('#topbar-host');
 const pageName = $('body').data('assessment-page');
 const messageBox = $('#assessment-message');
 var testBuildOrder = [];
@@ -6,13 +7,25 @@ var testBuildMap = new Map();
 
 $(document).ready(() =>
 {
-	sidebarHost.load('sidebar.html', function ()
+	function loadSidebar()
 	{
-		if (window.initSidebarNav)
+		sidebarHost.load('sidebar.html', function ()
 		{
-			window.initSidebarNav();
-		}
-	});
+			if (window.initSidebarNav)
+			{
+				window.initSidebarNav();
+			}
+		});
+	}
+
+	if (topbarHost.length && typeof window.loadDashboardTopbar === 'function')
+	{
+		window.loadDashboardTopbar('#topbar-host', loadSidebar);
+	}
+	else
+	{
+		loadSidebar();
+	}
 
 	if (pageName === 'question-add')
 	{
