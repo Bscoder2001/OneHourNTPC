@@ -33,6 +33,10 @@ const ChatApp = (function ()
 	let chatCtxMenuEl = null;
 	let archivedToggleBound = false;
 	let ctxEscBound = false;
+	let replyToMessageId = null;
+	let conversationHasMore = false;
+	let oldestMessageId = null;
+	let rosterTypingPeers = {};
 
 	function getArchivedPeerIds()
 	{
@@ -202,9 +206,14 @@ const ChatApp = (function ()
 		chatCtxMenuEl.style.top = top + 'px';
 	}
 
+	function findMessageWrap(messageId)
+	{
+		return document.querySelector('.chat-erp-msg-wrap[data-msg-id="' + messageId + '"]');
+	}
+
 	function applyMessageDeletedInUi(messageId)
 	{
-		const row = document.querySelector('.chat-erp-msg[data-msg-id="' + messageId + '"]');
+		const row = findMessageWrap(messageId);
 		if (!row)
 		{
 			return;
@@ -268,41 +277,44 @@ const ChatApp = (function ()
 			return;
 		}
 		wrap.dataset.ctxMenuBound = '1';
-		if (!ctxEscBound)
-		{
-			ctxEscBound = true;
-			document.addEventListener('keydown', function (e)
-			{
-				if (e.key === 'Escape')
-				{
-					hideChatContextMenu();
-				}
-			});
-		}
 		wrap.addEventListener('contextmenu', function (e)
 		{
-			const row = e.target.closest('.chat-erp-msg.is-sent');
-			if (!row || row.classList.contains('is-sending'))
+			if (e.target.closest('.chat-erp-msg-wrap, .chat-erp-msg'))
 			{
-				return;
+				e.preventDefault();
 			}
-			const mid = row.dataset.msgId;
-			if (!mid)
-			{
-				return;
-			}
-			e.preventDefault();
-			showChatContextMenu(e.clientX, e.clientY, [
-				{
-					label: 'Delete for everyone',
-					danger: true,
-					action: function ()
-					{
-						deleteMessageForEveryoneRequest(mid);
-					}
-				}
-			]);
 		});
+	}
+
+	function getMessageTextFromRow(row)
+	{
+		if (!row)
+		{
+			return '';
+		}
+		const root = row.classList.contains('chat-erp-msg-wrap') ? row : (row.closest('.chat-erp-msg-wrap') || row);
+		const bodyEl = root.querySelector('.chat-erp-msg-body, .chat-erp-msg-caption');
+		return bodyEl ? String(bodyEl.textContent || '').trim() : '';
+	}
+
+	function getMessageDownloadUrl(row)
+	{
+		if (!row)
+		{
+			return '';
+		}
+		const root = row.classList.contains('chat-erp-msg-wrap') ? row : (row.closest('.chat-erp-msg-wrap') || row);
+		const img = root.querySelector('.chat-erp-attach-img');
+		if (img && img.src)
+		{
+			return img.src;
+		}
+		const file = root.querySelector('.chat-erp-attach-file');
+		if (file && file.href)
+		{
+			return file.href;
+		}
+		return '';
 	}
 
 	function bindArchivedToggleOnce()
@@ -444,6 +456,14 @@ const ChatApp = (function ()
 		{
 			btn.disabled = !on || composerSending;
 		}
+		['chat-attach-btn', 'chat-voice-btn', 'chat-camera-btn'].forEach(function (id)
+		{
+			const el = document.getElementById(id);
+			if (el)
+			{
+				el.disabled = !on;
+			}
+		});
 	}
 
 	function showThreadLoading(show)
@@ -516,91 +536,296 @@ const ChatApp = (function ()
 		foot.className = 'chat-erp-msg-foot chat-erp-delivery--' + state;
 	}
 
-	function appendBubble(isSent, text, msgId, deliveryState, bubbleOpts)
+	function appendMessageDto(m, deliveryState, prepend)
 	{
-		bubbleOpts = bubbleOpts || {};
 		const wrap = document.getElementById('chat-messages');
-		if (!wrap)
+		if (!wrap || !m)
 		{
 			return null;
 		}
+		const isSent = m.sender_id === currentUserId;
 		const side = isSent ? 'sent' : 'received';
-		const last = wrap.lastElementChild;
+		const anchor = prepend ? wrap.firstElementChild : wrap.lastElementChild;
 		let continuation = false;
-		if (last && last.classList && last.classList.contains('chat-erp-msg') && last.classList.contains('is-' + side))
+		if (anchor && anchor.classList && anchor.classList.contains('chat-erp-msg-wrap') && anchor.classList.contains('is-' + side))
 		{
 			continuation = true;
 		}
-
-		const row = document.createElement('div');
-		row.className = 'chat-erp-msg is-' + side + (continuation ? ' is-continuation' : '');
-		if (msgId != null && msgId !== '')
+		let row;
+		if (typeof ChatRender !== 'undefined' && ChatRender.buildMessageRow)
 		{
-			row.dataset.msgId = String(msgId);
+			row = ChatRender.buildMessageRow(m, {
+				isSent: isSent,
+				peerName: activePeerName,
+				continuation: continuation,
+				deliveryState: deliveryState || (isSent ? 'sent' : null)
+			});
 		}
-		if (!isSent && !continuation)
+		else
 		{
-			const meta = document.createElement('div');
-			meta.className = 'chat-erp-msg-meta';
-			meta.textContent = activePeerName || 'Contact';
-			row.appendChild(meta);
+			const rowEl = document.createElement('div');
+			rowEl.className = 'chat-erp-msg is-' + side;
+			rowEl.dataset.msgId = String(m.id);
+			const body = document.createElement('div');
+			body.className = 'chat-erp-msg-body';
+			body.textContent = m.message || '';
+			rowEl.appendChild(body);
+			row = rowEl;
 		}
-		else if (isSent && !continuation)
+		if (prepend)
 		{
-			const meta = document.createElement('div');
-			meta.className = 'chat-erp-msg-meta';
-			meta.textContent = 'You';
-			row.appendChild(meta);
+			wrap.insertBefore(row, wrap.firstChild);
 		}
-
-		const body = document.createElement('div');
-		body.className = 'chat-erp-msg-body';
-		if (bubbleOpts.deletedForEveryone)
+		else
 		{
-			body.classList.add('chat-erp-msg-body--deleted');
+			wrap.appendChild(row);
 		}
-		body.textContent = text;
-		row.appendChild(body);
-
-		if (isSent)
+		if (!prepend)
 		{
-			const foot = document.createElement('div');
-			foot.className = 'chat-erp-msg-foot';
-			setDeliveryFoot(foot, deliveryState || 'sending');
-			row.appendChild(foot);
-			if (deliveryState === 'sending')
-			{
-				row.classList.add('is-sending');
-			}
+			scrollMessagesIfAppropriate(isSent);
 		}
-
-		wrap.appendChild(row);
-		scrollMessagesIfAppropriate(isSent);
 		return row;
 	}
 
-	function renderHistory(messages)
+	function appendBubble(isSent, text, msgId, deliveryState, bubbleOpts)
+	{
+		return appendMessageDto({
+			id: msgId,
+			sender_id: isSent ? currentUserId : activePeerId,
+			receiver_id: isSent ? activePeerId : currentUserId,
+			message: text,
+			message_type: 'text',
+			deleted_for_everyone: !!(bubbleOpts && bubbleOpts.deletedForEveryone),
+			attachments: []
+		}, deliveryState, false);
+	}
+
+	function renderHistory(messages, prepend)
 	{
 		const wrap = document.getElementById('chat-messages');
 		if (!wrap)
 		{
 			return;
 		}
-		wrap.innerHTML = '';
+		if (!prepend)
+		{
+			wrap.innerHTML = '';
+		}
+		const scrollH = wrap.scrollHeight;
+		const scrollTop = wrap.scrollTop;
 		for (let i = 0; i < messages.length; i++)
 		{
 			const m = messages[i];
-			const isSent = m.sender_id === currentUserId;
-			appendBubble(isSent, m.message, m.id, isSent ? 'sent' : null, {
-				deletedForEveryone: !!m.deleted_for_everyone
+			appendMessageDto(m, m.sender_id === currentUserId ? 'sent' : null, !!prepend);
+		}
+		if (!prepend)
+		{
+			const nodes = wrap.querySelectorAll('.chat-erp-msg-wrap.is-sent .chat-erp-msg-foot');
+			nodes.forEach(function (f)
+			{
+				setDeliveryFoot(f, 'sent');
+			});
+			scrollMessagesIfAppropriate(true);
+		}
+		else
+		{
+			wrap.scrollTop = wrap.scrollHeight - scrollH + scrollTop;
+		}
+		bindMessageInteractions();
+	}
+
+	function setReplyTo(m)
+	{
+		if (!m || !m.id)
+		{
+			clearReplyTo();
+			return;
+		}
+		replyToMessageId = parseInt(String(m.id), 10);
+		const bar = document.getElementById('chat-reply-bar');
+		const txt = document.getElementById('chat-reply-bar-text');
+		if (bar)
+		{
+			bar.hidden = false;
+		}
+		if (txt)
+		{
+			txt.textContent = (m.message || 'Message').slice(0, 80);
+		}
+	}
+
+	function clearReplyTo()
+	{
+		replyToMessageId = null;
+		const bar = document.getElementById('chat-reply-bar');
+		if (bar)
+		{
+			bar.hidden = true;
+		}
+	}
+
+	function scrollToMessage(msgId)
+	{
+		const el = findMessageWrap(msgId);
+		if (el)
+		{
+			el.classList.add('is-highlight');
+			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			setTimeout(function ()
+			{
+				el.classList.remove('is-highlight');
+			}, 1600);
+		}
+	}
+
+	async function deleteMessageForMeRequest(msgId)
+	{
+		const res = await apiFetch('api/chat/deleteMessageForMe', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ message_id: parseInt(String(msgId), 10) })
+		});
+		if (res.ok)
+		{
+			const row = findMessageWrap(msgId);
+			if (row)
+			{
+				row.remove();
+			}
+		}
+	}
+
+	function bindMessageInteractions()
+	{
+		const wrap = document.getElementById('chat-messages');
+		if (!wrap || wrap.dataset.interactBound === '1')
+		{
+			return;
+		}
+		wrap.dataset.interactBound = '1';
+		wrap.addEventListener('click', function (e)
+		{
+			const actionBtn = e.target.closest('.chat-erp-msg-action[data-action]');
+			if (actionBtn)
+			{
+				e.stopPropagation();
+				const msgWrap = actionBtn.closest('.chat-erp-msg-wrap');
+				if (!msgWrap || !msgWrap.dataset.msgId || msgWrap.classList.contains('is-sending'))
+				{
+					return;
+				}
+				const mid = msgWrap.dataset.msgId;
+				const action = actionBtn.dataset.action;
+				const bodyText = getMessageTextFromRow(msgWrap);
+				if (action === 'reply')
+				{
+					setReplyTo({ id: mid, message: bodyText });
+				}
+				else if (action === 'copy')
+				{
+					if (navigator.clipboard && bodyText)
+					{
+						navigator.clipboard.writeText(bodyText);
+					}
+				}
+				else if (action === 'download')
+				{
+					const url = getMessageDownloadUrl(msgWrap);
+					if (url)
+					{
+						window.open(url, '_blank');
+					}
+				}
+				else if (action === 'delete-me')
+				{
+					deleteMessageForMeRequest(mid);
+				}
+				else if (action === 'delete-everyone')
+				{
+					deleteMessageForEveryoneRequest(mid);
+				}
+				return;
+			}
+			const q = e.target.closest('.chat-erp-reply-quote');
+			if (q && q.dataset.scrollToMsg)
+			{
+				scrollToMessage(q.dataset.scrollToMsg);
+			}
+		});
+		bindMessageHoverStability();
+	}
+
+	function bindMessageHoverStability()
+	{
+		const wrap = document.getElementById('chat-messages');
+		if (!wrap || wrap.dataset.hoverStableBound === '1')
+		{
+			return;
+		}
+		wrap.dataset.hoverStableBound = '1';
+		const hideTimers = new WeakMap();
+		wrap.addEventListener('mouseover', function (e)
+		{
+			const msgWrap = e.target.closest('.chat-erp-msg-wrap');
+			if (!msgWrap)
+			{
+				return;
+			}
+			const t = hideTimers.get(msgWrap);
+			if (t)
+			{
+				clearTimeout(t);
+				hideTimers.delete(msgWrap);
+			}
+			msgWrap.classList.add('is-actions-open');
+		});
+		wrap.addEventListener('mouseout', function (e)
+		{
+			const msgWrap = e.target.closest('.chat-erp-msg-wrap');
+			if (!msgWrap)
+			{
+				return;
+			}
+			const related = e.relatedTarget;
+			if (related && msgWrap.contains(related))
+			{
+				return;
+			}
+			const existing = hideTimers.get(msgWrap);
+			if (existing)
+			{
+				clearTimeout(existing);
+			}
+			hideTimers.set(msgWrap, setTimeout(function ()
+			{
+				msgWrap.classList.remove('is-actions-open');
+				hideTimers.delete(msgWrap);
+			}, 160));
+		});
+		if (!window.matchMedia('(hover: hover)').matches)
+		{
+			wrap.addEventListener('click', function (e)
+			{
+				if (e.target.closest('.chat-erp-msg-action'))
+				{
+					return;
+				}
+				const msgWrap = e.target.closest('.chat-erp-msg-wrap');
+				if (!msgWrap)
+				{
+					return;
+				}
+				const open = msgWrap.classList.contains('is-actions-open');
+				wrap.querySelectorAll('.chat-erp-msg-wrap.is-actions-open').forEach(function (w)
+				{
+					w.classList.remove('is-actions-open');
+				});
+				if (!open)
+				{
+					msgWrap.classList.add('is-actions-open');
+				}
 			});
 		}
-		const nodes = wrap.querySelectorAll('.chat-erp-msg.is-sent .chat-erp-msg-foot');
-		nodes.forEach(function (f)
-		{
-			setDeliveryFoot(f, 'sent');
-		});
-		scrollMessagesIfAppropriate(true);
 	}
 
 	function updateRosterUnread(peerId, count)
@@ -619,11 +844,40 @@ const ChatApp = (function ()
 		{
 			badge.hidden = false;
 			badge.textContent = count > 99 ? '99+' : String(count);
+			badge.classList.add('is-bump');
+			setTimeout(function ()
+			{
+				badge.classList.remove('is-bump');
+			}, 400);
 		}
 		else
 		{
 			badge.hidden = true;
 			badge.textContent = '';
+		}
+	}
+
+	function updateRosterTypingPreview(peerId, typing, name)
+	{
+		const row = document.querySelector('.chat-erp-user-row[data-user-id="' + peerId + '"]');
+		if (!row)
+		{
+			return;
+		}
+		const preview = row.querySelector('.chat-erp-user-preview');
+		if (!preview)
+		{
+			return;
+		}
+		if (typing && activePeerId !== peerId)
+		{
+			preview.textContent = (name || 'Contact') + ' is typing…';
+			preview.classList.add('is-typing-preview');
+		}
+		else if (preview.classList.contains('is-typing-preview'))
+		{
+			preview.classList.remove('is-typing-preview');
+			loadRoster();
 		}
 	}
 
@@ -781,7 +1035,7 @@ const ChatApp = (function ()
 		{
 			set[String(ids[i])] = true;
 		}
-		document.querySelectorAll('.chat-erp-msg.is-sent[data-msg-id]').forEach(function (row)
+		document.querySelectorAll('.chat-erp-msg-wrap.is-sent[data-msg-id]').forEach(function (row)
 		{
 			const id = row.dataset.msgId;
 			if (set[id])
@@ -799,7 +1053,7 @@ const ChatApp = (function ()
 		{
 			return;
 		}
-		document.querySelectorAll('.chat-erp-msg.is-sent[data-msg-id]').forEach(function (row)
+		document.querySelectorAll('.chat-erp-msg-wrap.is-sent[data-msg-id]').forEach(function (row)
 		{
 			const mid = parseInt(row.dataset.msgId, 10);
 			if (!isNaN(mid) && mid <= upToId)
@@ -826,7 +1080,17 @@ const ChatApp = (function ()
 					return;
 				}
 				inActiveThread = true;
-				appendBubble(false, data.message, data.id, null);
+				appendMessageDto({
+					id: data.id,
+					sender_id: data.sender_id,
+					receiver_id: data.receiver_id,
+					message: data.message,
+					message_type: data.message_type || 'text',
+					attachments: data.attachments || [],
+					reply_to: data.reply_to || null,
+					reply_to_message_id: data.reply_to_message_id,
+					deleted_for_everyone: false
+				}, null, false);
 				queueDeliverAck([data.id]);
 				scrollMessagesIfAppropriate(false);
 			}
@@ -845,6 +1109,8 @@ const ChatApp = (function ()
 
 		channel.bind('user.typing', function (data)
 		{
+			rosterTypingPeers[data.typer_id] = !!data.typing;
+			updateRosterTypingPreview(data.typer_id, !!data.typing, data.typer_name);
 			if (data.typer_id !== activePeerId)
 			{
 				return;
@@ -911,6 +1177,7 @@ const ChatApp = (function ()
 		hideAuthGate();
 		const d = json.data;
 		currentUserId = d.user.id;
+		window.__chatCurrentUserId = currentUserId;
 		currentUserName = (typeof window.resolveDashboardTopbarDisplayName === 'function'
 			? window.resolveDashboardTopbarDisplayName(d.user)
 			: String(d.user.name || '').trim()) || 'You';
@@ -986,7 +1253,16 @@ const ChatApp = (function ()
 
 		const preview = document.createElement('div');
 		preview.className = 'chat-erp-user-preview' + (u.last_message_from_self ? ' is-from-you' : '');
-		preview.textContent = u.last_message_preview || 'No messages yet';
+		if (rosterTypingPeers[u.id])
+		{
+			preview.textContent = 'typing…';
+			preview.classList.add('is-typing-preview');
+		}
+		else
+		{
+			preview.textContent = u.last_message_preview || 'No messages yet';
+		}
+		preview.dataset.msgType = u.last_message_type || 'text';
 
 		const line = document.createElement('div');
 		line.className = 'chat-erp-user-line';
@@ -1188,6 +1464,32 @@ const ChatApp = (function ()
 		}
 	}
 
+	async function loadOlderMessages()
+	{
+		if (!activePeerId || !conversationHasMore || !oldestMessageId)
+		{
+			return;
+		}
+		const res = await apiFetch(
+			'api/chat/conversation?peer_id=' + encodeURIComponent(String(activePeerId)) + '&before_id=' + encodeURIComponent(String(oldestMessageId)),
+			{ method: 'GET' }
+		);
+		const json = await res.json().catch(function () { return null; });
+		if (!res.ok || !json || !json.data || !json.data.messages)
+		{
+			return;
+		}
+		const list = json.data.messages;
+		conversationHasMore = !!json.data.has_more;
+		oldestMessageId = list.length ? list[0].id : oldestMessageId;
+		const loadOlderBtn = document.getElementById('chat-load-older');
+		if (loadOlderBtn)
+		{
+			loadOlderBtn.hidden = !conversationHasMore;
+		}
+		renderHistory(list, true);
+	}
+
 	async function loadConversation(peerId)
 	{
 		const mySeq = ++conversationLoadSeq;
@@ -1203,6 +1505,7 @@ const ChatApp = (function ()
 			}
 			const wrap = document.getElementById('chat-messages');
 			const empty = document.getElementById('chat-thread-empty');
+			const loadOlderBtn = document.getElementById('chat-load-older');
 			if (!wrap)
 			{
 				return;
@@ -1217,7 +1520,13 @@ const ChatApp = (function ()
 				return;
 			}
 			const list = json.data.messages;
-			renderHistory(list);
+			conversationHasMore = !!json.data.has_more;
+			oldestMessageId = list.length ? list[0].id : null;
+			if (loadOlderBtn)
+			{
+				loadOlderBtn.hidden = !conversationHasMore;
+			}
+			renderHistory(list, false);
 			let maxId = 0;
 			for (let i = 0; i < list.length; i++)
 			{
@@ -1256,6 +1565,7 @@ const ChatApp = (function ()
 	{
 		activePeerId = peerId;
 		activePeerName = peerName || '';
+		clearReplyTo();
 		stopTyping();
 		showTypingLine('', false);
 		document.querySelectorAll('.chat-erp-user-row').forEach(function (el)
@@ -1295,6 +1605,8 @@ const ChatApp = (function ()
 			return;
 		}
 		const n = ta.value.length;
+		const show = n >= composerMaxChars * NEAR_CHAR_WARN_RATIO;
+		cc.hidden = !show;
 		cc.textContent = n + ' / ' + composerMaxChars;
 		cc.classList.remove('is-near-limit', 'is-at-limit');
 		if (n >= composerMaxChars)
@@ -1318,37 +1630,90 @@ const ChatApp = (function ()
 		ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
 	}
 
-	async function sendMessage()
+	async function sendPayload(text, replyId, file)
 	{
-		const ta = document.getElementById('chat-composer-input');
-		if (!ta || activePeerId === null || composerSending)
+		if (activePeerId === null || composerSending)
 		{
 			return;
 		}
-		const text = ta.value.replace(/\r\n/g, '\n').trim();
-		if (!text)
+		const bodyText = String(text || '').replace(/\r\n/g, '\n').trim();
+		if (!bodyText && !file)
 		{
 			return;
 		}
-		if (text.length > composerMaxChars)
+		if (bodyText.length > composerMaxChars)
 		{
 			return;
 		}
 		stopTyping();
 		composerSending = true;
 		setComposerEnabled(true);
-		const row = appendBubble(true, text, null, 'sending');
-		ta.value = '';
+		const optimistic = {
+			id: null,
+			sender_id: currentUserId,
+			receiver_id: activePeerId,
+			message: bodyText || (file ? 'Sending…' : ''),
+			message_type: file && file.type ? (file.type.indexOf('image/') === 0 ? 'image' : file.type.indexOf('audio/') === 0 ? 'audio' : 'file') : 'text',
+			attachments: [],
+			deleted_for_everyone: false
+		};
+		const row = appendMessageDto(optimistic, 'sending', false);
+		const ta = document.getElementById('chat-composer-input');
+		if (ta)
+		{
+			ta.value = '';
+		}
 		updateCharCount();
 		autosizeComposer();
+		clearReplyTo();
 
 		try
 		{
-			const res = await apiFetch('api/chat/sendMessage', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ receiver_id: activePeerId, message: text })
-			});
+			let res;
+			const rid = replyId != null ? replyId : replyToMessageId;
+			if (file)
+			{
+				const fd = new FormData();
+				fd.append('receiver_id', String(activePeerId));
+				fd.append('message', bodyText);
+				fd.append('file', file);
+				if (rid)
+				{
+					fd.append('reply_to_message_id', String(rid));
+				}
+				let chatToken = '';
+				try
+				{
+					chatToken = localStorage.getItem('chat_token') || '';
+				}
+				catch (e)
+				{
+				}
+				const headers = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+				if (chatToken)
+				{
+					headers.Authorization = 'Bearer ' + chatToken;
+				}
+				res = await fetch(apiBase.replace(/\/?$/, '/') + 'api/chat/sendMessage', {
+					method: 'POST',
+					credentials: 'omit',
+					headers: headers,
+					body: fd
+				});
+			}
+			else
+			{
+				const payload = { receiver_id: activePeerId, message: bodyText };
+				if (rid)
+				{
+					payload.reply_to_message_id = rid;
+				}
+				res = await apiFetch('api/chat/sendMessage', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+			}
 			const json = await res.json().catch(function () { return null; });
 			if (!res.ok)
 			{
@@ -1356,22 +1721,27 @@ const ChatApp = (function ()
 				if (row)
 				{
 					row.classList.add('is-send-failed');
-					const foot = row.querySelector('.chat-erp-msg-foot');
-					if (foot)
-					{
-						foot.className = 'chat-erp-msg-foot';
-						foot.textContent = 'Failed to send · tap resend from composer';
-					}
 				}
 				return;
 			}
 			const saved = json && json.data && json.data.message;
 			if (saved && saved.id && row)
 			{
-				row.dataset.msgId = String(saved.id);
-				row.classList.remove('is-sending');
-				const foot = row.querySelector('.chat-erp-msg-foot');
-				setDeliveryFoot(foot, 'sent');
+				if (typeof ChatRender !== 'undefined' && ChatRender.buildMessageRow)
+				{
+					row.replaceWith(ChatRender.buildMessageRow(saved, {
+						isSent: true,
+						peerName: activePeerName,
+						continuation: false,
+						deliveryState: 'sent'
+					}));
+				}
+				else
+				{
+					row.dataset.msgId = String(saved.id);
+					row.classList.remove('is-sending');
+					row.classList.remove('is-send-failed');
+				}
 			}
 			loadRoster();
 		}
@@ -1380,6 +1750,22 @@ const ChatApp = (function ()
 			composerSending = false;
 			setComposerEnabled(true);
 		}
+	}
+
+	async function sendMessage()
+	{
+		const ta = document.getElementById('chat-composer-input');
+		if (!ta)
+		{
+			return;
+		}
+		const text = ta.value;
+		if (typeof ChatMedia !== 'undefined')
+		{
+			await ChatMedia.sendWithOptionalFile(text, replyToMessageId);
+			return;
+		}
+		await sendPayload(text, replyToMessageId, null);
 	}
 
 	function startPresenceHeartbeat()
@@ -1494,6 +1880,33 @@ const ChatApp = (function ()
 		await loadRoster();
 		applyPeerFromUrl();
 		bindMessageContextMenu();
+		bindMessageInteractions();
+		const loadOlderBtn = document.getElementById('chat-load-older');
+		if (loadOlderBtn)
+		{
+			loadOlderBtn.addEventListener('click', loadOlderMessages);
+		}
+		const replyCancel = document.getElementById('chat-reply-cancel');
+		if (replyCancel)
+		{
+			replyCancel.addEventListener('click', clearReplyTo);
+		}
+		if (typeof ChatMedia !== 'undefined')
+		{
+			ChatMedia.init({
+				sendPayload: sendPayload,
+				getReplyId: function ()
+				{
+					return replyToMessageId;
+				}
+			});
+			ChatMedia.clearPendingFile();
+		}
+		const uploadPrev = document.getElementById('chat-upload-preview');
+		if (uploadPrev)
+		{
+			uploadPrev.hidden = true;
+		}
 		startPresenceHeartbeat();
 		startRosterRefresh();
 
@@ -1556,3 +1969,11 @@ $(function ()
 		startChatApp();
 	}
 });
+
+
+// Need to watch these apis to understand the chat system
+
+// 1. http://localhost:8000/api/chat/presence
+// 2. http://localhost:8000/api/chat/users
+// 3. http://localhost:8000/api/chat/typing
+// 4. http://localhost:8000/api/chat/sendMessage
